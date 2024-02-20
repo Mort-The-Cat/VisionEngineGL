@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\VisionEngineGL\VisionEngineGL.exe</FullPath>
+      <FullPath>C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
