@@ -9,7 +9,7 @@ void Engine_Loop()
 {
 	Cursor_Reset = false;
 
-	Model_Vertex_Buffer Test({ glm::vec2(-0.5, -0.5), glm::vec2(0.5, -0.5), glm::vec2(0.0, 0.5) });
+	Model_Vertex_Buffer Test({ glm::vec2(0.5, 0.5), glm::vec2(0.5, -0.5), glm::vec2(-0.5, -0.5), glm::vec2(-0.5, 0.5) }, { 0, 1, 3, 1, 2, 3 });
 
 	Test.Create_Buffer();
 	Test.Bind_Buffer();
@@ -28,10 +28,16 @@ void Engine_Loop()
 
 		//
 
-		glClearColor(1, 0, 0, 1);
+		glClearColor(0.2, 0.3, 0.2, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		Test.Bind_Buffer();
+
+		glCullFace(GL_FALSE);
+
+		glDrawElements(GL_TRIANGLES, Test.Indices.size(), GL_UNSIGNED_INT, 0);
+
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//
 
