@@ -1,16 +1,36 @@
 #ifndef OPENGL_DECLARATIONS_VISION
 #define OPENGL_DECLARATIONS_VISION
 
+#include "Fast_Maths.h"
+
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 #include "glm/glm.hpp"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include<array>
 #include<vector>
 #include<istream>
 #include<fstream>
 #include<iostream>
+
+#include<unordered_map>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+#include<random>
+
+float Tick;
+
+double Last_Time;
 
 void Throw_Error(const char* Error_Message)
 {
@@ -20,6 +40,44 @@ void Throw_Error(const char* Error_Message)
 
 GLFWwindow* Window = nullptr;
 int Window_Width = 1600, Window_Height = 800;
+
+glm::mat4 Projection_Matrix; // This is the projection matrix of the current camera!
+
+class Camera
+{
+public:
+	glm::vec3 Position;
+	glm::vec3 Orientation; // This is in Euler angles
+
+	float FOV;
+
+	Camera() {}
+	Camera(glm::vec3 Positionp, glm::vec3 Orientationp, float FOVp)
+	{
+		Position = Positionp;
+		Orientation = Orientationp;
+		FOV = FOVp;
+	}
+
+	void Set_Projection_Matrix()
+	{
+		glm::mat4 View = glm::mat4(1.0f);
+
+		View = glm::rotate(View, DTR * Orientation.y, glm::vec3(1, 0, 0));
+		View = glm::rotate(View, DTR * Orientation.z, glm::vec3(0, 0, 1));
+		View = glm::rotate(View, DTR * Orientation.x, glm::vec3(0, 1, 0));
+
+		View = glm::translate(View, -Position);
+
+		Projection_Matrix = glm::perspective(Fast::To_Radians(FOV), (float)Window_Width / (float)Window_Height, 0.1f, 100.0f);
+
+		Projection_Matrix[1][1] *= -1;
+
+		Projection_Matrix = Projection_Matrix * View;
+	}
+};
+
+Camera Player_Camera;
 
 std::string Get_File_Contents(const char* Directory)
 {
@@ -73,11 +131,11 @@ private:
 		}
 	}
 public:
-	unsigned int Shader_Program;
+	unsigned int Program_ID;
 
 	void Activate()
 	{
-		glUseProgram(Shader_Program);
+		glUseProgram(Program_ID);
 	}
 
 	void Create_Shader(const char* Vertex_File, const char* Fragment_File)
@@ -102,13 +160,13 @@ public:
 
 		Check_Shader_Errors(Fragment_Shader, "FRAGMENT", Fragment_File);
 
-		Shader_Program = glCreateProgram();
+		Program_ID = glCreateProgram();
 
-		glAttachShader(Shader_Program, Vertex_Shader);
-		glAttachShader(Shader_Program, Fragment_Shader);
-		glLinkProgram(Shader_Program);
+		glAttachShader(Program_ID, Vertex_Shader);
+		glAttachShader(Program_ID, Fragment_Shader);
+		glLinkProgram(Program_ID);
 
-		Check_Shader_Errors(Shader_Program, "PROGRAM", "");
+		Check_Shader_Errors(Program_ID, "PROGRAM", "");
 
 		glDeleteShader(Vertex_Shader);
 		glDeleteShader(Fragment_Shader);
@@ -119,6 +177,9 @@ public:
 void Framebuffer_Resize_Callback(GLFWwindow* Window, int Width, int Height)
 {
 	glViewport(0, 0, Width, Height);
+
+	Window_Width = Width;
+	Window_Height = Height;
 }
 
 void Initialise_OpenGL_Window()
@@ -143,6 +204,8 @@ void Initialise_OpenGL_Window()
 	//	Throw_Error(" >> Failed to initialise glad!\n");
 
 	glfwSetWindowSizeCallback(Window, Framebuffer_Resize_Callback);
+
+	stbi_set_flip_vertically_on_load(true);
 }
 
 void Close_Program()

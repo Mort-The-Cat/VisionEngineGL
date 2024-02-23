@@ -32,5 +32,17 @@
     <ClInclude Include="Input_Handler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Uniform_Buffer_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset_Loading_Cache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

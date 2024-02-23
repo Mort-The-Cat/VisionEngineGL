@@ -155,9 +155,13 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asset_Loading_Cache.h" />
     <ClInclude Include="Engine_Loop.h" />
     <ClInclude Include="Input_Handler.h" />
+    <ClInclude Include="Mesh_Loader.h" />
     <ClInclude Include="OpenGL_Declarations.h" />
+    <ClInclude Include="Texture_Declarations.h" />
+    <ClInclude Include="Uniform_Buffer_Declarations.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

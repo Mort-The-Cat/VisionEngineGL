@@ -93,6 +93,41 @@ void Player_Movement()
 	{
 		Close_Game();
 	}
+
+
+	const float Speed = 2.5;
+
+	float Angle = -DTR * Player_Camera.Orientation.x;
+
+	float Movement_X = sin(Angle) * Tick * Speed;
+	float Movement_Z = cos(Angle) * Tick * Speed;
+
+	if (Inputs[Controls::Forwards])
+	{
+		Player_Camera.Position.x -= Movement_X;
+		Player_Camera.Position.z -= Movement_Z;
+	}
+	if (Inputs[Controls::Backwards])
+	{
+		Player_Camera.Position.x += Movement_X;
+		Player_Camera.Position.z += Movement_Z;
+	}
+	if (Inputs[Controls::Left])
+	{
+		Player_Camera.Position.x -= Movement_Z;
+		Player_Camera.Position.z += Movement_X;
+	}
+	if (Inputs[Controls::Right])
+	{
+		Player_Camera.Position.x += Movement_Z;
+		Player_Camera.Position.z -= Movement_X;
+	}
+
+	Player_Camera.Orientation.x += Cursor.x * 90;
+	Player_Camera.Orientation.y += Cursor.y * 90;
+
+	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
+	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);
 }
 
 #endif
