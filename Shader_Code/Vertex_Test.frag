@@ -11,5 +11,5 @@ in vec2 UV;
 
 void main()
 {
-	Out_Colour = Test_Colour * texture(Texture, Interp_UV); // vec4(1, 1, 1, 1);
+	Out_Colour = Test_Colour * texture(Texture, UV); // vec4(1, 1, 1, 1);
 }

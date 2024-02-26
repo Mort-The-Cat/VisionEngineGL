@@ -8,6 +8,8 @@
 
 #include "glm/glm.hpp"
 
+#include "glm/gtx/hash.hpp"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -17,8 +19,9 @@
 #include<istream>
 #include<fstream>
 #include<iostream>
-
+#include<functional>
 #include<unordered_map>
+
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -67,7 +70,7 @@ public:
 		View = glm::rotate(View, DTR * Orientation.z, glm::vec3(0, 0, 1));
 		View = glm::rotate(View, DTR * Orientation.x, glm::vec3(0, 1, 0));
 
-		View = glm::translate(View, -Position);
+		View = glm::translate(View, Position);
 
 		Projection_Matrix = glm::perspective(Fast::To_Radians(FOV), (float)Window_Width / (float)Window_Height, 0.1f, 100.0f);
 

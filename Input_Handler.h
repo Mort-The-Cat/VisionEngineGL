@@ -104,24 +104,34 @@ void Player_Movement()
 
 	if (Inputs[Controls::Forwards])
 	{
-		Player_Camera.Position.x -= Movement_X;
-		Player_Camera.Position.z -= Movement_Z;
-	}
-	if (Inputs[Controls::Backwards])
-	{
 		Player_Camera.Position.x += Movement_X;
 		Player_Camera.Position.z += Movement_Z;
 	}
-	if (Inputs[Controls::Left])
+	if (Inputs[Controls::Backwards])
 	{
-		Player_Camera.Position.x -= Movement_Z;
-		Player_Camera.Position.z += Movement_X;
+		Player_Camera.Position.x -= Movement_X;
+		Player_Camera.Position.z -= Movement_Z;
 	}
-	if (Inputs[Controls::Right])
+	if (Inputs[Controls::Left])
 	{
 		Player_Camera.Position.x += Movement_Z;
 		Player_Camera.Position.z -= Movement_X;
 	}
+	if (Inputs[Controls::Right])
+	{
+		Player_Camera.Position.x -= Movement_Z;
+		Player_Camera.Position.z += Movement_X;
+	}
+
+	if (Inputs[Controls::Lean_Left])
+		Player_Camera.Orientation.z -= Tick;
+	if (Inputs[Controls::Lean_Right])
+		Player_Camera.Orientation.z += Tick;
+
+	if (Inputs[Controls::Down])
+		Player_Camera.Position.y -= Tick;
+	if (Inputs[Controls::Up])
+		Player_Camera.Position.y += Tick;
 
 	Player_Camera.Orientation.x += Cursor.x * 90;
 	Player_Camera.Orientation.y += Cursor.y * 90;

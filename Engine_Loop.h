@@ -7,12 +7,16 @@
 #include "Texture_Declarations.h"
 #include "Asset_Loading_Cache.h"
 #include "Input_Handler.h"
+#include "Mesh_Loader.h"
 
 void Engine_Loop()
 {
 	Cursor_Reset = true;
 
-	Model_Vertex_Buffer Test({ Model_Vertex(0.5, 0.5, 1, 0, 0, 1, 1), Model_Vertex(0.5, -0.5, 0, 0, 1, 1, 0), Model_Vertex(-0.5, -0.5, 0, 1, 0, 0, 0), Model_Vertex(-0.5, 0.5, 1, 1, 1, 0, 1) }, { 0, 1, 3, 1, 2, 3 });
+	Model_Vertex_Buffer Test; // ({ Model_Vertex(0.5, 0.5, 1, 0, 0, 1, 1), Model_Vertex(0.5, -0.5, 0, 0, 1, 1, 0), Model_Vertex(-0.5, -0.5, 0, 1, 0, 0, 0), Model_Vertex(-0.5, 0.5, 1, 1, 1, 0, 1) }, { 0, 1, 3, 1, 2, 3 });
+	
+	Load_Mesh_Obj("Assets/Models/Viking_Room.obj", &Test);
+
 	Model_Uniform_Buffer Test_Uniform(glm::vec4(0.75, 0.5, 1, 1));
 
 	Test.Create_Buffer();
@@ -68,6 +72,7 @@ void Engine_Loop()
 		Player_Camera.Set_Projection_Matrix();
 
 		glEnable(GL_CULL_FACE);
+		glCullFace(GL_CCW);
 		glEnable(GL_DEPTH_TEST);
 
 		glDrawElements(GL_TRIANGLES, Test.Indices.size(), GL_UNSIGNED_INT, 0);

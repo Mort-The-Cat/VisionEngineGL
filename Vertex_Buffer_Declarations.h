@@ -41,6 +41,14 @@ struct Model_Vertex
 		UV.x = U;
 		UV.y = V;
 	}
+
+	bool operator== (const Model_Vertex& Other) const
+	{
+		return 
+			Other.Position == Position && 
+			Other.Normal == Normal &&
+			Other.UV == UV;
+	}
 };
 
 //
@@ -89,6 +97,17 @@ public:
 
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6));
 		glEnableVertexAttribArray(2);
+	}
+};
+
+template<> struct std::hash<Model_Vertex>
+{
+	size_t operator()(Model_Vertex const& Vertex) const
+	{
+		return
+			((std::hash<glm::vec3>()(Vertex.Position) ^
+				((std::hash<glm::vec2>()(Vertex.UV) << 1) >> 1) ^
+				(std::hash<glm::vec3>()(Vertex.Normal) << 2) >> 2));
 	}
 };
 

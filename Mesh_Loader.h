@@ -30,7 +30,7 @@ void Load_Mesh_Obj(const char* File_Name, Model_Vertex_Buffer* Target_Mesh)
 
 			Vertex.Position = {
 				Attributes.vertices[3 * Index.vertex_index],
-				Attributes.vertices[3 * Index.vertex_index + 1],
+				-Attributes.vertices[3 * Index.vertex_index + 1],
 				Attributes.vertices[3 * Index.vertex_index + 2]
 			};
 
