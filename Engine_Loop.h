@@ -8,28 +8,14 @@
 #include "Asset_Loading_Cache.h"
 #include "Input_Handler.h"
 #include "Mesh_Loader.h"
+#include "Model_Declarations.h"
 
 void Engine_Loop()
 {
 	Cursor_Reset = true;
 
-	Model_Vertex_Buffer Test; // ({ Model_Vertex(0.5, 0.5, 1, 0, 0, 1, 1), Model_Vertex(0.5, -0.5, 0, 0, 1, 1, 0), Model_Vertex(-0.5, -0.5, 0, 1, 0, 0, 0), Model_Vertex(-0.5, 0.5, 1, 1, 1, 0, 1) }, { 0, 1, 3, 1, 2, 3 });
-	
-	Load_Mesh_Obj("Assets/Models/Viking_Room.obj", &Test);
-
-	Model_Uniform_Buffer Test_Uniform(glm::vec4(0.75, 0.5, 1, 1));
-
-	Test.Create_Buffer();
-	Test.Bind_Buffer();
-	Test.Update_Buffer();
-
-	//
-
-	Texture Test_Texture;
-
-	Get_Texture("Assets/Textures/Brick1.png", &Test_Texture);
-
-	//
+	Model Test;
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, &Test);
 
 	Shader Test_Shader;
 
@@ -55,7 +41,7 @@ void Engine_Loop()
 		glClearColor(0.2, 0.3, 0.2, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Test.Bind_Buffer();
+		/*Test.Bind_Buffer();
 
 		Test_Uniform.Colour.x = 0.5 * (sin(glfwGetTime()) + 1);
 		Test_Uniform.Colour.y = 0.5 * (cos(glfwGetTime()) + 1);
@@ -67,7 +53,20 @@ void Engine_Loop()
 
 		Test_Uniform.Update_Buffer();
 
-		Test_Texture.Bind_Texture();
+		Test_Texture.Bind_Texture();*/
+
+		Test.Uniforms.Colour.x = 0.5 * (sinf(glfwGetTime()) + 1);
+		Test.Uniforms.Colour.y = 0.5 * (cosf(glfwGetTime()) + 1);
+		Test.Uniforms.Colour.z = 0.5 * (sinf(glfwGetTime() * 2 + 0.7) + 1);
+
+		Test.Position = glm::vec3(0.25 * sinf(glfwGetTime()), 0, -3);
+
+		Test.Orientation.x += Tick;
+
+		// Test.Orientation.y += 0.01f * Tick;
+		// Test.Orientation.z += 0.01f * Tick;
+
+		Test.Render();
 
 		Player_Camera.Set_Projection_Matrix();
 

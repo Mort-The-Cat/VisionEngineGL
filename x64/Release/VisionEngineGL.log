@@ -11,54 +11,63 @@ C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(96,11): warning C4244: '+=': conve
 C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(118,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(98,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(116,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(55,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(46,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(98,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(50,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(59,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(59,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(59,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,32): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,32): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,32): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(76,32): warning C4244:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(64,96): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,49): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,32): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,32): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,32): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,32): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,58): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,32): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,32): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,32): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,32): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(80,52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  3 of 2055 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  2 of 2181 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     12 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

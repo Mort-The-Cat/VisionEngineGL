@@ -4,6 +4,7 @@
 #include "OpenGL_Declarations.h"
 #include "Texture_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
+#include "Mesh_Loader.h"
 
 #define LOAD_TEXTURE_SEARCH_CACHE_BIT 1u
 #define LOAD_TEXTURE_STORE_CACHE_BIT 2u
@@ -102,48 +103,43 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 	// stbi_image_free(Pixels);
 }
 
-Texture Pull_Texture(const char* Texture_Directory)
+Cache::Texture_Cache_Info Pull_Texture(const char* Texture_Directory)
 {
 	Cache::Texture_Cache_Info Cache_Info;
 
 	//if (Flags & LOAD_TEXTURE_SEARCH_CACHE_BIT)
 	//{
 	if (Cache::Search_Texture_Cache(Texture_Directory, &Cache_Info))
-		return Cache_Info.Texture;
+		return Cache_Info;
 	//}
 
 	Load_New_Texture(Texture_Directory, &Cache_Info);
 
 	Cache::Texture_Cache.push_back(Cache_Info);
-	return Cache_Info.Texture;
+	return Cache_Info;
 }
 
 //
 
-Model_Vertex_Buffer Pull_Model_Vertex_Buffer(const char* Directory)
+Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory)
 {
 	Cache::Mesh_Cache_Info Cache_Info;
 
+	if (Cache::Search_Mesh_Cache(Directory, &Cache_Info))
+		return Cache_Info;
 
+	Cache_Info.Mesh = new Model_Mesh(); // This allocates the memory that is used by the load_mesh_obj function
+
+	Load_Mesh_Obj(Directory, Cache_Info.Mesh);
+
+	Cache_Info.Directory = Directory;
+	Cache_Info.Vertex_Buffer.Create_Buffer();
+	Cache_Info.Vertex_Buffer.Mesh = Cache_Info.Mesh;
+	Cache_Info.Vertex_Buffer.Bind_Buffer();
+	Cache_Info.Vertex_Buffer.Update_Buffer();
+
+	Cache::Mesh_Cache.push_back(Cache_Info);
+	return Cache_Info;
 }
-
-/*void Get_Texture(std::string Directory, Texture* Target_Texture)
-{
-	Target_Texture->Create_Texture();
-
-	int Width, Height, Channels;
-
-	unsigned char* Pixels = stbi_load(Directory.c_str(), &Width, &Height, &Channels, 0);
-
-	if (Pixels)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-		Throw_Error(" >> Unable to load texture!");
-
-	stbi_image_free(Pixels);
-}*/
 
 #endif
