@@ -27,6 +27,7 @@ public:
 	glm::vec4 Colour;
 
 	glm::mat4 Model_Matrix;
+	Model_Uniform_Buffer() {}
 
 	Model_Uniform_Buffer(glm::vec4 Colourp)
 	{

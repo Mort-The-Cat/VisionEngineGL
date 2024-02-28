@@ -8,8 +8,8 @@
 class Base_Vertex_Buffer
 {
 public:
-	unsigned int Buffer_ID = 0xFFFFFFFF;
-	unsigned int Vertex_Array_ID = 0xFFFFFFFF;
+	unsigned int Buffer_ID = Unassigned_Bit_Mask;
+	unsigned int Vertex_Array_ID = Unassigned_Bit_Mask;
 
 	// Don't necessarily need index buffers
 
@@ -20,6 +20,8 @@ public:
 	virtual void Bind_Buffer() { ; }
 
 	virtual void Update_Buffer() { ; }
+
+	virtual void Delete_Buffer() { ; }
 };
 
 //
@@ -53,19 +55,41 @@ struct Model_Vertex
 
 //
 
-class Model_Vertex_Buffer : public Base_Vertex_Buffer
+struct Model_Mesh
 {
-	unsigned int Index_Buffer_ID = 0xFFFFFFFF; // Model vertex buffers need an index buffer
-public:
 	std::vector<Model_Vertex> Vertices;
 	std::vector<unsigned int> Indices;
+};
+
+class Model_Vertex_Buffer : public Base_Vertex_Buffer
+{
+	unsigned int Index_Buffer_ID = Unassigned_Bit_Mask; // Model vertex buffers need an index buffer
+public:
+
+	unsigned int Indices_Count = 0;
+
+	Model_Mesh* Mesh;
 
 	Model_Vertex_Buffer() {}
 
-	Model_Vertex_Buffer(std::vector<Model_Vertex> Vertices_P, std::vector<unsigned int> Indices_P)
+	//Model_Vertex_Buffer(std::vector<Model_Vertex> Vertices_P, std::vector<unsigned int> Indices_P)
+
+	Model_Vertex_Buffer(Model_Mesh* Meshp)
 	{
-		Vertices = Vertices_P;
-		Indices = Indices_P;
+		Mesh = Meshp;
+		//Vertices = Vertices_P;
+		//Indices = Indices_P;
+	}
+
+	void Delete_Buffer() override
+	{
+		if (Buffer_ID != Unassigned_Bit_Mask)
+		{
+			glDeleteBuffers(1, &Buffer_ID);
+			glDeleteBuffers(1, &Index_Buffer_ID);
+
+			glDeleteVertexArrays(1, &Vertex_Array_ID);
+		}
 	}
 
 	void Create_Buffer() override
@@ -85,9 +109,11 @@ public:
 
 	void Update_Buffer() override
 	{
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices[0]) * Vertices.size(), Vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh->Vertices[0]) * Mesh->Vertices.size(), Mesh->Vertices.data(), GL_STATIC_DRAW);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), Indices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Mesh->Indices[0]) * Mesh->Indices.size(), Mesh->Indices.data(), GL_STATIC_DRAW);
+
+		Indices_Count = Mesh->Indices.size();
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)0);
 		glEnableVertexAttribArray(0);

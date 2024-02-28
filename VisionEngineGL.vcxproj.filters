@@ -44,5 +44,8 @@
     <ClInclude Include="Mesh_Loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Model_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

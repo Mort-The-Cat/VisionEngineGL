@@ -159,6 +159,7 @@
     <ClInclude Include="Engine_Loop.h" />
     <ClInclude Include="Input_Handler.h" />
     <ClInclude Include="Mesh_Loader.h" />
+    <ClInclude Include="Model_Declarations.h" />
     <ClInclude Include="OpenGL_Declarations.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="Uniform_Buffer_Declarations.h" />

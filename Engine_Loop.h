@@ -62,8 +62,8 @@ void Engine_Loop()
 		Test_Uniform.Colour.z = 0.5 * (sin(glfwGetTime() * 2.0 + 0.7) + 1);
 
 		Test_Uniform.Model_Matrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.25 * sinf(glfwGetTime()), 0, -3));
-		Test_Uniform.Model_Matrix = glm::rotate(Test_Uniform.Model_Matrix, (float)glfwGetTime(), glm::vec3(0, 0, 1));
-		Test_Uniform.Model_Matrix = glm::rotate(Test_Uniform.Model_Matrix, (float)glfwGetTime(), glm::vec3(1, 0, 0));
+		Test_Uniform.Model_Matrix = glm::rotate(Test_Uniform.Model_Matrix, (float)glfwGetTime() * 0.01f, glm::vec3(0, 0, 1));
+		Test_Uniform.Model_Matrix = glm::rotate(Test_Uniform.Model_Matrix, (float)glfwGetTime() * 0.01f, glm::vec3(1, 0, 0));
 
 		Test_Uniform.Update_Buffer();
 
@@ -74,8 +74,6 @@ void Engine_Loop()
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_CCW);
 		glEnable(GL_DEPTH_TEST);
-
-		glDrawElements(GL_TRIANGLES, Test.Indices.size(), GL_UNSIGNED_INT, 0);
 
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 

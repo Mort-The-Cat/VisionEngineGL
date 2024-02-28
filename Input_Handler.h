@@ -95,12 +95,12 @@ void Player_Movement()
 	}
 
 
-	const float Speed = 2.5;
+	float Speed = 2.5 * Tick;
 
 	float Angle = -DTR * Player_Camera.Orientation.x;
 
-	float Movement_X = sin(Angle) * Tick * Speed;
-	float Movement_Z = cos(Angle) * Tick * Speed;
+	float Movement_X = sin(Angle) * Speed;
+	float Movement_Z = cos(Angle) * Speed;
 
 	if (Inputs[Controls::Forwards])
 	{
@@ -124,14 +124,14 @@ void Player_Movement()
 	}
 
 	if (Inputs[Controls::Lean_Left])
-		Player_Camera.Orientation.z -= Tick;
+		Player_Camera.Orientation.z += Tick * 90;
 	if (Inputs[Controls::Lean_Right])
-		Player_Camera.Orientation.z += Tick;
+		Player_Camera.Orientation.z -= Tick * 90;
 
 	if (Inputs[Controls::Down])
-		Player_Camera.Position.y -= Tick;
+		Player_Camera.Position.y -= Speed;
 	if (Inputs[Controls::Up])
-		Player_Camera.Position.y += Tick;
+		Player_Camera.Position.y += Speed;
 
 	Player_Camera.Orientation.x += Cursor.x * 90;
 	Player_Camera.Orientation.y += Cursor.y * 90;

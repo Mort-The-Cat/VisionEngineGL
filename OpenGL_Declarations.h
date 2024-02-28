@@ -22,6 +22,7 @@
 #include<functional>
 #include<unordered_map>
 
+const unsigned int Unassigned_Bit_Mask = 0xFFFFFFFF;
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

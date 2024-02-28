@@ -3,6 +3,7 @@
 
 #include "OpenGL_Declarations.h"
 #include "Texture_Declarations.h"
+#include "Vertex_Buffer_Declarations.h"
 
 #define LOAD_TEXTURE_SEARCH_CACHE_BIT 1u
 #define LOAD_TEXTURE_STORE_CACHE_BIT 2u
@@ -18,11 +19,115 @@ namespace Cache
 		alignas(0) std::string Directory;
 		stbi_uc* Pixels;
 		int Texture_Width, Texture_Height, Texture_Channels;
-		Texture Texture;
+
+		Texture Texture;	// This can be taken easily from the cache
 	};
+
+	struct Mesh_Cache_Info
+	{
+		alignas(0) std::string Directory;
+		Model_Mesh* Mesh; // This is saved in the cache for later use.
+
+		Model_Vertex_Buffer Vertex_Buffer;
+
+		// However, we must deallocate the mesh data before we remove this item from the mesh cache!!
+	};
+
+	std::vector<Mesh_Cache_Info> Mesh_Cache;
+	std::vector<Texture_Cache_Info> Texture_Cache;
+
+	void Clear_Texture_Cache()
+	{
+		for (size_t W = 0; W < Texture_Cache.size(); W++)
+		{
+			Texture_Cache[W].Texture.Delete_Texture();
+			stbi_image_free(Texture_Cache[W].Pixels);
+		}
+		Texture_Cache.clear();
+	}
+
+	void Clear_Mesh_Cache()
+	{
+		for (size_t W = 0; W < Mesh_Cache.size(); W++)
+		{
+			Mesh_Cache[W].Vertex_Buffer.Delete_Buffer();
+			delete Mesh_Cache[W].Mesh;
+		}
+		Mesh_Cache.clear();
+	}
+
+	bool Search_Texture_Cache(const char* Directory, Texture_Cache_Info* Target_Info)
+	{
+		for (size_t W = 0; W < Texture_Cache.size(); W++)
+		{
+			if (strcmp(Directory, Texture_Cache[W].Directory.c_str()) == 0)
+			{
+				*Target_Info = Texture_Cache[W];
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Search_Mesh_Cache(const char* Directory, Mesh_Cache_Info* Target_Info)
+	{
+		for (size_t W = 0; W < Mesh_Cache.size(); W++)
+		{
+			if (strcmp(Directory, Mesh_Cache[W].Directory.c_str()) == 0)
+			{
+				*Target_Info = Mesh_Cache[W];
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
-void Get_Texture(std::string Directory, Texture* Target_Texture)
+void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_Info)
+{
+	Target_Info->Texture.Create_Texture();
+
+	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 0);
+
+	if (Target_Info->Pixels)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Target_Info->Texture_Width, Target_Info->Texture_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Target_Info->Pixels);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		Throw_Error(" >> Unable to load texture!");
+
+	Target_Info->Directory = Directory;
+
+	// stbi_image_free(Pixels);
+}
+
+Texture Pull_Texture(const char* Texture_Directory)
+{
+	Cache::Texture_Cache_Info Cache_Info;
+
+	//if (Flags & LOAD_TEXTURE_SEARCH_CACHE_BIT)
+	//{
+	if (Cache::Search_Texture_Cache(Texture_Directory, &Cache_Info))
+		return Cache_Info.Texture;
+	//}
+
+	Load_New_Texture(Texture_Directory, &Cache_Info);
+
+	Cache::Texture_Cache.push_back(Cache_Info);
+	return Cache_Info.Texture;
+}
+
+//
+
+Model_Vertex_Buffer Pull_Model_Vertex_Buffer(const char* Directory)
+{
+	Cache::Mesh_Cache_Info Cache_Info;
+
+
+}
+
+/*void Get_Texture(std::string Directory, Texture* Target_Texture)
 {
 	Target_Texture->Create_Texture();
 
@@ -39,6 +144,6 @@ void Get_Texture(std::string Directory, Texture* Target_Texture)
 		Throw_Error(" >> Unable to load texture!");
 
 	stbi_image_free(Pixels);
-}
+}*/
 
 #endif

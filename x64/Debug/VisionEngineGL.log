@@ -1,0 +1,75 @@
+﻿  Main.cpp
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(77,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(87,18): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(96,11): warning C4244: '+=': conversion from 'float' to 'uint32_t', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(118,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(98,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(55,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(46,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(55,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(60,31): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(61,31): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:             T=float
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(62,31): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(64,96): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(78,49): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(102): warning C4715: 'Get_File_Contents': not all control paths return a value
+glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
+glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
+glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
+glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
+glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
+glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
+glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
+  VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

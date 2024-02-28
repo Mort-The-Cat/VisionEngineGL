@@ -5,9 +5,15 @@
 
 class Texture
 {
-	unsigned int Texture_ID = 0xFFFFFFFF;
+	unsigned int Texture_ID = Unassigned_Bit_Mask;
 public:
 	Texture() {}
+
+	void Delete_Texture()
+	{
+		if(Texture_ID != Unassigned_Bit_Mask) // We only want to delete this texture if we've created the gl texture id
+			glDeleteTextures(1, &Texture_ID);
+	}
 
 	void Bind_Texture()
 	{

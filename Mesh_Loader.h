@@ -4,7 +4,7 @@
 #include "OpenGL_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
 
-void Load_Mesh_Obj(const char* File_Name, Model_Vertex_Buffer* Target_Mesh)
+void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
 {
 #define Obj tinyobj // This means we can avoid using this god-awful namespace 
 
