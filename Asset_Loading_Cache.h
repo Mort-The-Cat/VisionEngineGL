@@ -88,10 +88,13 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 {
 	Target_Info->Texture.Create_Texture();
 
+	stbi_set_flip_vertically_on_load(true);
+
 	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 0);
 
 	if (Target_Info->Pixels)
 	{
+		auto Channel_Flag = Target_Info->Texture_Channels == 4 ? GL_RGBA : GL_RGB;
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Target_Info->Texture_Width, Target_Info->Texture_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Target_Info->Pixels);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}

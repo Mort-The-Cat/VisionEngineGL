@@ -34,6 +34,8 @@ public:
 
 		Uniforms.Update_Buffer();
 
+		Albedo.Bind_Texture();
+
 		glDrawElements(GL_TRIANGLES, Mesh.Indices_Count, GL_UNSIGNED_INT, 0);
 	}
 };
@@ -44,6 +46,6 @@ void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Model* Target_Model)
 	Target_Model->Albedo = Albedo;
 }
 
-std::vector<Model> Scene_Models;
+std::vector<Model*> Scene_Models;
 
 #endif

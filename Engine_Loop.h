@@ -10,17 +10,32 @@
 #include "Mesh_Loader.h"
 #include "Model_Declarations.h"
 
+void Render_All()
+{
+	for (size_t W = 0; W < Scene_Models.size(); W++)
+	{
+		Scene_Models[W]->Uniforms.Colour = glm::vec4(1, 1, 1, 1);
+		Scene_Models[W]->Render();
+	}
+}
+
 void Engine_Loop()
 {
 	Cursor_Reset = true;
 
 	Model Test;
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, &Test);
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, &Test);
 
 	Shader Test_Shader;
 
 	Test_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag");
 	Test_Shader.Activate();
+
+	//
+
+	Scene_Models.push_back(new Model());
+	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Scene_Models.back());
 
 	Initialise_Model_Uniform_Locations_Object(Test_Shader);
 
@@ -67,6 +82,8 @@ void Engine_Loop()
 		// Test.Orientation.z += 0.01f * Tick;
 
 		Test.Render();
+
+		Render_All();
 
 		Player_Camera.Set_Projection_Matrix();
 
