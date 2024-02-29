@@ -178,6 +178,8 @@ public:
 	
 };
 
+Shader Scene_Object_Shader;
+
 void Framebuffer_Resize_Callback(GLFWwindow* Window, int Width, int Height)
 {
 	glViewport(0, 0, Width, Height);

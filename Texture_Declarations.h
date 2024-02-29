@@ -15,9 +15,16 @@ public:
 			glDeleteTextures(1, &Texture_ID);
 	}
 
+	void Parse_Texture(Shader Shader, const char* Location, GLuint Unit)
+	{
+		GLint Uniform_Location = glGetUniformLocation(Shader.Program_ID, Location);
+
+		glUniform1i(Uniform_Location, Unit);
+		glActiveTexture(GL_TEXTURE0 + Unit);
+	}
+
 	void Bind_Texture()
 	{
-		glActiveTexture(GL_TEXTURE0);
 
 		// Texture_Units++;
 		glBindTexture(GL_TEXTURE_2D, Texture_ID);

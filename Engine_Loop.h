@@ -19,37 +19,42 @@ void Render_All()
 
 	for (size_t W = 0; W < Scene_Models.size(); W++)
 	{
-		Scene_Models[W]->Uniforms.Colour = glm::vec4(1, 1, 1, 1);
-		Scene_Models[W]->Render();
+		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
+}
+
+void Setup_Test_Scene()
+{
+	Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), 50, 3));
+
+	Cursor_Reset = true;
+
+	Scene_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag");
+	Scene_Object_Shader.Activate();
+
+	//
+
+	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Brick");
+
+	Scene_Models.push_back(new Model());
+	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Assets/Textures/Black.png").Texture, Scene_Models.back());
+
+	Scene_Models.push_back(new Model());
+	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back());
+
+	Scene_Models.push_back(new Model());
+	Scene_Models.back()->Position = glm::vec3(9, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Assets/Textures/Black.png").Texture, Scene_Models.back());
+
+	Initialise_Model_Uniform_Locations_Object(Scene_Object_Shader);
+	Initialise_Light_Uniform_Locations_Object(Scene_Object_Shader);
 }
 
 void Engine_Loop()
 {
-	Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1, 1, 1), glm::vec3(0, 0, 1), 360, 1));
-
-	Cursor_Reset = true;
-
-	Model Test;
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, &Test);
-
-	Shader Test_Shader;
-
-	Test_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag");
-	Test_Shader.Activate();
-
-	//
-
-	Scene_Models.push_back(new Model());
-	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Scene_Models.back());
-
-	Scene_Models.push_back(new Model());
-	Scene_Models.back()->Position = glm::vec3(9, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Scene_Models.back());
-
-	Initialise_Model_Uniform_Locations_Object(Test_Shader);
-	Initialise_Light_Uniform_Locations_Object(Test_Shader);
+	Setup_Test_Scene();
 
 	Last_Time = glfwGetTime();
 
@@ -68,20 +73,9 @@ void Engine_Loop()
 		glClearColor(0.2, 0.3, 0.2, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Test.Uniforms.Colour = glm::vec4(1, 1, 1, 1);
+		Scene_Models[0]->Orientation.x += Tick;
 
-		//Test.Uniforms.Colour.x = 0.0 * (sinf(glfwGetTime()) + 1);
-		//Test.Uniforms.Colour.y = 0.0 * (cosf(glfwGetTime()) + 1);
-		//Test.Uniforms.Colour.z = 0.0 * (sinf(glfwGetTime() * 2 + 0.7) + 1);
-
-		Test.Position = glm::vec3(0.25 * sinf(glfwGetTime()), 0, -3);
-
-		Test.Orientation.x += Tick;
-
-		// Test.Orientation.y += 0.01f * Tick;
-		// Test.Orientation.z += 0.01f * Tick;
-
-		Test.Render();
+		Scene_Lights[0]->Blur = 45 + 45 * sinf(glfwGetTime());
 
 		Render_All();
 

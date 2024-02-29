@@ -70,7 +70,7 @@ void Update_Lighting_Buffer()
 		Light_Uniforms.Position[W].x = Scene_Lights[W]->Position.x;
 		Light_Uniforms.Position[W].y = Scene_Lights[W]->Position.y;
 		Light_Uniforms.Position[W].z = Scene_Lights[W]->Position.z;
-		Light_Uniforms.Position[W].w = Scene_Lights[W]->Blur;		// Blur value
+		Light_Uniforms.Position[W].w = 1.0f / Scene_Lights[W]->Blur;		// Blur value
 
 		Light_Uniforms.Colour[W].r = Scene_Lights[W]->Colour.r;
 		Light_Uniforms.Colour[W].g = Scene_Lights[W]->Colour.g;

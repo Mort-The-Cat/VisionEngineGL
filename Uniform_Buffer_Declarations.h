@@ -27,21 +27,13 @@ void Initialise_Model_Uniform_Locations_Object(Shader Shader)
 class Model_Uniform_Buffer
 {
 public:
-	glm::vec4 Colour;
-
 	glm::mat4 Model_Matrix;
+	glm::vec3 Model_Position;
 	Model_Uniform_Buffer() {}
-
-	Model_Uniform_Buffer(glm::vec4 Colourp)
-	{
-		Colour = Colourp;
-	}
 
 	void Update_Buffer()
 	{
-		glUniform4f(Model_Uniform_Location.Test_Colour, Colour.x, Colour.y, Colour.z, Colour.w);
-
-		glUniform3f(Model_Uniform_Location.Model_Position, Model_Matrix[0].x, Model_Matrix[0].y, Model_Matrix[0].z);
+		glUniform3f(Model_Uniform_Location.Model_Position, Model_Position.x, Model_Position.y, Model_Position.z);
 
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Matrix, 1, GL_FALSE, glm::value_ptr(Model_Matrix));
 

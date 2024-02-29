@@ -102,8 +102,44 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 		Throw_Error(" >> Unable to load texture!");
 
 	Target_Info->Directory = Directory;
+}
 
-	// stbi_image_free(Pixels);
+void Push_Merged_Material(const char* T_1, const char* T_2, const char* T_3, const char* Material_Name)
+{
+	Cache::Texture_Cache_Info Final_Texture;
+	std::array<Cache::Texture_Cache_Info, 3> Textures;
+	std::array<const char*, 3> Directories = { T_1, T_2, T_3 };
+
+	for (size_t W = 0; W < 3; W++)
+		Textures[W].Pixels = stbi_load(Directories[W], &Textures[W].Texture_Width, &Textures[W].Texture_Height, &Textures[W].Texture_Channels, 4);
+
+	size_t Total_Size = Textures[0].Texture_Width * Textures[0].Texture_Height * Textures[0].Texture_Channels;
+
+	Final_Texture.Pixels = (stbi_uc*)malloc(Total_Size);
+
+	for (size_t W = 0; W < Total_Size; W += 4)
+	{
+		Final_Texture.Pixels[W] = Textures[0].Pixels[W];
+		Final_Texture.Pixels[W + 1] = Textures[1].Pixels[W];
+		Final_Texture.Pixels[W + 2] = Textures[2].Pixels[W + 1];
+		Final_Texture.Pixels[W + 3] = Textures[2].Pixels[W];
+	}
+
+	Final_Texture.Texture_Channels = Textures[0].Texture_Channels;
+	Final_Texture.Texture_Width = Textures[0].Texture_Width;
+	Final_Texture.Texture_Height = Textures[0].Texture_Height;
+
+	Final_Texture.Directory = Material_Name;
+
+	for (size_t W = 0; W < 3; W++)
+		stbi_image_free(Textures[W].Pixels);
+
+	Final_Texture.Texture.Create_Texture();
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Final_Texture.Texture_Width, Final_Texture.Texture_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Final_Texture.Pixels);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	Cache::Texture_Cache.push_back(Final_Texture);
 }
 
 Cache::Texture_Cache_Info Pull_Texture(const char* Texture_Directory)

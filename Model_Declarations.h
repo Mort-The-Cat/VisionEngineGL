@@ -15,6 +15,7 @@ public:
 	Model_Uniform_Buffer Uniforms;
 
 	Texture Albedo;
+	Texture Material;
 
 	glm::vec3 Position;
 	glm::vec3 Orientation;
@@ -23,7 +24,7 @@ public:
 
 	Model() {}
 
-	void Render()
+	void Render(Shader Shader)
 	{
 		Mesh.Bind_Buffer();
 
@@ -32,18 +33,24 @@ public:
 		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.y, glm::vec3(1, 0, 0));
 		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, -Orientation.x, glm::vec3(0, 1, 0));
 
+		Uniforms.Model_Position = Position;
+
 		Uniforms.Update_Buffer();
 
+		Albedo.Parse_Texture(Shader, "Albedo", 0);
 		Albedo.Bind_Texture();
+		Material.Parse_Texture(Shader, "Material", 1);
+		Material.Bind_Texture();
 
 		glDrawElements(GL_TRIANGLES, Mesh.Indices_Count, GL_UNSIGNED_INT, 0);
 	}
 };
 
-void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Model* Target_Model)
+void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model)
 {
 	Target_Model->Mesh = Mesh;
 	Target_Model->Albedo = Albedo;
+	Target_Model->Material = Material;
 }
 
 std::vector<Model*> Scene_Models;
