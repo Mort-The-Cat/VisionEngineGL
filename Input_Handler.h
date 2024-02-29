@@ -95,7 +95,7 @@ void Player_Movement()
 	}
 
 
-	float Speed = 2.5 * Tick;
+	float Speed = -2.5 * Tick;
 
 	float Angle = -DTR * Player_Camera.Orientation.x;
 

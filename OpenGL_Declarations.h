@@ -67,11 +67,11 @@ public:
 	{
 		glm::mat4 View = glm::mat4(1.0f);
 
-		View = glm::rotate(View, DTR * Orientation.y, glm::vec3(1, 0, 0));
 		View = glm::rotate(View, DTR * Orientation.z, glm::vec3(0, 0, 1));
+		View = glm::rotate(View, DTR * Orientation.y, glm::vec3(1, 0, 0));
 		View = glm::rotate(View, DTR * Orientation.x, glm::vec3(0, 1, 0));
 
-		View = glm::translate(View, Position);
+		View = glm::translate(View, -Position);
 
 		Projection_Matrix = glm::perspective(Fast::To_Radians(FOV), (float)Window_Width / (float)Window_Height, 0.1f, 100.0f);
 
@@ -81,7 +81,7 @@ public:
 	}
 };
 
-Camera Player_Camera;
+Camera Player_Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 100);
 
 std::string Get_File_Contents(const char* Directory)
 {

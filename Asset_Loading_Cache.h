@@ -88,7 +88,7 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 {
 	Target_Info->Texture.Create_Texture();
 
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 
 	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 0);
 

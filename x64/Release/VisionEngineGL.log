@@ -20,46 +20,16 @@ C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(55,57): warning C4267: '=': conve
 C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(98,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(47,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(59,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(56,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(68,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(56,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(68,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(56,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,32): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,32): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,32): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(73,32): warning C4244:         ]
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,32): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,32): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,32): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(74,32): warning C4244:         ]
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,58): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,32): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,32): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,32): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,32): warning C4244:             T=float
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(75,32): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(68,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
@@ -67,9 +37,9 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(77,52): warning C4244: 'argument'
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  4 of 2216 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  1 of 2269 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    14 functions had inline decision re-evaluated but remain unchanged
+    13 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info

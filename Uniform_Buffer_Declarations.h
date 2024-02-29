@@ -12,6 +12,8 @@ struct Model_Uniform_Location_Object
 	int Model_Matrix;
 
 	int Projection_Matrix;
+
+	int Model_Position;
 } Model_Uniform_Location;
 
 void Initialise_Model_Uniform_Locations_Object(Shader Shader)
@@ -19,6 +21,7 @@ void Initialise_Model_Uniform_Locations_Object(Shader Shader)
 	Model_Uniform_Location.Test_Colour = glGetUniformLocation(Shader.Program_ID, "Test_Colour");
 	Model_Uniform_Location.Model_Matrix = glGetUniformLocation(Shader.Program_ID, "Model_Matrix");
 	Model_Uniform_Location.Projection_Matrix = glGetUniformLocation(Shader.Program_ID, "Projection_Matrix");
+	Model_Uniform_Location.Model_Position = glGetUniformLocation(Shader.Program_ID, "Model_Position");
 }
 
 class Model_Uniform_Buffer
@@ -37,6 +40,8 @@ public:
 	void Update_Buffer()
 	{
 		glUniform4f(Model_Uniform_Location.Test_Colour, Colour.x, Colour.y, Colour.z, Colour.w);
+
+		glUniform3f(Model_Uniform_Location.Model_Position, Model_Matrix[0].x, Model_Matrix[0].y, Model_Matrix[0].z);
 
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Matrix, 1, GL_FALSE, glm::value_ptr(Model_Matrix));
 
