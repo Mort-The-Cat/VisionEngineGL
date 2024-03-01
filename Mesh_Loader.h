@@ -36,7 +36,7 @@ void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
 
 			Vertex.Normal = {
 				Attributes.normals[3 * Index.normal_index],
-				Attributes.normals[3 * Index.normal_index + 1],
+				-Attributes.normals[3 * Index.normal_index + 1],
 				Attributes.normals[3 * Index.normal_index + 2]
 			};
 
