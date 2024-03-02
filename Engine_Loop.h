@@ -11,6 +11,7 @@
 #include "Model_Declarations.h"
 #include "Lighting_Handler.h"
 #include "Job_System.h"
+#include "Deletion_Handler.h"
 
 void Render_All()
 {
@@ -52,23 +53,25 @@ void Setup_Test_Scene()
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back());
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller());
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back());
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller());
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(9, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back());
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller());
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(0, 5, -5);
-	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back());
+	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller());
 
 	Initialise_Model_Uniform_Locations_Object(Scene_Object_Shader);
 	Initialise_Light_Uniform_Locations_Object(Scene_Object_Shader);
 	Initialise_Camera_Uniform_Locations_Object(Scene_Object_Shader);
+
+	Initialise_Job_System();
 }
 
 void Engine_Loop()
@@ -102,6 +105,8 @@ void Engine_Loop()
 		Player_Camera.Bind_Buffers();
 
 		Render_All();
+
+		Handle_Deletions();
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_CCW);

@@ -65,6 +65,9 @@
     <ClInclude Include="Vertex_Buffer_Declarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Deletion_Handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />

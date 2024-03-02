@@ -8,6 +8,7 @@
 #include "Job_System_Declarations.h"
 
 #define MF_TO_BE_DELETED 0
+#define MF_ACTIVE 1
 
 class Model
 {
@@ -23,9 +24,14 @@ public:
 
 	Controller* Control;
 
-	bool Flags[1]; // Doesn't really matter how many bits we use for this
+	bool Flags[2] = { false, false }; // Doesn't really matter how many bits we use for this
 
 	Model() {}
+
+	~Model()
+	{
+		delete Control;
+	}
 
 	void Render(Shader Shader)
 	{
@@ -49,11 +55,13 @@ public:
 	}
 };
 
-void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model)
+void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp)
 {
 	Target_Model->Mesh = Mesh;
 	Target_Model->Albedo = Albedo;
 	Target_Model->Material = Material;
+	Target_Model->Control = Controlp;
+	Controlp->Initialise_Control(Target_Model);
 }
 
 std::vector<Model*> Scene_Models;

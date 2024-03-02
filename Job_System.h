@@ -5,6 +5,17 @@
 #include "OpenGL_Declarations.h"
 #include "Model_Declarations.h"
 
+class Test_Deletion_Controller : public Controller
+{
+public:
+	float Timer = 8;
+	virtual void Control_Function() override
+	{
+		Timer -= Tick;
+		Object->Flags[MF_TO_BE_DELETED] = Timer < 0; // If the timer is less than zero, the object should be deleted!
+	}
+};
+
 void Execute_Control_Function(void* Parameter)
 {
 	Controller* Control = (Controller*)Parameter;
@@ -108,9 +119,8 @@ void Initialise_Job_System()
 void Handle_Scene()
 {
 	for (size_t W = 0; W < Scene_Models.size(); W++)
-	{
-		Job_System::Submit_Job(Job_System::Job(Execute_Control_Function, Scene_Models[W]->Control));
-	}
+		if(Scene_Models[W]->Flags[MF_ACTIVE])
+			Job_System::Submit_Job(Job_System::Job(Execute_Control_Function, Scene_Models[W]->Control));
 }
 
 #endif

@@ -17,7 +17,7 @@ class Controller
 public:
 	Model* Object;
 	virtual void Control_Function() {}
-	virtual void Initialise_Control() {}
+	virtual void Initialise_Control(Model* Objectp) { Object = Objectp; }
 };
 
 namespace Job_System

@@ -6,6 +6,8 @@
 // We may have to refactor this in order to get the linker to behave
 
 #include "OpenGL_Declarations.h"
+#include "Job_System.h"
+#include "Asset_Loading_Cache.h"
 
 bool Inputs[11];
 
@@ -87,6 +89,14 @@ float Total_Timer = 0;
 
 uint32_t Frames = 0;
 
+void Spawn_Test_Object()
+{
+	Scene_Models.push_back(new Model());
+	Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Deletion_Controller());
+	Scene_Models.back()->Position = Player_Camera.Position;
+	Scene_Models.back()->Flags[MF_ACTIVE] = true;
+}
+
 void Player_Movement()
 {
 	if (Inputs[Controls::Pause])
@@ -94,6 +104,10 @@ void Player_Movement()
 		Close_Game();
 	}
 
+	if (Inputs[Controls::Use])
+	{
+		Spawn_Test_Object();
+	}
 
 	float Speed = -2.5 * Tick;
 
