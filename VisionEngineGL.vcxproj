@@ -156,14 +156,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset_Loading_Cache.h" />
+    <ClInclude Include="Bool_Array.h" />
     <ClInclude Include="Engine_Loop.h" />
+    <ClInclude Include="Fast_Maths.h" />
     <ClInclude Include="Input_Handler.h" />
+    <ClInclude Include="Job_System.h" />
+    <ClInclude Include="Job_System_Declarations.h" />
     <ClInclude Include="Lighting_Handler.h" />
     <ClInclude Include="Mesh_Loader.h" />
     <ClInclude Include="Model_Declarations.h" />
     <ClInclude Include="OpenGL_Declarations.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="Uniform_Buffer_Declarations.h" />
+    <ClInclude Include="Vertex_Buffer_Declarations.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader_Code\Vertex_Test.frag" />
+    <None Include="Shader_Code\Vertex_Test.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

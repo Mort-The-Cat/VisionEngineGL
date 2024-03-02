@@ -9,6 +9,8 @@ uniform vec4 Light_Direction[20];
 uniform sampler2D Albedo;
 uniform sampler2D Material;
 
+uniform vec3 Camera_Position;
+
 in vec3 Position;
 in vec3 Normal;
 in vec2 UV;
@@ -19,10 +21,12 @@ vec3 Specular_Lighting = vec3(0, 0, 0);
 
 float Inverse_Material_W = texture(Material, UV).a;
 
+vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
+
 mat3 TBN(vec3 P_Normal)
 {
 
-	vec3 Random_Vector = normalize(vec3(P_Normal.x + 3, P_Normal.y + 3, P_Normal.z + 3));
+	vec3 Random_Vector = Camera_To_Pixel; //normalize(vec3(P_Normal.x - 2, P_Normal.y + 1, P_Normal.z + 3));
 
 	vec3 Tangent = normalize(cross(Random_Vector, P_Normal));
 

@@ -79,6 +79,8 @@ public:
 
 		Projection_Matrix = Projection_Matrix * View;
 	}
+
+	void Bind_Buffers();
 };
 
 Camera Player_Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 100);
@@ -197,6 +199,8 @@ void Initialise_OpenGL_Window()
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	Window = glfwCreateWindow(Window_Width, Window_Height, "Vision engine test!", NULL, NULL);
+
+	glfwSwapInterval(0);
 
 	if (Window == NULL)
 		Throw_Error(" >> Failed to create OpenGL Window!\n");

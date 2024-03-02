@@ -5,6 +5,7 @@
 #include "Vertex_Buffer_Declarations.h"
 #include "Uniform_Buffer_Declarations.h"
 #include "Texture_Declarations.h"
+#include "Job_System_Declarations.h"
 
 #define MF_TO_BE_DELETED 0
 
@@ -19,6 +20,8 @@ public:
 
 	glm::vec3 Position;
 	glm::vec3 Orientation;
+
+	Controller* Control;
 
 	bool Flags[1]; // Doesn't really matter how many bits we use for this
 
