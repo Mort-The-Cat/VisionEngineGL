@@ -47,6 +47,8 @@ int Window_Width = 1600, Window_Height = 800;
 
 glm::mat4 Projection_Matrix; // This is the projection matrix of the current camera!
 
+glm::vec3 Camera_Direction;
+
 class Camera
 {
 public:
@@ -78,6 +80,19 @@ public:
 		Projection_Matrix[1][1] *= -1;
 
 		Projection_Matrix = Projection_Matrix * View;
+
+		//
+
+		glm::vec3 Direction(0, 0, 0);
+
+		Direction.y = sinf(-Orientation.y * DTR);
+		Direction.z = -sqrtf(1 - Direction.y * Direction.y);
+
+		Direction.x = sinf(-Orientation.x * DTR) * Direction.z;
+
+		Direction.z *= cosf(-Orientation.x * DTR);
+
+		Camera_Direction = Direction;
 	}
 
 	void Bind_Buffers();

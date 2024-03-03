@@ -9,18 +9,22 @@ struct Camera_Uniform_Location_Object
 {
 	int Projection_Matrix;
 	int Camera_Position;
+	int Camera_Direction;
 } Camera_Uniform_Location;
 
 void Camera::Bind_Buffers()
 {
 	glUniform3f(Camera_Uniform_Location.Camera_Position, Position.x, Position.y, Position.z);
 	glUniformMatrix4fv(Camera_Uniform_Location.Projection_Matrix, 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
+
+	glUniform3f(Camera_Uniform_Location.Camera_Direction, Camera_Direction.x, Camera_Direction.y, Camera_Direction.z);
 }
 
 void Initialise_Camera_Uniform_Locations_Object(Shader Shader)
 {
 	Camera_Uniform_Location.Projection_Matrix = glGetUniformLocation(Shader.Program_ID, "Projection_Matrix");
 	Camera_Uniform_Location.Camera_Position = glGetUniformLocation(Shader.Program_ID, "Camera_Position");
+	Camera_Uniform_Location.Camera_Direction = glGetUniformLocation(Shader.Program_ID, "Camera_Direction");
 }
 
 struct Model_Uniform_Location_Object

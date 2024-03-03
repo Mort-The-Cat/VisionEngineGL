@@ -9,7 +9,10 @@ uniform vec4 Light_Direction[20];
 uniform sampler2D Albedo;
 uniform sampler2D Material;
 
+uniform samplerCube Cubemap;
+
 uniform vec3 Camera_Position;
+uniform vec3 Camera_Direction;
 
 in vec3 Position;
 in vec3 Normal;
@@ -26,7 +29,9 @@ vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 mat3 TBN(vec3 P_Normal)
 {
 
-	vec3 Random_Vector = Camera_To_Pixel; //normalize(vec3(P_Normal.x - 2, P_Normal.y + 1, P_Normal.z + 3));
+	vec3 Random_Vector = Camera_To_Pixel;
+
+	// vec3 Random_Vector = normalize(P_Normal - Camera_To_Pixel * 0.25);
 
 	vec3 Tangent = normalize(cross(Random_Vector, P_Normal));
 
@@ -34,7 +39,7 @@ mat3 TBN(vec3 P_Normal)
 
 	vec3 Bitangent = cross(P_Normal, Tangent);
 
-	mat3 Matrix = (mat3(Tangent, P_Normal, Bitangent));
+	mat3 Matrix = transpose(mat3(Tangent, P_Normal, Bitangent));
 
 	return Matrix;
 }
@@ -88,10 +93,16 @@ void main()
 	Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
 	
 	vec3 Light = Lighting();
-	
-	Out_Colour = vec4(Light, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 
-	// Out_Colour = vec4(Normal_Map_Read().xyz, 1);
+	float Opacity = texture(Material, UV).g * Inverse_Material_W;
+
+	Out_Colour = vec4(Light, 1) * texture(Albedo, UV);
+	
+	// Out_Colour = vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, reflect(Camera_To_Pixel, Final_Normal)) + vec4(Light * Opacity, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
+
+	// Out_Colour = vec4(Final_Normal, 1);
+
+	//Out_Colour = vec4(Normal_Map_Read().xyz, 1);
 
 	// Out_Colour = vec4(texture(Material, UV).z * Inverse_Material_W, 0, texture(Material, UV).w, 1);
 }

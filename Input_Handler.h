@@ -92,9 +92,9 @@ uint32_t Frames = 0;
 void Spawn_Test_Object()
 {
 	Scene_Models.push_back(new Model());
-	Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Deletion_Controller());
 	Scene_Models.back()->Position = Player_Camera.Position;
 	Scene_Models.back()->Flags[MF_ACTIVE] = true;
+	Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Deletion_Controller());
 }
 
 void Player_Movement()

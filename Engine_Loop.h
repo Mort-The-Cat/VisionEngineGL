@@ -19,16 +19,9 @@ void Render_All()
 
 	Scene_Lights[0]->Position = Player_Camera.Position;
 
-	glm::vec3 Direction(0, 0, 0);
 
-	Direction.y = sinf(-Player_Camera.Orientation.y * DTR);
-	Direction.z = -sqrtf(1 - Direction.y * Direction.y);
 
-	Direction.x = sinf(-Player_Camera.Orientation.x * DTR) * Direction.z;
-
-	Direction.z *= cosf(-Player_Camera.Orientation.x * DTR);
-
-	Scene_Lights[0]->Direction = Direction;
+	Scene_Lights[0]->Direction = Camera_Direction;
 
 	for (size_t W = 0; W < Scene_Models.size(); W++)
 	{

@@ -8,6 +8,9 @@ struct Light_Uniform_Location_Object
 	int Position;
 	int Colour;
 	int Direction;
+
+	int Cubemap;
+
 } Light_Uniform_Location;
 
 void Initialise_Light_Uniform_Locations_Object(Shader Shader)
@@ -16,6 +19,7 @@ void Initialise_Light_Uniform_Locations_Object(Shader Shader)
 	Light_Uniform_Location.Colour = glGetUniformLocation(Shader.Program_ID, "Light_Colour");
 	Light_Uniform_Location.Direction = glGetUniformLocation(Shader.Program_ID, "Light_Direction");
 
+	Light_Uniform_Location.Cubemap = glGetUniformLocation(Shader.Program_ID, "Cubemap");
 }
 
 #define NUMBER_OF_LIGHTS 20
@@ -91,6 +95,8 @@ void Update_Lighting_Buffer()
 	}
 
 	Light_Uniforms.Update_Buffer();
+
+
 }
 
 #endif
