@@ -35,7 +35,7 @@ void Setup_Test_Scene()
 
 	Cursor_Reset = true;
 
-	Scene_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag");
+	Scene_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 	Scene_Object_Shader.Activate();
 
 	//

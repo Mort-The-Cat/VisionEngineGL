@@ -16,6 +16,7 @@ uniform vec3 Camera_Direction;
 
 in vec3 Position;
 in vec3 Normal;
+in vec3 UV_Tangent;
 in vec2 UV;
 
 vec3 Final_Normal;
@@ -26,20 +27,27 @@ float Inverse_Material_W = texture(Material, UV).a;
 
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 
+// https://github.com/VictorGordan/opengl-tutorials/blob/main/YoutubeOpenGL%2027%20-%20Normal%20Maps/default.geom
+
+// I'm going to need to get tangent space aligned with UV space to get the normal map texture actually working. 
+
+// I'll just precompute this during model loading and parse the tangent to the vertex shader
+
 mat3 TBN(vec3 P_Normal)
 {
+	//vec3 Random_Vector = Camera_To_Pixel;
 
-	vec3 Random_Vector = Camera_To_Pixel;
+	vec3 Random_Vector = vec3(1, 0, 0);
 
-	// vec3 Random_Vector = normalize(P_Normal - Camera_To_Pixel * 0.25);
+	vec3 Tangent = UV_Tangent; // normalize(cross(Random_Vector, P_Normal));
 
-	vec3 Tangent = normalize(cross(Random_Vector, P_Normal));
+	//vec3 Tangent = vec3(0, 0, 1);
 
 	// Tangent = normalize(Tangent - dot(Tangent, P_Normal) * P_Normal);
 
 	vec3 Bitangent = cross(P_Normal, Tangent);
 
-	mat3 Matrix = transpose(mat3(Tangent, P_Normal, Bitangent));
+	mat3 Matrix = transpose(mat3(Tangent, Normal, Bitangent));
 
 	return Matrix;
 }
@@ -87,10 +95,12 @@ vec3 Lighting()
 void main()
 {
 	//Final_Normal = normalize(TBN(Normal) * Normal_Map_Read());
-	Final_Normal = Normal;
+	
+	Final_Normal = normalize(Normal);
+	
 	// Final_Normal.y *= -1;
 
-	Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
+	// Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
 	
 	vec3 Light = Lighting();
 
@@ -101,6 +111,8 @@ void main()
 	// Out_Colour = vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, reflect(Camera_To_Pixel, Final_Normal)) + vec4(Light * Opacity, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 
 	// Out_Colour = vec4(Final_Normal, 1);
+
+	// Out_Colour = vec4(UV_Tangent * 0.5 + 0.5, 1);
 
 	//Out_Colour = vec4(Normal_Map_Read().xyz, 1);
 

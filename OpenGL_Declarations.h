@@ -128,7 +128,7 @@ private:
 		char Info_Log[1024];
 		if (Type != "PROGRAM")
 		{
-			// We're checking either the vertex or fragment shader
+			// We're checking either the vertex or fragment shader or the geometry shader
 
 			glGetShaderiv(Shader, GL_COMPILE_STATUS, &Success);
 
@@ -159,17 +159,26 @@ public:
 		glUseProgram(Program_ID);
 	}
 
-	void Create_Shader(const char* Vertex_File, const char* Fragment_File)
+	void Create_Shader(const char* Vertex_File, const char* Fragment_File, const char* Geometry_File)
 	{
-		unsigned int Vertex_Shader, Fragment_Shader;
+		unsigned int Vertex_Shader, Fragment_Shader, Geometry_Shader;
 
 		Vertex_Shader = glCreateShader(GL_VERTEX_SHADER);
 		Fragment_Shader = glCreateShader(GL_FRAGMENT_SHADER);
 
+		if (Geometry_File != nullptr)
+			Geometry_Shader = glCreateShader(GL_GEOMETRY_SHADER);
+
 		std::string Vertex_Code = Get_File_Contents(Vertex_File);
 		std::string Fragment_Code = Get_File_Contents(Fragment_File);
+		std::string Geometry_Code;
+
+		if(Geometry_File != nullptr)
+			Geometry_Code = Get_File_Contents(Geometry_File);
+		
 		const char* Vertex_Source = Vertex_Code.c_str();
 		const char* Fragment_Source = Fragment_Code.c_str();
+		const char* Geometry_Source = Geometry_Code.c_str();
 
 		glShaderSource(Vertex_Shader, 1, &Vertex_Source, NULL);
 		glCompileShader(Vertex_Shader);
@@ -181,16 +190,30 @@ public:
 
 		Check_Shader_Errors(Fragment_Shader, "FRAGMENT", Fragment_File);
 
+		if (Geometry_File != nullptr)
+		{
+			glShaderSource(Geometry_Shader, 1, &Geometry_Source, NULL);
+			glCompileShader(Geometry_Shader);
+			Check_Shader_Errors(Geometry_Shader, "GEOMETRY", Geometry_File);
+		}
+
 		Program_ID = glCreateProgram();
 
 		glAttachShader(Program_ID, Vertex_Shader);
 		glAttachShader(Program_ID, Fragment_Shader);
+		
+		if (Geometry_File != nullptr)
+			glAttachShader(Program_ID, Geometry_Shader);
+
 		glLinkProgram(Program_ID);
 
 		Check_Shader_Errors(Program_ID, "PROGRAM", "");
 
 		glDeleteShader(Vertex_Shader);
 		glDeleteShader(Fragment_Shader);
+
+		if (Geometry_File != nullptr)
+			glDeleteShader(Geometry_Shader);
 	}
 	
 };

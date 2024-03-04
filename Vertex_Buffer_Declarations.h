@@ -30,7 +30,13 @@ struct Model_Vertex
 {
 	glm::vec3 Position; // We need a 3d position vector
 	glm::vec3 Normal;
+
+	// glm::vec3 UV_Tangent; // This is the tangent of the surface normal, aligned to the UV plane
+
 	glm::vec2 UV;
+
+	// float Occlusion = 1;
+
 	Model_Vertex() {}
 	Model_Vertex(float X, float Y, float R, float G, float B, float U, float V)
 	{
@@ -42,6 +48,12 @@ struct Model_Vertex
 		//Colour.b = B;
 		UV.x = U;
 		UV.y = V;
+	}
+
+	void operator -=(const Model_Vertex& Other) // This doesn't subtract *everything*
+	{
+		Position -= Other.Position;
+		UV -= Other.UV;
 	}
 
 	bool operator== (const Model_Vertex& Other) const
@@ -115,14 +127,20 @@ public:
 
 		Indices_Count = Mesh->Indices.size();
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)0); // Position
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 3));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 3)); // Normal
 		glEnableVertexAttribArray(1);
 
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
 		glEnableVertexAttribArray(2);
+
+		//glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 9)); // UV
+		//glEnableVertexAttribArray(3);
+
+		//glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 11)); // Occlusion
+		//glEnableVertexAttribArray(4);
 	}
 };
 
