@@ -23,7 +23,7 @@ vec3 Final_Normal;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
 
-float Inverse_Material_W = texture(Material, UV).a;
+float Inverse_Material_W = 1.0f; //texture(Material, UV).a;
 
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 
@@ -40,14 +40,14 @@ mat3 TBN(vec3 P_Normal)
 	vec3 Random_Vector = vec3(1, 0, 0);
 
 	vec3 Tangent = UV_Tangent; // normalize(cross(Random_Vector, P_Normal));
-
-	//vec3 Tangent = vec3(0, 0, 1);
+	
+	//vec3 Tangent = vec3(0, 0, -1);
 
 	// Tangent = normalize(Tangent - dot(Tangent, P_Normal) * P_Normal);
 
 	vec3 Bitangent = cross(P_Normal, Tangent);
 
-	mat3 Matrix = transpose(mat3(Tangent, Normal, Bitangent));
+	mat3 Matrix = (mat3(Tangent, Normal, Bitangent));
 
 	return Matrix;
 }
@@ -56,8 +56,8 @@ vec3 Normal_Map_Read()
 {
 	vec3 New_Values;
 
-	New_Values.x = (texture(Material, UV).b * Inverse_Material_W * 2 - 1);
-	New_Values.z = (texture(Material, UV).a * 2 - 1);
+	New_Values.x = (texture(Material, UV).z * Inverse_Material_W * 2 - 1);
+	New_Values.z = (texture(Material, UV).w * 2 - 1);
 
 	New_Values.y = sqrt(1 - (New_Values.x * New_Values.x + New_Values.z * New_Values.z));
 
@@ -100,7 +100,7 @@ void main()
 	
 	// Final_Normal.y *= -1;
 
-	// Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
+	Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
 	
 	vec3 Light = Lighting();
 

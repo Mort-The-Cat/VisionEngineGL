@@ -20,9 +20,24 @@ void main()
 	vec2 UV_A = data_in[1].UV - data_in[0].UV;
 	vec2 UV_B = data_in[2].UV - data_in[0].UV;
 
-	vec3 Edge_A = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-	vec3 Edge_B = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 Edge_A; // = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	vec3 Edge_B; // = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
 
+	if((UV_A.x * UV_B.y - UV_B.x * UV_A.y) == 0)
+	{
+		UV_A = data_in[2].UV - data_in[0].UV;
+		UV_B = data_in[1].UV - data_in[0].UV;
+
+		Edge_A = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+		Edge_B = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	}
+	else
+	{
+		Edge_A = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+		Edge_B = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+	}
+
+	/*
 	float B;
 
 	float A;
@@ -36,14 +51,14 @@ void main()
 		UV_B = data_in[1].UV - data_in[0].UV;
 	}
 
-	B = -UV_A.y / (UV_B.y * UV_A.x - UV_B.x * UV_A.y);
-	A = (1 - B * UV_B.x) / UV_A.x;
+	B = -abs(UV_A.y / (UV_B.y * UV_A.x - UV_B.x * UV_A.y));
+	A = abs((1 - B * UV_B.x) / UV_A.x);
 
-	vec3 Tangent = normalize(Edge_A * A + Edge_B * B);
+	vec3 Tangent = normalize(Edge_A * A + Edge_B * B);*/
 
-	//float Inv = 1.0f / (UV_A.x * UV_B.y - UV_B.x * UV_A.y);
+	float Inv = 1.0f / (UV_A.x * UV_B.y - UV_B.x * UV_A.y);
 
-	//vec3 Tangent = normalize(Inv * (UV_B.y * Edge_A - UV_A.y * Edge_B));
+	vec3 Tangent = -normalize(Inv * (UV_B.y * Edge_A - UV_A.y * Edge_B));
 
 	//
 
