@@ -20,7 +20,7 @@ public:
 		GLint Uniform_Location = glGetUniformLocation(Shader.Program_ID, Location);
 
 		glUniform1i(Uniform_Location, Unit);
-		glActiveTexture(GL_TEXTURE0 + Unit);
+		// glActiveTexture(GL_TEXTURE_CUBE_MAP);
 	}
 	
 	void Bind_Texture()
@@ -33,17 +33,44 @@ public:
 		glGenTextures(1, &Texture_ID);
 
 		Bind_Texture();
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 };
 
+Cubemap_Texture Test_Cubemap;
+
 void Load_Cubemap(std::array<const char*, 6> Faces, Cubemap_Texture* Target_Texture)
 {
+	int Width, Height, Channels;
+	unsigned char* Data;
 
+	stbi_set_flip_vertically_on_load(false);
+
+	Target_Texture->Create_Texture();
+
+	for (size_t W = 0; W < Faces.size(); W++)
+	{
+		Data = stbi_load(Faces[W], &Width, &Height, &Channels, 0); // We don't *need* all four channels, but GPUs handle 4 channel images best
+
+		if (Data)
+		{
+			glTexImage2D(
+				GL_TEXTURE_CUBE_MAP_POSITIVE_X + W,
+				0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);
+
+			stbi_image_free(Data);
+		}
+		else
+			Throw_Error(" >> Unable to load cubemap image!\n");
+	}
+
+	stbi_set_flip_vertically_on_load(false);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
 class Texture

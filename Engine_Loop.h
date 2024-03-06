@@ -15,6 +15,8 @@
 
 void Render_All()
 {
+	Test_Cubemap.Parse_Texture(Scene_Object_Shader, "Cubemap", 0);
+
 	Update_Lighting_Buffer();
 
 	Scene_Lights[0]->Position = Player_Camera.Position;
@@ -40,7 +42,17 @@ void Setup_Test_Scene()
 
 	//
 
-	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Brick");
+	Load_Cubemap(
+		{
+		"Assets/Cubemap/Test/Cubemap_Left.png",
+		"Assets/Cubemap/Test/Cubemap_Right.png",
+		"Assets/Cubemap/Test/Cubemap_Top.png",
+		"Assets/Cubemap/Test/Cubemap_Bottom.png",
+		"Assets/Cubemap/Test/Cubemap_Back.png",
+		"Assets/Cubemap/Test/Cubemap_Front.png"
+		}, &Test_Cubemap);
+
+	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Brick");
 
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 

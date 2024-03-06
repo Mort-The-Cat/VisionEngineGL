@@ -94,8 +94,6 @@ vec3 Lighting()
 
 void main()
 {
-	//Final_Normal = normalize(TBN(Normal) * Normal_Map_Read());
-	
 	Final_Normal = normalize(Normal);
 	
 	// Final_Normal.y *= -1;
@@ -104,17 +102,11 @@ void main()
 	
 	vec3 Light = Lighting();
 
-	float Opacity = texture(Material, UV).g * Inverse_Material_W;
+	float Opacity = 0.5;
 
-	Out_Colour = vec4(Light, 1) * texture(Albedo, UV);
+	// Out_Colour = vec4(Light, 1) * texture(Albedo, UV);
+
+	//Out_Colour = vec4(texture(Cubemap, Camera_To_Pixel).xyz, 1);
 	
-	// Out_Colour = vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, reflect(Camera_To_Pixel, Final_Normal)) + vec4(Light * Opacity, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
-
-	// Out_Colour = vec4(Final_Normal, 1);
-
-	// Out_Colour = vec4(UV_Tangent * 0.5 + 0.5, 1);
-
-	//Out_Colour = vec4(Normal_Map_Read().xyz, 1);
-
-	// Out_Colour = vec4(texture(Material, UV).z * Inverse_Material_W, 0, texture(Material, UV).w, 1);
+	Out_Colour = vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, reflect(Camera_To_Pixel, Final_Normal)) + vec4(Light * Opacity, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 }
