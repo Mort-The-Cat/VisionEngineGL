@@ -27,6 +27,8 @@ float Inverse_Material_W = 1.0f; //texture(Material, UV).a;
 
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 
+vec3 Reflection_Vector;
+
 // https://github.com/VictorGordan/opengl-tutorials/blob/main/YoutubeOpenGL%2027%20-%20Normal%20Maps/default.geom
 
 // I'm going to need to get tangent space aligned with UV space to get the normal map texture actually working. 
@@ -66,6 +68,17 @@ vec3 Normal_Map_Read()
 	return New_Values;
 }
 
+float Specular_Texture = texture(Material, UV).x;
+
+void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, int Light_Index)
+{
+	float Specular_Value = In_FOV * pow(max(0, dot(reflect(-Light_To_Pixel, Final_Normal), Camera_To_Pixel)), 1 + 124 * Specular_Texture);
+
+	Specular_Value *= Specular_Texture * 1.5;
+
+	Specular_Lighting += Light_Colour[Light_Index].xyz * Specular_Value;
+}
+
 vec3 Lighting()
 {
 	vec3 Sum_Of_Light = vec3(0.1, 0.1, 0.1);
@@ -78,15 +91,15 @@ vec3 Lighting()
 
 		float Dot_Normal_Light = max(0, dot(Light_To_Pixel, Final_Normal));
 
-		//
-
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 
 		float In_FOV = min(1, Light_Position[W].w * max(0, 1.0f - (Angle - Light_Direction[W].w)));
 
-		//
+		Dot_Normal_Light *= In_FOV;
 
-		Sum_Of_Light += In_FOV * Dot_Normal_Light * Inverse_Length * Light_Colour[W].xyz;
+		Handle_Specular(In_FOV, Light_To_Pixel, W);
+
+		Sum_Of_Light += Dot_Normal_Light * Inverse_Length * Light_Colour[W].xyz;
 	}
 
 	return Sum_Of_Light;
@@ -99,14 +112,16 @@ void main()
 	// Final_Normal.y *= -1;
 
 	Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
+
+	Reflection_Vector = normalize(reflect(Camera_To_Pixel, Final_Normal));
 	
 	vec3 Light = Lighting();
 
-	float Opacity = 0.5;
+	float Opacity = texture(Material, UV).g;
 
 	// Out_Colour = vec4(Light, 1) * texture(Albedo, UV);
 
 	//Out_Colour = vec4(texture(Cubemap, Camera_To_Pixel).xyz, 1);
 	
-	Out_Colour = vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, reflect(Camera_To_Pixel, Final_Normal)) + vec4(Light * Opacity, 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
+	Out_Colour = vec4(Specular_Lighting, 0) + vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Opacity), 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 }
