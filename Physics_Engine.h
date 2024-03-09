@@ -6,6 +6,8 @@
 #include "Model_Declarations.h"
 #include "Hitdetection.h"
 
+void Wait_On_Physics();
+
 namespace Physics
 {
 	class Physics_Object;
@@ -177,11 +179,11 @@ namespace Physics
 
 	void Record_Collisions()
 	{
-		// while (Threads_Working_On_Physics) { ; }
+		Wait_On_Physics();
 
-		// Threads_Working_Count_Mutex.lock();
+		Threads_Working_Count_Mutex.lock();
 		Threads_Working_On_Physics = NUMBER_OF_WORKERS;
-		// Threads_Working_Count_Mutex.unlock();
+		Threads_Working_Count_Mutex.unlock();
 
 		Recorded_Impulses.clear(); // I'm so dumb XD I forgot to include this!
 
@@ -191,7 +193,7 @@ namespace Physics
 
 	void Resolve_Collisions()
 	{
-		while (Threads_Working_On_Physics) { ; }
+		Wait_On_Physics();
 
 		Threads_Working_Count_Mutex.lock();
 		Threads_Working_On_Physics = NUMBER_OF_WORKERS;
@@ -237,5 +239,16 @@ public:
 		Object->Hitbox->Flags[HF_TO_BE_DELETED] = Should_Delete;
 	}
 };
+
+void Wait_On_Physics()
+{
+	bool Still_Working = false;
+	do
+	{
+		Physics::Threads_Working_Count_Mutex.lock();
+		Still_Working = Physics::Threads_Working_On_Physics;
+		Physics::Threads_Working_Count_Mutex.unlock();
+	} while (Still_Working);
+}
 
 #endif

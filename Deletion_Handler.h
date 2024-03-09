@@ -13,7 +13,7 @@ bool Is_Deleted(void* Pointer)
 
 void Handle_Deletions()
 {
-	while (Physics::Threads_Working_On_Physics) { ; }
+	Wait_On_Physics();
 
 	for (size_t W = 0; W < Scene_Lights.size(); W++)
 	{
@@ -44,7 +44,7 @@ void Handle_Deletions()
 		if (Physics::Scene_Physics_Objects[W]->Flags[PF_TO_BE_DELETED])
 		{
 			delete Physics::Scene_Physics_Objects[W];
-			Physics::Scene_Physics_Objects[W] = nullptr;
+ 			Physics::Scene_Physics_Objects[W] = nullptr;
 		}
 	}
 

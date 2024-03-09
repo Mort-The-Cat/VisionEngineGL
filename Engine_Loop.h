@@ -106,9 +106,9 @@ void Engine_Loop()
 
 		Scene_Lights[0]->Blur = 45 + 45 * sinf(glfwGetTime());
 
-		Handle_Scene();
-
 		Physics::Record_Collisions();
+		
+		Handle_Scene();
 
 		Player_Camera.Set_Projection_Matrix();
 		Player_Camera.Bind_Buffers();
