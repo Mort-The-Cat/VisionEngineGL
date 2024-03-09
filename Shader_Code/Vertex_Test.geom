@@ -6,6 +6,7 @@ layout(triangle_strip, max_vertices = 3) out;
 out vec3 Position;
 out vec3 Normal;
 out vec3 UV_Tangent;
+out vec3 UV_Bitangent;
 out vec2 UV;
 
 in DATA
@@ -70,6 +71,7 @@ void main()
 		Normal = data_in[W].Normal;
 		UV = data_in[W].UV;
 		UV_Tangent = Tangent;
+		UV_Bitangent = cross(Tangent, Normal);
 		EmitVertex();
 	}
 

@@ -8,10 +8,12 @@
 #include "Asset_Loading_Cache.h"
 #include "Input_Handler.h"
 #include "Mesh_Loader.h"
-#include "Model_Declarations.h"
+#include "Model.h"
 #include "Lighting_Handler.h"
 #include "Job_System.h"
 #include "Deletion_Handler.h"
+
+#include "Physics_Engine.h"
 
 void Render_All()
 {
@@ -52,25 +54,25 @@ void Setup_Test_Scene()
 		"Assets/Cubemap/Test/Cubemap_Front.png"
 		}, &Test_Cubemap);
 
-	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Brick");
+	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Brick");
 
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 
-	Scene_Models.push_back(new Model());
+	Scene_Models.push_back(new Model({ MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller());
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
-	Scene_Models.push_back(new Model());
+	Scene_Models.push_back(new Model( { MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller());
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(9, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller());
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), nullptr);
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(0, 5, -5);
-	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller());
+	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(),  nullptr);
 
 	Initialise_Model_Uniform_Locations_Object(Scene_Object_Shader);
 	Initialise_Light_Uniform_Locations_Object(Scene_Object_Shader);
@@ -106,10 +108,14 @@ void Engine_Loop()
 
 		Handle_Scene();
 
+		Physics::Record_Collisions();
+
 		Player_Camera.Set_Projection_Matrix();
 		Player_Camera.Bind_Buffers();
 
 		Render_All();
+
+		Physics::Resolve_Collisions();
 
 		Handle_Deletions();
 

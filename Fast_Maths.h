@@ -5,8 +5,16 @@
 
 #include <cstdint>
 #include <math.h>
+#include <random>
 
 constexpr const float DTR = 3.14159f / 180.0f;
+
+constexpr const float Inv_Rand = 1.0f / (float)RAND_MAX;
+
+float RNG()
+{
+	return static_cast<float>(rand()) * Inv_Rand;
+}
 
 namespace Fast
 {

@@ -17,6 +17,7 @@ uniform vec3 Camera_Direction;
 in vec3 Position;
 in vec3 Normal;
 in vec3 UV_Tangent;
+in vec3 UV_Bitangent;
 in vec2 UV;
 
 vec3 Final_Normal;
@@ -37,17 +38,9 @@ vec3 Reflection_Vector;
 
 mat3 TBN(vec3 P_Normal)
 {
-	//vec3 Random_Vector = Camera_To_Pixel;
+	vec3 Tangent = UV_Tangent;
 
-	vec3 Random_Vector = vec3(1, 0, 0);
-
-	vec3 Tangent = UV_Tangent; // normalize(cross(Random_Vector, P_Normal));
-	
-	//vec3 Tangent = vec3(0, 0, -1);
-
-	// Tangent = normalize(Tangent - dot(Tangent, P_Normal) * P_Normal);
-
-	vec3 Bitangent = cross(P_Normal, Tangent);
+	vec3 Bitangent = UV_Bitangent;
 
 	mat3 Matrix = (mat3(Tangent, Normal, Bitangent));
 

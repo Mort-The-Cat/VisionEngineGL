@@ -7,8 +7,12 @@
 #include "Texture_Declarations.h"
 #include "Job_System_Declarations.h"
 
+#include "Hitdetection.h"
+
 #define MF_TO_BE_DELETED 0
 #define MF_ACTIVE 1
+#define MF_SOLID 2
+#define MF_PHYSICS_TEST 3
 
 class Model
 {
@@ -24,9 +28,17 @@ public:
 
 	Controller* Control;
 
-	bool Flags[2] = { false, false }; // Doesn't really matter how many bits we use for this
+	Hitbox* Hitbox;
+
+	bool Flags[4] = { false, false, false, false }; // Doesn't really matter how many bits we use for this
 
 	Model() {}
+
+	Model(std::vector<size_t> Flagsp) 
+	{ 
+		for (size_t W = 0; W < Flagsp.size(); W++)
+			Flags[Flagsp[W]] = true;
+	}
 
 	~Model()
 	{
@@ -55,14 +67,7 @@ public:
 	}
 };
 
-void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp)
-{
-	Target_Model->Mesh = Mesh;
-	Target_Model->Albedo = Albedo;
-	Target_Model->Material = Material;
-	Target_Model->Control = Controlp;
-	Controlp->Initialise_Control(Target_Model);
-}
+void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp, Hitbox* Hitboxp);
 
 std::vector<Model*> Scene_Models;
 

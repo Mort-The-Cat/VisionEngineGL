@@ -8,6 +8,7 @@
 #include "OpenGL_Declarations.h"
 #include "Job_System.h"
 #include "Asset_Loading_Cache.h"
+#include "Physics_Engine.h"
 
 bool Inputs[11];
 
@@ -91,10 +92,12 @@ uint32_t Frames = 0;
 
 void Spawn_Test_Object()
 {
-	Scene_Models.push_back(new Model());
-	Scene_Models.back()->Position = Player_Camera.Position;
-	Scene_Models.back()->Flags[MF_ACTIVE] = true;
-	Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Deletion_Controller());
+	for (size_t W = 0; W < 100; W++)
+	{
+		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
+		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 2 - 1, RNG() * 2 - 1, RNG() * 2 - 1);
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+	}
 }
 
 void Player_Movement()

@@ -1,38 +1,44 @@
 ﻿  Main.cpp
-C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(77,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(85,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(87,18): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(95,18): warning C4244: 'initializing': conversion from 'int64_t' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(96,11): warning C4244: '+=': conversion from 'float' to 'uint32_t', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(104,11): warning C4244: '+=': conversion from 'float' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(118,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(126,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(128,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
+C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
+  (compiling source file 'Main.cpp')
+  
 C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(102,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(112,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(81,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(79,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(115,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(88,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(93,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(88,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(102,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(88,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(102,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(93,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(102,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(107,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(120): warning C4715: 'Get_File_Contents': not all control paths return a value
