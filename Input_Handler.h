@@ -92,11 +92,11 @@ uint32_t Frames = 0;
 
 void Spawn_Test_Object()
 {
-	for (size_t W = 0; W < 100; W++)
+	for (size_t W = 0; W < 10; W++)
 	{
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 2 - 1, RNG() * 2 - 1, RNG() * 2 - 1);
-		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
 	}
 }
 

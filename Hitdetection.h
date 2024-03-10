@@ -94,7 +94,57 @@ namespace Collision_Test
 		glm::vec3 Overlap = AABB_Position - *Sphere.Position;
 
 		if (Overlap == glm::vec3(0, 0, 0))
-			Overlap = *AABB.Position - *Sphere.Position;
+			//Overlap = *AABB.Position - *Sphere.Position;
+
+		{
+			float Positions[6][2] =
+			{
+				{ AABB.A.x + AABB.Position->x, Sphere.Position->x },
+				{ AABB.A.y + AABB.Position->y, Sphere.Position->y },
+				{ AABB.A.z + AABB.Position->z, Sphere.Position->z },
+
+				{ Sphere.Position->x, AABB.B.x + AABB.Position->x },
+				{ Sphere.Position->y, AABB.B.y + AABB.Position->y },
+				{ Sphere.Position->z, AABB.B.z + AABB.Position->z }
+			};
+
+			float Delta_Overlaps[6] =
+			{
+				Positions[0][0] - Positions[0][1] - Sphere.Radius, // positive x (towards the initial caller of the "hitdetection" function)
+				Positions[1][0] - Positions[1][1] - Sphere.Radius, // positive y
+				Positions[2][0] - Positions[2][1] - Sphere.Radius, // positive z
+
+				Positions[3][0] - Positions[3][1] - Sphere.Radius, // negative x
+				Positions[4][0] - Positions[4][1] - Sphere.Radius, // negative y
+				Positions[5][0] - Positions[5][1] - Sphere.Radius, // negative z
+			};
+
+			glm::vec3 Normals[6] =
+			{
+				glm::vec3(1, 0, 0),
+				glm::vec3(0, 1, 0),
+				glm::vec3(0, 0, 1),
+
+				glm::vec3(-1, 0, 0),
+				glm::vec3(0, -1, 0),
+				glm::vec3(0, 0, -1)
+			};
+
+			uint8_t X_Index = Delta_Overlaps[0] > Delta_Overlaps[3] ? 0 : 3;
+			uint8_t Y_Index = Delta_Overlaps[1] > Delta_Overlaps[4] ? 1 : 4;
+			uint8_t Z_Index = Delta_Overlaps[2] > Delta_Overlaps[5] ? 2 : 5;
+
+			glm::vec3 Average_Position;
+
+			Average_Position.x = (Positions[X_Index][0] + Positions[X_Index][1]) * 0.5f;
+			Average_Position.y = (Positions[Y_Index][0] + Positions[Y_Index][1]) * 0.5f;
+			Average_Position.z = (Positions[Z_Index][0] + Positions[Z_Index][1]) * 0.5f;
+
+			uint8_t Index = Delta_Overlaps[X_Index] > Delta_Overlaps[Y_Index] ? X_Index : Y_Index;
+			Index = Delta_Overlaps[Index] > Delta_Overlaps[Z_Index] ? Index : Z_Index;
+
+			return Collision_Info(Average_Position, Normals[Index], Delta_Overlaps[Index]);
+		}
 
 		float Length = sqrtf(glm::dot(Overlap, Overlap));
 

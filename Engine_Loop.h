@@ -56,19 +56,36 @@ void Setup_Test_Scene()
 
 	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Brick");
 
+	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Stone");
+
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	//Scene_Models.push_back(new Model({ MF_SOLID }));
+	//Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	//Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 	Scene_Models.push_back(new Model( { MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
 
-	Scene_Models.push_back(new Model());
-	Scene_Models.back()->Position = glm::vec3(9, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), nullptr);
+	Scene_Models.push_back(new Model({ MF_SOLID }));
+	Scene_Models.back()->Position = glm::vec3(5, -5, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
+
+	{
+		Scene_Models.push_back(new Model({ MF_SOLID }));
+		Scene_Models.back()->Position = glm::vec3(-5, -5, -3);
+		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
+
+		Scene_Models.push_back(new Model({ MF_SOLID }));
+		Scene_Models.back()->Position = glm::vec3(0, -5, -8);
+		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
+
+		Scene_Models.push_back(new Model({ MF_SOLID }));
+		Scene_Models.back()->Position = glm::vec3(0, -5, 2);
+		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
+
+	}
 
 	Scene_Models.push_back(new Model());
 	Scene_Models.back()->Position = glm::vec3(0, 5, -5);
@@ -101,8 +118,6 @@ void Engine_Loop()
 
 		glClearColor(0.2, 0.3, 0.2, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Scene_Models[0]->Orientation.x += Tick;
 
 		Scene_Lights[0]->Blur = 45 + 45 * sinf(glfwGetTime());
 
