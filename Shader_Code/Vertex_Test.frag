@@ -56,8 +56,6 @@ vec3 Normal_Map_Read()
 
 	New_Values.y = sqrt(1 - (New_Values.x * New_Values.x + New_Values.z * New_Values.z));
 
-	// New_Values = vec3(0, 1, 0);
-
 	return New_Values;
 }
 
@@ -110,11 +108,9 @@ void main()
 	
 	vec3 Light = Lighting();
 
-	float Opacity = texture(Material, UV).g;
+	float Reflectivity = texture(Material, UV).g;
 
-	// Out_Colour = vec4(Light, 1) * texture(Albedo, UV);
-
-	//Out_Colour = vec4(texture(Cubemap, Camera_To_Pixel).xyz, 1);
+	float Opacity = texture(Albedo, UV).a;
 	
-	Out_Colour = vec4(Specular_Lighting, 0) + vec4(Opacity, Opacity, Opacity, 1) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Opacity), 1) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
+	Out_Colour = vec4(Specular_Lighting, 0) + vec4(Reflectivity, Reflectivity, Reflectivity, Opacity) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Reflectivity), Opacity) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 }

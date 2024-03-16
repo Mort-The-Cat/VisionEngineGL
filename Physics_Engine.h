@@ -53,7 +53,7 @@ namespace Physics
 			if (Normal_Speed > 0)
 			{
 				float A_Inv_Mass = Inv_Mass;
-				float B_Inv_Mass = Collision->B != nullptr ? Collision->B->Inv_Mass : 1;
+				float B_Inv_Mass = Collision->B != nullptr ? Collision->B->Inv_Mass : 0.0f;
 
 				float E = Elasticity * (Collision->B != nullptr ? Collision->B->Elasticity : 1.0f);
 
@@ -87,7 +87,7 @@ namespace Physics
 			Velocity += Forces;
 			Velocity.y += Gravity;
 
-			Object->Position += Velocity * Tick;
+			Object->Position += Velocity * abs(Tick);
 
 			Velocity += Forces;
 			Velocity.y += Gravity;
@@ -221,7 +221,7 @@ public:
 
 		Physics_Info->Mass = 1.0f;
 		Physics_Info->Inv_Mass = 1.0f;
-		Physics_Info->Elasticity = 0.8f;
+		Physics_Info->Elasticity = 0.9f;
 
 		Physics::Scene_Physics_Objects.push_back(Physics_Info);
 

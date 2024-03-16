@@ -39,6 +39,8 @@ void Setup_Test_Scene()
 
 	Cursor_Reset = true;
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	Scene_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 	Scene_Object_Shader.Activate();
 
@@ -60,9 +62,9 @@ void Setup_Test_Scene()
 
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 
-	//Scene_Models.push_back(new Model({ MF_SOLID }));
-	//Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	//Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	Scene_Models.push_back(new Model({ MF_SOLID }));
+	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 	Scene_Models.push_back(new Model( { MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
@@ -72,6 +74,7 @@ void Setup_Test_Scene()
 	Scene_Models.back()->Position = glm::vec3(5, -5, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
 
+	if(false)
 	{
 		Scene_Models.push_back(new Model({ MF_SOLID }));
 		Scene_Models.back()->Position = glm::vec3(-5, -5, -3);
@@ -107,7 +110,7 @@ void Engine_Loop()
 	while (!glfwWindowShouldClose(Window))
 	{
 		double Current_Time = glfwGetTime();
-		Tick = Current_Time - Last_Time;
+		Tick = (Current_Time - Last_Time);
 		Last_Time = Current_Time;
 
 		Receive_Inputs();
@@ -128,15 +131,19 @@ void Engine_Loop()
 		Player_Camera.Set_Projection_Matrix();
 		Player_Camera.Bind_Buffers();
 
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_CCW);
+		glEnable(GL_DEPTH_TEST);
+
+		//
+
+		glEnable(GL_BLEND);
+
 		Render_All();
 
 		Physics::Resolve_Collisions();
 
 		Handle_Deletions();
-
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_CCW);
-		glEnable(GL_DEPTH_TEST);
 
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 

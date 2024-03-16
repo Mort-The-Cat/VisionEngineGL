@@ -84,6 +84,14 @@ namespace Cache
 	}
 }
 
+void Transparency(Cache::Texture_Cache_Info* Target_Info)
+{
+	size_t Total_Size = Target_Info->Texture_Height * Target_Info->Texture_Width * 4;
+
+	for (size_t W = 3; W < Total_Size; W += 4)
+		Target_Info->Pixels[W] = 64; // We want half the value set
+}
+
 void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_Info)
 {
 	Target_Info->Texture.Create_Texture();
@@ -91,6 +99,9 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 	stbi_set_flip_vertically_on_load(false);
 
 	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 0);
+
+	//if (strcmp(Directory.c_str(), "Assets/Textures/Important.png") == 0)
+	//	Transparency(Target_Info);
 
 	if (Target_Info->Pixels)
 	{
