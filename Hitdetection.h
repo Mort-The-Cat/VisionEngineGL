@@ -5,6 +5,54 @@
 
 namespace Collision_Test
 {
+	Collision_Info Find_Collision(Hitbox* A, bool (*Should_Compare)(Hitbox*, Hitbox*), Hitbox** Target_Pointer)
+	{
+		Collision_Info Info;
+
+		for (size_t W = 0; W < Scene_Hitboxes.size(); W++)
+		{
+			if (Should_Compare(A, Scene_Hitboxes[W])) // If we should compare these two hitboxes
+			{
+				Info = A->Hitdetection(Scene_Hitboxes[W]); // Compare them
+
+				if (Info.Overlap != 0) // If there is an intersection of any kind
+				{
+					*Target_Pointer = Scene_Hitboxes[W]; // Set the pointer of the hitbox in question
+					return Info;						// and return the collision info that we got
+				}
+			}
+		}
+
+		*Target_Pointer = nullptr;
+
+		return Info;
+	}
+
+	bool Always_Compare(Hitbox* A, Hitbox* B)
+	{
+		return true;
+	}
+
+	Collision_Info Raycast(glm::vec3 Origin, glm::vec3 Velocity, size_t Max_Step, bool (*Should_Compare)(Hitbox*, Hitbox*), Hitbox** Target_Pointer) // A raycast only receives 1 hitbox
+	{
+		Sphere_Hitbox Particle;
+		Particle.Radius = 0.1;
+		Particle.Position = &Origin;
+
+		size_t Step = 0;
+
+		Collision_Info Info;
+
+		do
+		{
+			*Particle.Position += Velocity;
+			Step++;
+			Info = Find_Collision(&Particle, Should_Compare, Target_Pointer);
+		} while (Step < Max_Step && Info.Overlap == 0);
+
+		return Info; // If we never found a collision, this will have already been initialised to zero anyways so its fine
+	}
+
 	Collision_Info Sphere_Against_Sphere(Sphere_Hitbox& Sphere, Sphere_Hitbox& Other)
 	{
 		glm::vec3 Overlap = *Sphere.Position - *Other.Position;

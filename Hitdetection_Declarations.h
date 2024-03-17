@@ -36,6 +36,7 @@ class Hitbox
 {
 public:
 	glm::vec3* Position;
+	Model* Object;
 
 	bool Flags[1] = { false };
 

@@ -119,6 +119,32 @@ void Player_Movement()
 	float Movement_X = sin(Angle) * Speed;
 	float Movement_Z = cos(Angle) * Speed;
 
+	if (Mouse_Inputs[0]) // If left-click,
+	{
+		// we wanna apply a force onto some objects!
+
+		glm::vec3 Raycast_Velocity(-sin(Angle) * cos(DTR * Player_Camera.Orientation.y), -sin(DTR * Player_Camera.Orientation.y), -cos(Angle) * cos(DTR * Player_Camera.Orientation.y));
+
+		Hitbox* Target = nullptr;
+		Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.01), 500, Collision_Test::Always_Compare, &Target);
+		if (Target != nullptr)
+		{
+			//Target->Flags[HF_TO_BE_DELETED] = true;
+			//Target->Object->Flags[MF_TO_BE_DELETED] = true;
+			if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
+			{
+				// Apply some force
+				Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
+				
+				//Control->Physics_Info->Flags[PF_TO_BE_DELETED] = true;
+				
+				Control->Time = -1;
+				
+				//Control->Physics_Info->Forces -= Raycast_Velocity;
+			}
+		}
+	}
+
 	if (Inputs[Controls::Forwards])
 	{
 		Player_Camera.Position.x += Movement_X;

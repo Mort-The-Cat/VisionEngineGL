@@ -234,9 +234,9 @@ public:
 
 		bool Should_Delete = Object->Position.y > 5 || Time < 0;
 
-		Object->Flags[MF_TO_BE_DELETED] = Should_Delete;
-		Physics_Info->Flags[PF_TO_BE_DELETED] = Should_Delete;
-		Object->Hitbox->Flags[HF_TO_BE_DELETED] = Should_Delete;
+		Object->Flags[MF_TO_BE_DELETED] |= Should_Delete;
+		Physics_Info->Flags[PF_TO_BE_DELETED] |= Should_Delete;
+		Object->Hitbox->Flags[HF_TO_BE_DELETED] |= Should_Delete;
 	}
 };
 

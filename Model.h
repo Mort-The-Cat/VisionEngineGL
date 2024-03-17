@@ -17,6 +17,7 @@ void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Mo
 	if (Target_Model->Flags[MF_SOLID] && Hitboxp != nullptr)
 	{
 		Target_Model->Hitbox->Position = &Target_Model->Position;
+		Target_Model->Hitbox->Object = Target_Model;
 
 		Scene_Hitboxes.push_back(Hitboxp);
 		if (Target_Model->Flags[MF_PHYSICS_TEST] && Scene_Hitboxes.size() > Physics::Scene_Physics_Objects.size())
