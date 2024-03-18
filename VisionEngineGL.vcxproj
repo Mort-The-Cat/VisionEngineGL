@@ -170,6 +170,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Model_Declarations.h" />
     <ClInclude Include="OpenGL_Declarations.h" />
+    <ClInclude Include="Particle_System_Declarations.h" />
     <ClInclude Include="Physics_Engine.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="Uniform_Buffer_Declarations.h" />
