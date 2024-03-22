@@ -66,7 +66,7 @@ namespace Physics
 
 			float B_Active = Collision->B != nullptr;
 
-			glm::vec3 Delta = Collision->Collision.Collision_Normal * (Fast::Add_Epsilon(Collision->Collision.Overlap, 2) / (1.0f + B_Active));
+			glm::vec3 Delta = Collision->Collision.Collision_Normal * (Fast::Add_Epsilon(Collision->Collision.Overlap, 0) / (1.0f + B_Active));
 
 			Object->Position += Delta;
 

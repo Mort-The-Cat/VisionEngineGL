@@ -22,6 +22,13 @@
 #include<functional>
 #include<unordered_map>
 
+struct Camera_Uniform_Location_Object
+{
+	int Projection_Matrix;
+	int Camera_Position;
+	int Camera_Direction;
+} Camera_Uniform_Location;
+
 const unsigned int Unassigned_Bit_Mask = 0xFFFFFFFF;
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -95,7 +102,7 @@ public:
 		Camera_Direction = Direction;
 	}
 
-	void Bind_Buffers();
+	void Bind_Buffers(Camera_Uniform_Location_Object Location);
 };
 
 Camera Player_Camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 100);
@@ -163,6 +170,8 @@ public:
 	{
 		unsigned int Vertex_Shader, Fragment_Shader, Geometry_Shader;
 
+		glUseProgram(0);
+
 		Vertex_Shader = glCreateShader(GL_VERTEX_SHADER);
 		Fragment_Shader = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -198,6 +207,7 @@ public:
 		}
 
 		Program_ID = glCreateProgram();
+		glUseProgram(Program_ID);
 
 		glAttachShader(Program_ID, Vertex_Shader);
 		glAttachShader(Program_ID, Fragment_Shader);

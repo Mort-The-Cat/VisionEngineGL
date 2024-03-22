@@ -26,45 +26,54 @@ C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(39,21): warning C4305: '=': trun
 C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(83,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(115,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(129,102): warning C4305: 'argument': truncation from 'double' to 'T'
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(129,102): warning C4305:         with
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(129,102): warning C4305:         [
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(129,102): warning C4305:             T=float
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(129,102): warning C4305:         ]
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         with
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         [
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:             T=float
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(113,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(128,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(122,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(137,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(122,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(137,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(122,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(137,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(125,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(140,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(120): warning C4715: 'Get_File_Contents': not all control paths return a value
-glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
-glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
+C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,92): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  (compiling source file 'Main.cpp')
+  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,92):
+  the template instantiation context (the oldest one first) is
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(131,40):
+  	see reference to class template instantiation 'Particle_Renderer<Smoke_Particle_Info>' being compiled
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(97,8):
+  	while compiling class template member function 'void Particle_Renderer<Smoke_Particle_Info>::Render(void)'
+  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(42,24):
+  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info>::Render' in 'Render_All'
+  
+C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  (compiling source file 'Main.cpp')
+  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40):
+  the template instantiation context (the oldest one first) is
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(54,36):
+  	see reference to class template instantiation 'Particle_Info<Smoke_Particle>' being compiled
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(44,7):
+  	while compiling class template member function 'void Particle_Info<Smoke_Particle>::Parse_Values(size_t)'
+  		C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(114,27):
+  		see the first reference to 'Particle_Info<Smoke_Particle>::Parse_Values' in 'Particle_Renderer<Smoke_Particle_Info>::Render'
+  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(42,24):
+  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info>::Render' in 'Render_All'
+  
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(127): warning C4715: 'Get_File_Contents': not all control paths return a value
   VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

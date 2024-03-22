@@ -177,6 +177,7 @@
     <ClInclude Include="Vertex_Buffer_Declarations.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shader_Code\Smoke_Particle.vert" />
     <None Include="Shader_Code\Vertex_Test.frag" />
     <None Include="Shader_Code\Vertex_Test.vert" />
   </ItemGroup>

@@ -87,5 +87,6 @@
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />
     <None Include="Shader_Code\Vertex_Test.vert" />
+    <None Include="Shader_Code\Smoke_Particle.vert" />
   </ItemGroup>
 </Project>

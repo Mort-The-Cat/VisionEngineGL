@@ -12,8 +12,17 @@
 #include "Lighting_Handler.h"
 #include "Job_System.h"
 #include "Deletion_Handler.h"
+#include "Particle_System_Declarations.h"
 
 #include "Physics_Engine.h"
+
+void Initialise_Particles()
+{
+	Shader Smoke_Particle_Shader;
+	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
+
+	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Stone").Texture, &Smoke_Particles);
+}
 
 void Render_All()
 {
@@ -23,14 +32,14 @@ void Render_All()
 
 	Scene_Lights[0]->Position = Player_Camera.Position;
 
-
-
 	Scene_Lights[0]->Direction = Camera_Direction;
 
 	for (size_t W = 0; W < Scene_Models.size(); W++)
 	{
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
+
+	Smoke_Particles.Render();
 }
 
 void Setup_Test_Scene()
@@ -61,6 +70,8 @@ void Setup_Test_Scene()
 	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Stone");
 
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
+
+	Initialise_Particles();
 
 	Scene_Models.push_back(new Model({ MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
@@ -94,9 +105,13 @@ void Setup_Test_Scene()
 	Scene_Models.back()->Position = glm::vec3(0, 5, -5);
 	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(),  nullptr);
 
-	Initialise_Model_Uniform_Locations_Object(Scene_Object_Shader);
-	Initialise_Light_Uniform_Locations_Object(Scene_Object_Shader);
-	Initialise_Camera_Uniform_Locations_Object(Scene_Object_Shader);
+	Scene_Object_Shader.Activate();
+
+	Model_Uniform_Location = Initialise_Model_Uniform_Locations_Object(Scene_Object_Shader);
+	Light_Uniform_Location = Initialise_Light_Uniform_Locations_Object(Scene_Object_Shader);
+	Camera_Uniform_Location = Initialise_Camera_Uniform_Locations_Object(Scene_Object_Shader);
+
+	//
 
 	Initialise_Job_System();
 }
@@ -128,8 +143,12 @@ void Engine_Loop()
 		
 		Handle_Scene();
 
+		Smoke_Particles.Update();
+
+		Scene_Object_Shader.Activate();
+
 		Player_Camera.Set_Projection_Matrix();
-		Player_Camera.Bind_Buffers();
+		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_CCW);

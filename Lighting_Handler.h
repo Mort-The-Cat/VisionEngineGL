@@ -13,13 +13,16 @@ struct Light_Uniform_Location_Object
 
 } Light_Uniform_Location;
 
-void Initialise_Light_Uniform_Locations_Object(Shader Shader)
+Light_Uniform_Location_Object Initialise_Light_Uniform_Locations_Object(Shader Shader)
 {
-	Light_Uniform_Location.Position = glGetUniformLocation(Shader.Program_ID, "Light_Position");
-	Light_Uniform_Location.Colour = glGetUniformLocation(Shader.Program_ID, "Light_Colour");
-	Light_Uniform_Location.Direction = glGetUniformLocation(Shader.Program_ID, "Light_Direction");
+	Light_Uniform_Location_Object Location;
+	Location.Position = glGetUniformLocation(Shader.Program_ID, "Light_Position");
+	Location.Colour = glGetUniformLocation(Shader.Program_ID, "Light_Colour");
+	Location.Direction = glGetUniformLocation(Shader.Program_ID, "Light_Direction");
 
-	Light_Uniform_Location.Cubemap = glGetUniformLocation(Shader.Program_ID, "Cubemap");
+	Location.Cubemap = glGetUniformLocation(Shader.Program_ID, "Cubemap");
+
+	return Location;
 }
 
 #define NUMBER_OF_LIGHTS 20
@@ -31,11 +34,11 @@ public:
 	std::array<glm::vec4, NUMBER_OF_LIGHTS> Colour;
 	std::array<glm::vec4, NUMBER_OF_LIGHTS> Direction;
 
-	void Update_Buffer()
+	void Update_Buffer(Light_Uniform_Location_Object Location)
 	{
-		glUniform4fv(Light_Uniform_Location.Position, NUMBER_OF_LIGHTS, glm::value_ptr(Position[0]));
-		glUniform4fv(Light_Uniform_Location.Colour, NUMBER_OF_LIGHTS, glm::value_ptr(Colour[0]));
-		glUniform4fv(Light_Uniform_Location.Direction, NUMBER_OF_LIGHTS, glm::value_ptr(Direction[0]));
+		glUniform4fv(Location.Position, NUMBER_OF_LIGHTS, glm::value_ptr(Position[0]));
+		glUniform4fv(Location.Colour, NUMBER_OF_LIGHTS, glm::value_ptr(Colour[0]));
+		glUniform4fv(Location.Direction, NUMBER_OF_LIGHTS, glm::value_ptr(Direction[0]));
 	}
 } Light_Uniforms;
 
@@ -94,9 +97,7 @@ void Update_Lighting_Buffer()
 		Light_Uniforms.Direction[W] = glm::vec4(0, 0, 0, 0);
 	}
 
-	Light_Uniforms.Update_Buffer();
-
-
+	Light_Uniforms.Update_Buffer(Light_Uniform_Location);
 }
 
 #endif

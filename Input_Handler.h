@@ -10,6 +10,8 @@
 #include "Asset_Loading_Cache.h"
 #include "Physics_Engine.h"
 
+#include "Particle_System_Declarations.h"
+
 bool Inputs[11];
 
 std::array<uint16_t, 11> Inputs_Keycode = // The values of these keycodes can be changed during runtime if the user wishes to adjust the controls for whatever reason
@@ -129,6 +131,8 @@ void Player_Movement()
 		Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.01), 500, Collision_Test::Always_Compare, &Target);
 		if (Target != nullptr)
 		{
+			for (size_t W = 0; W < 10; W++)
+				Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position, glm::vec3(2 * RNG() - 1, 2 * RNG() - 1, 2 * RNG() - 1));
 			//Target->Flags[HF_TO_BE_DELETED] = true;
 			//Target->Object->Flags[MF_TO_BE_DELETED] = true;
 			if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
