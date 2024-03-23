@@ -131,8 +131,8 @@ void Player_Movement()
 		Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.01), 500, Collision_Test::Always_Compare, &Target);
 		if (Target != nullptr)
 		{
-			for (size_t W = 0; W < 10; W++)
-				Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position, glm::vec3(2 * RNG() - 1, 2 * RNG() - 1, 2 * RNG() - 1));
+			//for (size_t W = 0; W < 10; W++)
+			Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position, glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 			//Target->Flags[HF_TO_BE_DELETED] = true;
 			//Target->Object->Flags[MF_TO_BE_DELETED] = true;
 			if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object

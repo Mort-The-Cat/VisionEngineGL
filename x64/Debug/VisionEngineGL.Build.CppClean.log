@@ -1,8 +1,8 @@
 c:\visionenginegl\visionenginegl\x64\debug\vc143.pdb
 c:\visionenginegl\visionenginegl\x64\debug\vc143.idb
 c:\visionenginegl\visionenginegl\x64\debug\glad.obj
-c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.ilk
-c:\visionenginegl\visionenginegl\visionenginegl.exe
+c:\visionenginegl\visionenginegl\x64\debug\main.obj
+c:\visionenginegl\visionenginegl\x64\debug\main.obj.enc
 c:\visionenginegl\visionenginegl\visionenginegl.pdb
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\cl.command.1.tlog
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\cl.items.tlog
@@ -10,4 +10,5 @@ c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\cl.read.1.tlog
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\cl.write.1.tlog
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\link.command.1.tlog
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\link.read.1.tlog
+c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\link.read.2.tlog
 c:\visionenginegl\visionenginegl\x64\debug\visionenginegl.tlog\link.write.1.tlog

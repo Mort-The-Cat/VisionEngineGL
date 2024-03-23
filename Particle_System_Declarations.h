@@ -13,7 +13,7 @@ struct Smoke_Particle
 
 bool Smoke_Particle_Remove_If(const Smoke_Particle& A)
 {
-	return A.Position.w > 10; // Smoke disappears after 10 seconds
+	return A.Position.w > 4; // Smoke disappears after 10 seconds
 }
 
 template<typename Particle>
@@ -41,10 +41,12 @@ public:
 		Float_Size = sizeof(Particle) >> 2;
 	}
 
-	void Parse_Values(size_t Index) 
+	size_t Parse_Values(size_t Index) 
 	{
 		size_t Count = std::min(Particles_Per_Call, Particles_Data.size() - Index);
 		glUniform1fv(Uniform_Location, Count * Float_Size, (const GLfloat*)(&Particles_Data[Index]));
+
+		return Count;
 	}
 
 	//virtual void Update() {}
@@ -58,7 +60,7 @@ public:
 
 	Smoke_Particle_Info()
 	{
-		Particles_Per_Call = 300;
+		Particles_Per_Call = 200;
 	}
 
 	void Spawn_Particle(glm::vec3 Position, glm::vec3 Velocity)
@@ -109,11 +111,11 @@ template<typename Particle>
 			Material.Parse_Texture(Shader, "Material", 1);
 			Material.Bind_Texture();
 
-			for (size_t W = 0; W < Particles.Count; W += Particles.Particles_Per_Call)
+			for (size_t W = 0; W < Particles.Particles_Data.size(); W += Particles.Particles_Per_Call)
 			{
-				Particles.Parse_Values(W);
+				size_t Count = Particles.Parse_Values(W);
 
-				glDrawElementsInstanced(GL_TRIANGLES, Mesh.Indices_Count, GL_UNSIGNED_INT, 0, Particles.Particles_Per_Call);
+				glDrawElementsInstanced(GL_TRIANGLES, Mesh.Indices_Count, GL_UNSIGNED_INT, 0, Count);
 			}
 		}
 	};
@@ -123,7 +125,7 @@ template<typename Particle>
 		Target_Renderer->Shader = Shader;
 		Target_Renderer->Mesh = Mesh;
 		Target_Renderer->Albedo = Albedo;
-		Target_Renderer->Material;
+		Target_Renderer->Material = Material;
 
 		Target_Renderer->Particles.Init_Shader_Information(Shader);
 	}

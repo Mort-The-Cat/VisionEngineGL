@@ -21,12 +21,13 @@ void Initialise_Particles()
 	Shader Smoke_Particle_Shader;
 	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Stone").Texture, &Smoke_Particles);
+	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Transparent.png").Texture, Pull_Texture("Stone").Texture, &Smoke_Particles);
 }
 
 void Render_All()
 {
 	Test_Cubemap.Parse_Texture(Scene_Object_Shader, "Cubemap", 0);
+	Test_Cubemap.Bind_Texture();
 
 	Update_Lighting_Buffer();
 
@@ -38,6 +39,13 @@ void Render_All()
 	{
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
+
+	Smoke_Particles.Shader.Activate();
+
+	glDepthMask(GL_FALSE);
+
+	Test_Cubemap.Parse_Texture(Smoke_Particles.Shader, "Cubemap", 0);
+	Test_Cubemap.Bind_Texture();
 
 	Smoke_Particles.Render();
 }
@@ -133,6 +141,8 @@ void Engine_Loop()
 		Player_Movement();
 
 		//
+
+		glDepthMask(GL_TRUE);
 
 		glClearColor(0.2, 0.3, 0.2, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

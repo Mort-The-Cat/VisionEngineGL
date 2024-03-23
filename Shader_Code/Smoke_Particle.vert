@@ -4,8 +4,6 @@ layout(location = 0) in vec3 In_Position;
 layout(location = 1) in vec3 In_Normal;
 layout(location = 2) in vec2 In_UV;
 
-uniform float Particle_Data[2400];
-
 uniform mat4 Projection_Matrix;
 
 out DATA
@@ -15,19 +13,23 @@ out DATA
 	vec2 UV;
 } data_out;
 
-vec3 Particle_Position = vec3(0, 0, 0);
-vec3 Particle_Velocity = vec3(0, 0, 0);
+uniform float Particle_Data[1600]; // We know that the smoke particle has 8 floats in it total
 
-float Particle_Age = 0;
-float Particle_Gravity = 0;
+int Particle_Index = gl_InstanceID * 8;
+
+vec3 Particle_Position = vec3(Particle_Data[Particle_Index], Particle_Data[Particle_Index + 1], Particle_Data[Particle_Index + 2]);
+vec3 Particle_Velocity = vec3(Particle_Data[Particle_Index + 4], Particle_Data[Particle_Index + 5], Particle_Data[Particle_Index + 6]);
+
+float Particle_Age = Particle_Data[Particle_Index + 3];
+float Particle_Gravity = Particle_Data[Particle_Index + 7];
 
 void main()
 {
 	vec4 Transformed_Position = vec4(In_Position + Particle_Position, 1);
 
-	Transformed_Position.xyz += Particle_Velocity * Particle_Age;
+	Transformed_Position.xyz += Particle_Velocity * log(1 + Particle_Age);
 
-	Transformed_Position.y += Particle_Gravity * Particle_Age * Particle_Age;
+	Transformed_Position.y += Particle_Gravity * Particle_Age;
 
 	gl_Position = Transformed_Position;
 

@@ -111,6 +111,8 @@ void main()
 	float Reflectivity = texture(Material, UV).g;
 
 	float Opacity = texture(Albedo, UV).a;
+
+	//Out_Colour = vec4(Final_Normal, 0.5); //texture(Material, UV);
 	
 	Out_Colour = vec4(Specular_Lighting, 0) + vec4(Reflectivity, Reflectivity, Reflectivity, Opacity) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Reflectivity), Opacity) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
 }
