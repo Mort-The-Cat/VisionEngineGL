@@ -20,7 +20,10 @@ C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: '
 C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(80,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(39,21): warning C4305: '=': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(182,21): warning C4305: '=': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(83,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
@@ -84,7 +87,7 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 2872 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  5 of 3009 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     13 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

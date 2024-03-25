@@ -108,6 +108,19 @@ public:
 	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) override;
 	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) override;
 	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) override;
+
+	bool Normal_Already_Included(glm::vec3 Normal)
+	{
+		for (size_t W = 0; W < Indices.size(); W += 3)
+		{
+			glm::vec3 Calculated_Normal = Calculate_Surface_Normal(Vertices[Indices[W]], Vertices[Indices[W + 1]], Vertices[Indices[W + 2]]);
+
+			if (Normal == Calculated_Normal)
+				return true;
+		}
+
+		return false;
+	}
 };
 
 std::vector<Hitbox*> Scene_Hitboxes; // The first n objects (where n = Scene_Physics_Objects.size()) are always physics objects
@@ -140,6 +153,46 @@ Sphere_Hitbox* Generate_Sphere_Hitbox(Model_Mesh& Mesh)
 	Return->Radius = sqrtf(Return->Radius);
 
 	return Return;
+}
+
+Mesh_Hitbox* Generate_Mesh_Hitbox(Model_Mesh& Mesh)
+{
+	Mesh_Hitbox* Hitbox = new Mesh_Hitbox();
+
+	// Get indices for all of the edges in the mesh
+
+	// For this, it'll be good to calculate all of the 
+
+	Hitbox->Vertices.resize(Mesh.Vertices.size());
+
+	//Hitbox->Indices = Mesh.Indices; // We can copy this 1-1
+
+	for (size_t W = 0; W < Mesh.Vertices.size(); W++)
+		Hitbox->Vertices[W] = Mesh.Vertices[W].Position;
+
+	for (size_t W = 0; W < Mesh.Indices.size(); W += 3) // We're dealing with triangles so that's how we'll iterate
+	{
+		glm::vec3 Normal = Calculate_Surface_Normal(Mesh.Vertices[Mesh.Indices[W]].Position, Mesh.Vertices[Mesh.Indices[W + 1]].Position, Mesh.Vertices[Mesh.Indices[W + 2]].Position);
+
+		if (!Hitbox->Normal_Already_Included(Normal))
+		{
+			Hitbox->Indices.reserve(Hitbox->Indices.size() + 3);
+
+			for (char V = 0; V < 3; V++)
+				Hitbox->Indices.push_back(Mesh.Indices[W + V]);
+		}
+
+		// We check if we've included this normal in the model before!
+
+	}
+
+	// I believe that makes it a success!!
+
+	Hitbox->Matrix_Rotation = glm::mat3(1);
+
+	Hitbox->Transformed_Vertices = Hitbox->Vertices;
+
+	return Hitbox;
 }
 
 #endif

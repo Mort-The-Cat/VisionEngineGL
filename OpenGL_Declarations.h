@@ -59,6 +59,15 @@ glm::mat4 Projection_Matrix; // This is the projection matrix of the current cam
 
 glm::vec3 Camera_Direction;
 
+glm::vec3 Calculate_Surface_Normal(glm::vec3 A, glm::vec3 B, glm::vec3 C)
+{
+	// We'll need to calculate the surface normal of these three vectors
+
+	glm::vec3 Normal = glm::normalize(glm::cross(A - C, B - C));
+
+	return Normal;
+}
+
 class Camera
 {
 public:
