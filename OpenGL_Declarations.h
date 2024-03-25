@@ -37,6 +37,9 @@ const unsigned int Unassigned_Bit_Mask = 0xFFFFFFFF;
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
+#define TINYGLTFLOADER_IMPLEMENTATION
+#include <tiny_gltf_loader.h>
+
 #include<random>
 
 float Tick;

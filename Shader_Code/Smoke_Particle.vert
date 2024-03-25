@@ -11,6 +11,7 @@ out DATA
 	vec3 Normal;
 	mat4 Projection_Matrix;
 	vec2 UV;
+	float Lighting_Transparency;
 } data_out;
 
 uniform float Particle_Data[1600]; // We know that the smoke particle has 8 floats in it total
@@ -36,4 +37,6 @@ void main()
 	data_out.Normal = In_Normal; // We don't have any rotation on this yet lol
 	data_out.UV = In_UV;
 	data_out.Projection_Matrix = Projection_Matrix;
+
+	data_out.Lighting_Transparency = 0.5;
 }

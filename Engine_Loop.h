@@ -21,7 +21,7 @@ void Initialise_Particles()
 	Shader Smoke_Particle_Shader;
 	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Transparent.png").Texture, Pull_Texture("Stone").Texture, &Smoke_Particles);
+	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Transparent.png").Texture, Pull_Texture("Black").Texture, &Smoke_Particles);
 }
 
 void Render_All()

@@ -20,6 +20,8 @@ in vec3 UV_Tangent;
 in vec3 UV_Bitangent;
 in vec2 UV;
 
+in float Lighting_Transparency;
+
 vec3 Final_Normal;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
@@ -80,7 +82,7 @@ vec3 Lighting()
 		float Inverse_Length = inversesqrt(dot(Light_To_Pixel, Light_To_Pixel));
 		Light_To_Pixel *= Inverse_Length;
 
-		float Dot_Normal_Light = max(0, dot(Light_To_Pixel, Final_Normal));
+		float Dot_Normal_Light = max(Lighting_Transparency, dot(Light_To_Pixel, Final_Normal));
 
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 

@@ -15,6 +15,7 @@ out DATA
 	vec3 Normal;
 	mat4 Projection_Matrix;
 	vec2 UV;
+	float Lighting_Transparency;
 } data_out;
 
 // out vec3 Position;
@@ -33,6 +34,7 @@ void main()
 	data_out.UV = In_UV;
 	data_out.Projection_Matrix = Projection_Matrix;
 	
+	data_out.Lighting_Transparency = 0;
 	
 	//UV_Tangent = (Model_Matrix * vec4(In_UV_Tangent, 1)).xyz - Model_Position;
 }

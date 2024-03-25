@@ -29,6 +29,7 @@ Collision_Info Inverse_Collision(Collision_Info Info)
 
 class AABB_Hitbox;
 class Sphere_Hitbox;
+class Mesh_Hitbox;
 
 #define HF_TO_BE_DELETED 0u
 
@@ -47,6 +48,7 @@ public:
 
 	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) { return Collision_Info(); }
 	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) { return Collision_Info(); }
+	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) { return Collision_Info(); }
 };
 
 class AABB_Hitbox : public Hitbox
@@ -60,6 +62,7 @@ public:
 
 	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) override;
 	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) override;
+	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) override;
 };
 
 class Sphere_Hitbox : public Hitbox
@@ -74,6 +77,37 @@ public:
 
 	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) override;
 	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) override;
+	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) override;
+};
+
+class Mesh_Hitbox : public Hitbox
+{
+public:
+	std::vector<glm::vec3> Vertices;
+	std::vector<uint32_t> Indices; // These are the indices for each tri !
+
+	std::vector<glm::vec3> Transformed_Vertices; // These are the vertices that have been transformed with the rotation matrices and the object's hitbox's position
+
+	glm::mat3 Matrix_Rotation; // This is the matrix rotation applied to the vertices during hit detection- perhaps I can initialise this from the control function
+
+	Mesh_Hitbox() {}
+
+	void Update_Vertices()
+	{
+		for (size_t W = 0; W < Vertices.size(); W++)
+			Transformed_Vertices[W] = Matrix_Rotation * Vertices[W];
+
+		// This should be okay
+	}
+
+	virtual Collision_Info Hitdetection(Hitbox* Other) override
+	{
+		return Other->Mesh_Hitdetection(this);
+	}
+
+	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) override;
+	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) override;
+	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) override;
 };
 
 std::vector<Hitbox*> Scene_Hitboxes; // The first n objects (where n = Scene_Physics_Objects.size()) are always physics objects

@@ -24,32 +24,10 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 	return glm::normalize(A_Scale * Delta_A.Position + B_Scale * Delta_B.Position);
 }
 
-/*void Calculate_UV_Tangents(Model_Mesh* Target_Mesh) // This only works if every face has unique vertices, not sharing any...
+void Load_Mesh_Gltf(const char* File_Name, Model_Mesh* Target_Mesh)
 {
-	// This *will* cause us to calculate the UV tangent for each vertex more than once, but it doesn't really matter that much.
 
-	// If I think it does matter and I have a good idea for it, I'll loop through them in a slightly different manner
-
-	for (size_t W = 0; W < Target_Mesh->Indices.size(); W += 3) // every tri is determined by every 3rd index
-	{
-		Target_Mesh->Vertices[Target_Mesh->Indices[W]].UV_Tangent = Calculate_UV_Tangent(
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 1]], 
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 2]], 
-			Target_Mesh->Vertices[Target_Mesh->Indices[W]]);
-
-		Target_Mesh->Vertices[Target_Mesh->Indices[W + 1]].UV_Tangent = Calculate_UV_Tangent(
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 2]],
-			Target_Mesh->Vertices[Target_Mesh->Indices[W]],
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 1]]);
-
-		Target_Mesh->Vertices[Target_Mesh->Indices[W + 2]].UV_Tangent = Calculate_UV_Tangent(
-			Target_Mesh->Vertices[Target_Mesh->Indices[W]],
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 1]],
-			Target_Mesh->Vertices[Target_Mesh->Indices[W + 2]]);
-
-		// This gives 
-	}
-}*/
+}
 
 void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
 {
