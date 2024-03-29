@@ -67,7 +67,7 @@ public:
 	{
 		Smoke_Particle New_Particle;
 		New_Particle.Position = glm::vec4(Position, 0);
-		New_Particle.Velocity = glm::vec4(Velocity, -0.2);
+		New_Particle.Velocity = glm::vec4(Velocity, RNG() * 3 - 6);
 		Particles_Data.push_back(New_Particle);
 	}
 
@@ -82,13 +82,13 @@ public:
 	}
 };
 
-template<typename Particle>
+template<typename Particle, typename Vertex_Buffer>
 	class Particle_Renderer
 	{
 	public:
 		Shader Shader;
 		Particle Particles;
-		Model_Vertex_Buffer Mesh;
+		Vertex_Buffer Mesh;
 		Texture Albedo;
 		Texture Material;
 
@@ -119,8 +119,8 @@ template<typename Particle>
 			}
 		}
 	};
-template<typename Particle>
-	void Create_Particle_Renderer(Shader Shader, Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Particle_Renderer<Particle>* Target_Renderer)
+template<typename Particle, typename Vertex_Buffer>
+	void Create_Particle_Renderer(Shader Shader, Vertex_Buffer Mesh, Texture Albedo, Texture Material, Particle_Renderer<Particle, Vertex_Buffer>* Target_Renderer)
 	{
 		Target_Renderer->Shader = Shader;
 		Target_Renderer->Mesh = Mesh;
@@ -130,7 +130,9 @@ template<typename Particle>
 		Target_Renderer->Particles.Init_Shader_Information(Shader);
 	}
 
-Particle_Renderer<Smoke_Particle_Info> Smoke_Particles;
+Particle_Renderer<Smoke_Particle_Info, Model_Vertex_Buffer> Smoke_Particles;
+
+Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Smoke_Particles;
 
 //Particle_Renderer<Smoke_Particle_Info> Smoke_Particles;
 

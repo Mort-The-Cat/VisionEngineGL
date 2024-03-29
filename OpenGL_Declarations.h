@@ -26,6 +26,7 @@ struct Camera_Uniform_Location_Object
 {
 	int Projection_Matrix;
 	int Camera_Position;
+	int Camera_Up_Direction;
 	int Camera_Direction;
 } Camera_Uniform_Location;
 
@@ -56,7 +57,7 @@ GLFWwindow* Window = nullptr;
 int Window_Width = 1600, Window_Height = 800;
 
 glm::mat4 Projection_Matrix; // This is the projection matrix of the current camera!
-
+glm::vec3 Camera_Up_Direction;
 glm::vec3 Camera_Direction;
 
 glm::vec3 Calculate_Surface_Normal(glm::vec3 A, glm::vec3 B, glm::vec3 C)
@@ -112,6 +113,8 @@ public:
 		Direction.z *= cosf(-Orientation.x * DTR);
 
 		Camera_Direction = Direction;
+
+		Camera_Up_Direction = glm::vec3(View[0][1], View[1][1], View[2][1]);
 	}
 
 	void Bind_Buffers(Camera_Uniform_Location_Object Location);

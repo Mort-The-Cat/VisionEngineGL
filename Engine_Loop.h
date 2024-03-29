@@ -22,6 +22,11 @@ void Initialise_Particles()
 	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
 	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Test_Smoke.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke_Noise.png").Texture, Pull_Texture("Black").Texture, &Smoke_Particles);
+
+	Shader Billboard_Particle_Shader;
+	Billboard_Particle_Shader.Create_Shader("Shader_Code/Billboard_Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
+
+	Create_Particle_Renderer(Billboard_Particle_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, &Billboard_Smoke_Particles);
 }
 
 void Render_All()
@@ -48,6 +53,14 @@ void Render_All()
 	Test_Cubemap.Bind_Texture();
 
 	Smoke_Particles.Render();
+
+	//
+
+	Billboard_Smoke_Particles.Shader.Activate();
+
+	Test_Cubemap.Parse_Texture(Billboard_Smoke_Particles.Shader, "Cubemap", 0);
+	Test_Cubemap.Bind_Texture();
+	Billboard_Smoke_Particles.Render();
 }
 
 void Setup_Test_Scene()
@@ -124,6 +137,9 @@ void Setup_Test_Scene()
 	Initialise_Job_System();
 }
 
+float Time_Elapsed_Since_FPS_Update = 0;
+size_t Frame_Counter = 0;
+
 void Engine_Loop()
 {
 	Setup_Test_Scene();
@@ -155,6 +171,8 @@ void Engine_Loop()
 
 		Smoke_Particles.Update();
 
+		Billboard_Smoke_Particles.Update();
+
 		Scene_Object_Shader.Activate();
 
 		Player_Camera.Set_Projection_Matrix();
@@ -177,6 +195,17 @@ void Engine_Loop()
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//
+
+		Frame_Counter++;
+
+		Time_Elapsed_Since_FPS_Update += Tick;
+
+		if (Time_Elapsed_Since_FPS_Update > 1.0f)
+		{
+			glfwSetWindowTitle(Window, (std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))).c_str());
+			Time_Elapsed_Since_FPS_Update = 0;
+			Frame_Counter = 0;
+		}
 
 		glfwSwapBuffers(Window);
 		glfwPollEvents();

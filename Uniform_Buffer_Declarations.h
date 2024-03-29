@@ -10,6 +10,8 @@ void Camera::Bind_Buffers(Camera_Uniform_Location_Object Location)
 	glUniform3f(Location.Camera_Position, Position.x, Position.y, Position.z);
 	glUniformMatrix4fv(Location.Projection_Matrix, 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
 
+	glUniform3f(Location.Camera_Up_Direction, Camera_Up_Direction.x, Camera_Up_Direction.y, Camera_Up_Direction.z);
+
 	glUniform3f(Location.Camera_Direction, Camera_Direction.x, Camera_Direction.y, Camera_Direction.z);
 }
 
@@ -18,6 +20,7 @@ Camera_Uniform_Location_Object Initialise_Camera_Uniform_Locations_Object(Shader
 	Camera_Uniform_Location_Object Locations;
 	Locations.Projection_Matrix = glGetUniformLocation(Shader.Program_ID, "Projection_Matrix");
 	Locations.Camera_Position = glGetUniformLocation(Shader.Program_ID, "Camera_Position");
+	Locations.Camera_Up_Direction = glGetUniformLocation(Shader.Program_ID, "Camera_Up_Direction");
 	Locations.Camera_Direction = glGetUniformLocation(Shader.Program_ID, "Camera_Direction");
 
 	return Locations;

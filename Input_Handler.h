@@ -137,7 +137,7 @@ void Player_Movement()
 			Scene_Lights.back()->Flags[LF_TO_BE_DELETED] = true;
 
 			for (size_t W = 0; W < 2; W++)
-				Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+				Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 			
 			//Target->Flags[HF_TO_BE_DELETED] = true;
 			//Target->Object->Flags[MF_TO_BE_DELETED] = true;
@@ -192,10 +192,10 @@ void Player_Movement()
 	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
 	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);
 
-	if (Inputs[Controls::Auxilliary])
-	{
-		printf(" >> FPS: %f\n", 1.0f / Tick);
-	}
+	//if (Inputs[Controls::Auxilliary])
+	//{
+	//	printf(" >> FPS: %f\n", 1.0f / Tick);
+	//}
 }
 
 #endif

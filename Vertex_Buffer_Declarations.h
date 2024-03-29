@@ -26,6 +26,20 @@ public:
 
 //
 
+struct Billboard_Vertex
+{
+	glm::vec2 Screen_Position;
+	glm::vec2 UV;
+
+	Billboard_Vertex() {}
+
+	Billboard_Vertex(glm::vec2 Screen_Positionp, glm::vec2 UVp)
+	{
+		Screen_Position = Screen_Positionp;
+		UV = UVp;
+	}
+};
+
 struct Model_Vertex
 {
 	glm::vec3 Position; // We need a 3d position vector
@@ -38,17 +52,6 @@ struct Model_Vertex
 	// float Occlusion = 1;
 
 	Model_Vertex() {}
-	Model_Vertex(float X, float Y, float R, float G, float B, float U, float V)
-	{
-		Position.x = X;
-		Position.y = Y;
-		Position.z = 0;
-		//Colour.r = R;
-		//Colour.g = G;
-		//Colour.b = B;
-		UV.x = U;
-		UV.y = V;
-	}
 
 	void operator -=(const Model_Vertex& Other) // This doesn't subtract *everything*
 	{
@@ -71,6 +74,83 @@ struct Model_Mesh
 {
 	std::vector<Model_Vertex> Vertices;
 	std::vector<unsigned int> Indices;
+};
+
+struct Billboard_Mesh
+{
+	std::vector<Billboard_Vertex> Vertices;
+	std::vector<unsigned int> Indices;
+};
+
+class Billboard_Vertex_Buffer : public Base_Vertex_Buffer
+{
+	unsigned int Index_Buffer_ID = Unassigned_Bit_Mask;
+public:
+	unsigned int Indices_Count = 0;
+
+	Billboard_Mesh Mesh; // Caching and sharing this data would be more effort than it's worth I think
+
+	Billboard_Vertex_Buffer(float X1, float Y1, float X2, float Y2)
+	{
+		Mesh.Vertices.resize(4);
+		Mesh.Vertices[0] = { glm::vec2(X1, Y1), glm::vec2(0, 0) };
+		Mesh.Vertices[1] = { glm::vec2(X2, Y1), glm::vec2(1, 0) };
+		Mesh.Vertices[2] = { glm::vec2(X2, Y2), glm::vec2(1, 1) };
+		Mesh.Vertices[3] = { glm::vec2(X1, Y2), glm::vec2(0, 1) };
+
+		Mesh.Indices = 
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		Create_Buffer();
+		Bind_Buffer();
+		Update_Buffer();
+	}
+
+	Billboard_Vertex_Buffer() {}
+
+	void Delete_Buffer() override
+	{
+		if (Buffer_ID != Unassigned_Bit_Mask)
+		{
+			glDeleteBuffers(1, &Buffer_ID);
+			glDeleteBuffers(1, &Index_Buffer_ID);
+
+			glDeleteVertexArrays(1, &Vertex_Array_ID);
+		}
+	}
+
+	void Create_Buffer() override
+	{
+		glGenBuffers(1, &Buffer_ID);
+		glGenVertexArrays(1, &Vertex_Array_ID);
+
+		glGenBuffers(1, &Index_Buffer_ID);
+	}
+
+	void Bind_Buffer() override
+	{
+		glBindVertexArray(Vertex_Array_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, Buffer_ID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Index_Buffer_ID);
+	}
+
+	void Update_Buffer() override
+	{
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh.Vertices[0]) * Mesh.Vertices.size(), Mesh.Vertices.data(), GL_STATIC_DRAW);
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Mesh.Indices[0]) * Mesh.Indices.size(), Mesh.Indices.data(), GL_STATIC_DRAW);
+
+		Indices_Count = Mesh.Indices.size();
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Billboard_Vertex), (void*)0); // Position
+		glEnableVertexAttribArray(0);
+
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Billboard_Vertex), (void*)(sizeof(float) * 2)); // UV
+		glEnableVertexAttribArray(1);
+	}
 };
 
 class Model_Vertex_Buffer : public Base_Vertex_Buffer
@@ -135,12 +215,6 @@ public:
 
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
 		glEnableVertexAttribArray(2);
-
-		//glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 9)); // UV
-		//glEnableVertexAttribArray(3);
-
-		//glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 11)); // Occlusion
-		//glEnableVertexAttribArray(4);
 	}
 };
 
