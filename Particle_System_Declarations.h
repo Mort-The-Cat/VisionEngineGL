@@ -49,8 +49,6 @@ public:
 		return Count;
 	}
 
-	//virtual void Update() {}
-	// virtual void Spawn_Particle() {}
 };
 
 class Smoke_Particle_Info : public Particle_Info<Smoke_Particle>
@@ -67,7 +65,7 @@ public:
 	{
 		Smoke_Particle New_Particle;
 		New_Particle.Position = glm::vec4(Position, 0);
-		New_Particle.Velocity = glm::vec4(Velocity, RNG() * 12 - 6);
+		New_Particle.Velocity = glm::vec4(Velocity, RNG() * 24 - 12);
 		Particles_Data.push_back(New_Particle);
 	}
 
@@ -133,7 +131,5 @@ template<typename Particle, typename Vertex_Buffer>
 Particle_Renderer<Smoke_Particle_Info, Model_Vertex_Buffer> Smoke_Particles;
 
 Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Smoke_Particles;
-
-//Particle_Renderer<Smoke_Particle_Info> Smoke_Particles;
 
 #endif

@@ -29,7 +29,7 @@ C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conv
 C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(182,21): warning C4305: '=': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(83,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(84,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
@@ -76,13 +76,13 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(162,16): warning C4305: 'argument
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(165,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(118,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   (compiling source file 'Main.cpp')
-  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(118,83):
+  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,83):
   the template instantiation context (the oldest one first) is
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(135,65):
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(133,65):
   	see reference to class template instantiation 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>' being compiled
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(99,8):
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(97,8):
   	while compiling class template member function 'void Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render(void)'
   		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(63,34):
   		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
@@ -91,18 +91,18 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   (compiling source file 'Main.cpp')
   C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40):
   the template instantiation context (the oldest one first) is
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(56,36):
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(54,36):
   	see reference to class template instantiation 'Particle_Info<Smoke_Particle>' being compiled
   	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(44,9):
   	while compiling class template member function 'size_t Particle_Info<Smoke_Particle>::Parse_Values(size_t)'
-  		C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,18):
+  		C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(114,18):
   		see the first reference to 'Particle_Info<Smoke_Particle>::Parse_Values' in 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render'
   		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(63,34):
   		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 3115 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  4 of 3115 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     14 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

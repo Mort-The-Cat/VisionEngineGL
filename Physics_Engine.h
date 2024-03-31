@@ -16,6 +16,7 @@ namespace Physics
 	{
 	public:
 		glm::vec3 A_Position, B_Position;
+		glm::vec3 A_Velocity, B_Velocity;
 		Physics_Object* A = nullptr;
 		Physics_Object* B = nullptr;
 		Collision_Info Collision;
@@ -41,8 +42,8 @@ namespace Physics
 
 		virtual void Resolve_Collision(Impulse_Object* Collision)
 		{
-			glm::vec3 A_Velocity = Velocity;
-			glm::vec3 B_Velocity = Collision->B != nullptr ? Collision->B->Velocity : glm::vec3(0, 0, 0);
+			glm::vec3 A_Velocity = Collision->A_Velocity;
+			glm::vec3 B_Velocity = Collision->B != nullptr ? Collision->B_Velocity : glm::vec3(0, 0, 0);
 
 			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity;
 
@@ -124,6 +125,9 @@ namespace Physics
 				Impulse.A_Position = Scene_Physics_Objects[W]->Object->Position;
 				Impulse.B_Position = Scene_Physics_Objects[V]->Object->Position;
 
+				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
+				Impulse.B_Velocity = Scene_Physics_Objects[V]->Velocity;
+
 				if (Impulse.Collision.Overlap != 0)
 				{
 					Recorded_Impulses_Mutex.lock();
@@ -143,6 +147,8 @@ namespace Physics
 
 				Impulse.A_Position = Scene_Physics_Objects[W]->Object->Position;
 				Impulse.B_Position = *Scene_Hitboxes[V]->Position;
+
+				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
 				
 				if (Impulse.Collision.Overlap != 0)
 				{
@@ -167,8 +173,8 @@ namespace Physics
 		for (size_t W = *Offset; W < Recorded_Impulses.size(); W += NUMBER_OF_WORKERS)
 			Recorded_Impulses[W].A->Resolve_Collision(&Recorded_Impulses[W]);
 		
-		for (size_t W = *Offset; W < Scene_Physics_Objects.size(); W += NUMBER_OF_WORKERS)
-			Scene_Physics_Objects[W]->Step();
+		//for (size_t W = *Offset; W < Scene_Physics_Objects.size(); W += NUMBER_OF_WORKERS)
+		//	Scene_Physics_Objects[W]->Step();
 
 		Threads_Working_Count_Mutex.lock();
 		Threads_Working_On_Physics--;
@@ -195,12 +201,17 @@ namespace Physics
 	{
 		Wait_On_Physics();
 
-		Threads_Working_Count_Mutex.lock();
+		//Threads_Working_Count_Mutex.lock();
 		Threads_Working_On_Physics = NUMBER_OF_WORKERS;
-		Threads_Working_Count_Mutex.unlock();
+		//Threads_Working_Count_Mutex.unlock();
 
 		for (size_t W = 0; W < NUMBER_OF_WORKERS; W++)
 			Job_System::Submit_Job(Job_System::Job(Job_Resolve_Collisions, new size_t(W)));
+
+		Wait_On_Physics();
+
+		for (size_t W = 0; W < Scene_Physics_Objects.size(); W++)
+			Scene_Physics_Objects[W]->Step();
 	}
 }
 

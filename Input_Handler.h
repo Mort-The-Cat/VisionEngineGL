@@ -138,19 +138,13 @@ void Player_Movement()
 
 			for (size_t W = 0; W < 1; W++)
 				Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
-			
-			//Target->Flags[HF_TO_BE_DELETED] = true;
-			//Target->Object->Flags[MF_TO_BE_DELETED] = true;
+
 			if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
 			{
 				// Apply some force
 				Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
 				
-				//Control->Physics_Info->Flags[PF_TO_BE_DELETED] = true;
-				
 				Control->Time = -1;
-				
-				//Control->Physics_Info->Forces -= Raycast_Velocity;
 			}
 		}
 	}
