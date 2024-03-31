@@ -47,6 +47,8 @@ float Tick;
 
 double Last_Time;
 
+size_t Frame_Counter = 0;
+
 void Throw_Error(const char* Error_Message)
 {
 	printf("%s", Error_Message);

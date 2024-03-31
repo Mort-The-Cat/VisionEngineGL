@@ -136,7 +136,7 @@ void Player_Movement()
 			Scene_Lights.push_back(new Lightsource(Info.Collision_Position - Info.Collision_Normal * glm::vec3(0.1), glm::vec3(RNG() * 1 + 2, RNG() + 1, RNG()), Info.Collision_Normal, 360, 1));
 			Scene_Lights.back()->Flags[LF_TO_BE_DELETED] = true;
 
-			for (size_t W = 0; W < 2; W++)
+			for (size_t W = 0; W < 1; W++)
 				Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 			
 			//Target->Flags[HF_TO_BE_DELETED] = true;

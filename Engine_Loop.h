@@ -138,7 +138,6 @@ void Setup_Test_Scene()
 }
 
 float Time_Elapsed_Since_FPS_Update = 0;
-size_t Frame_Counter = 0;
 
 void Engine_Loop()
 {

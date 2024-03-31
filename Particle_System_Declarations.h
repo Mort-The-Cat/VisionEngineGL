@@ -67,7 +67,7 @@ public:
 	{
 		Smoke_Particle New_Particle;
 		New_Particle.Position = glm::vec4(Position, 0);
-		New_Particle.Velocity = glm::vec4(Velocity, RNG() * 3 - 6);
+		New_Particle.Velocity = glm::vec4(Velocity, RNG() * 12 - 6);
 		Particles_Data.push_back(New_Particle);
 	}
 
