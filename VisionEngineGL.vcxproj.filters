@@ -83,6 +83,9 @@
     <ClInclude Include="Particle_System_Declarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Audio_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />

@@ -10,6 +10,8 @@
 #include "Asset_Loading_Cache.h"
 #include "Physics_Engine.h"
 
+#include "Audio_Declarations.h"
+
 #include "Particle_System_Declarations.h"
 
 bool Inputs[11];
@@ -98,8 +100,8 @@ void Spawn_Test_Object()
 	{
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
-		//Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
-		Create_Model(Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Mesh));
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		//Create_Model(Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Mesh));
 	}
 }
 
@@ -132,6 +134,7 @@ void Player_Movement()
 		Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.01), 500, Collision_Test::Always_Compare, &Target);
 		if (Target != nullptr)
 		{
+			Fire_Sound->setVolume(1);
 			//for (size_t W = 0; W < 10; W++)
 
 			Scene_Lights.push_back(new Lightsource(Info.Collision_Position - Info.Collision_Normal * glm::vec3(0.1), glm::vec3(RNG() * 1 + 2, RNG() + 1, RNG()), Info.Collision_Normal, 360, 1));
@@ -144,11 +147,15 @@ void Player_Movement()
 			{
 				// Apply some force
 				Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
-				
+
 				Control->Time = -1;
+
+				Sound_Engine->play2D(Sound_Effect_Source);
 			}
 		}
 	}
+	else
+		Fire_Sound->setVolume(0);
 
 	if (Inputs[Controls::Forwards])
 	{

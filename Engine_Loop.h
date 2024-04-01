@@ -94,9 +94,9 @@ void Setup_Test_Scene()
 
 	Initialise_Particles();
 
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	//Scene_Models.push_back(new Model({ MF_SOLID }));
+	//Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	//Create_Model(Pull_Mesh("Assets/Models/Viking_Room.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 	Scene_Models.push_back(new Model( { MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
