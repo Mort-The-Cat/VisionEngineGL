@@ -324,7 +324,7 @@ namespace Collision_Test
 		Temp.Position = AABB.Position;
 		Temp.Matrix_Rotation = glm::mat3(1.0f);
 
-		return Inverse_Collision(Mesh.Mesh_Hitdetection(&Temp));
+		return Mesh.Mesh_Hitdetection(&Temp);
 	}
 
 	Collision_Info AABB_Against_Sphere(AABB_Hitbox& AABB, Sphere_Hitbox& Sphere)
@@ -413,7 +413,7 @@ Collision_Info AABB_Hitbox::Sphere_Hitdetection(Sphere_Hitbox* Other)
 
 Collision_Info AABB_Hitbox::Mesh_Hitdetection(Mesh_Hitbox* Other)
 {
-	return Collision_Test::AABB_Against_Mesh(*this, *Other);
+	return Inverse_Collision(Collision_Test::AABB_Against_Mesh(*this, *Other));
 }
 
 //
@@ -447,7 +447,7 @@ Collision_Info Mesh_Hitbox::Sphere_Hitdetection(Sphere_Hitbox* Other)
 
 Collision_Info Mesh_Hitbox::AABB_Hitdetection(AABB_Hitbox* Other)
 {
-	return Inverse_Collision(Collision_Test::AABB_Against_Mesh(*Other, *this));
+	return Collision_Test::AABB_Against_Mesh(*Other, *this);
 }
 
 #endif
