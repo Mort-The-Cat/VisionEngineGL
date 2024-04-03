@@ -16,7 +16,7 @@ irrklang::ISound* Fire_Sound;
 
 irrklang::ISoundSource* Bump_Sound_Effect_Source;
 
-const glm::vec3 Audio_Position_Multiplier = glm::vec3(0.1, 0.1, 0.1);
+const glm::vec3 Audio_Position_Multiplier = glm::vec3(1);
 
 irrklang::vec3df Get_Klang_Vector(glm::vec3 Vector)
 {

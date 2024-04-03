@@ -92,7 +92,7 @@ public:
 
 	void Set_Audio_Observer()
 	{
-		Sound_Engine->setListenerPosition(Get_Klang_Vector(-Position * Audio_Position_Multiplier), Get_Klang_Vector(-Camera_Direction));
+		Sound_Engine->setListenerPosition(Get_Klang_Vector(Position * Audio_Position_Multiplier), Get_Klang_Vector(Camera_Direction), { 0, 0, 0 }, { 0, -1, 0 });
 
 		Sound_Engine->setSoundVolume(0.1);
 
