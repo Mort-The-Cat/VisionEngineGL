@@ -4,6 +4,7 @@
 #include "Fast_Maths.h"
 
 #include "irrKlang.h"
+#include "Audio_Declarations.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -87,6 +88,15 @@ public:
 		Position = Positionp;
 		Orientation = Orientationp;
 		FOV = FOVp;
+	}
+
+	void Set_Audio_Observer()
+	{
+		Sound_Engine->setListenerPosition(Get_Klang_Vector(-Position * Audio_Position_Multiplier), Get_Klang_Vector(-Camera_Direction));
+
+		Sound_Engine->setSoundVolume(0.1);
+
+		Sound_Engine->setRolloffFactor(10);
 	}
 
 	void Set_Projection_Matrix()

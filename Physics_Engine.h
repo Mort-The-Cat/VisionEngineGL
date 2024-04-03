@@ -83,6 +83,13 @@ namespace Physics
 		{
 			float Gravity = Tick * 4.9;
 
+			float Force_Magnitude = glm::dot(Forces, Forces);
+
+			//if (Force_Magnitude > Mass * 5) // Some threshold
+			//{
+			//	Sound_Engine->play3D(Bump_Sound_Effect_Source, Get_Klang_Vector(Object->Position * Audio_Position_Multiplier));
+			//}
+
 			Forces *= Inv_Mass * 0.5;
 
 			Velocity += Forces;
