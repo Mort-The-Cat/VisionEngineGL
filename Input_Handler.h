@@ -154,7 +154,18 @@ void Player_Movement()
 
 	if (Inputs[Controls::Auxilliary])
 	{
-		Sound_Engine->play3D(Bump_Sound_Effect_Source, { 0, 0, 0 });
+		irrklang::ISound* Sound = Sound_Engine->play3D(Sound_Effect_Source, { 0, 0, 0 }, false, true, false, true);
+
+		Sound->setVolume(0.1);
+		Sound->setIsPaused(false);
+		Sound->drop();
+
+		// irrklang::ISound* Sound = Sound_Engine->play2D(Sound_Effect_Source, false, true, false, true);
+
+		//Sound->setPan(-1);
+		//Sound->setIsPaused(false);
+		//Sound->drop();
+
 		Billboard_Smoke_Particles.Particles.Spawn_Particle(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	}
 
