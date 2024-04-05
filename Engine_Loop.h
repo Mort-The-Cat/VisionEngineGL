@@ -14,6 +14,8 @@
 #include "Deletion_Handler.h"
 #include "Particle_System_Declarations.h"
 
+#include "Audio_Handler_Declarations.h"
+
 #include "Physics_Engine.h"
 
 void Initialise_Particles()
@@ -136,6 +138,10 @@ void Setup_Test_Scene()
 
 	//
 
+	Audio::Create_Audio_Source(glm::vec3(0, 0, 0), 1);
+
+	//
+
 	Initialise_Job_System();
 }
 
@@ -179,6 +185,8 @@ void Engine_Loop()
 		Player_Camera.Set_Projection_Matrix();
 		Player_Camera.Set_Audio_Observer();
 		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
+
+		Audio::Handle_Audio(Player_Camera);
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_CCW);

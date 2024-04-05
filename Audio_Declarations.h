@@ -18,6 +18,8 @@ irrklang::ISoundSource* Bump_Sound_Effect_Source;
 
 const glm::vec3 Audio_Position_Multiplier = glm::vec3(0.25);
 
+glm::vec3 Current_Listener_Right_Ear_Vector;
+
 irrklang::vec3df Get_Klang_Vector(glm::vec3 Vector)
 {
 	return { Vector.x, Vector.y, Vector.z };
