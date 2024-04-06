@@ -50,7 +50,7 @@ namespace Audio
 
 			Panning *= Panning * Panning;
 			
-			float Perceived_Volume = Volume / (1 + Delta_Inverse_Length);
+			float Perceived_Volume = Volume / (1 + 0.5 * Delta_Inverse_Length);
 
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
