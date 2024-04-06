@@ -25,6 +25,13 @@
 #include<functional>
 #include<unordered_map>
 
+float Time_Elapsed_Since_FPS_Update = 0;
+
+bool Is_Deleted(void* Pointer)
+{
+	return Pointer == nullptr;
+}
+
 struct Camera_Uniform_Location_Object
 {
 	int Projection_Matrix;
@@ -92,11 +99,9 @@ public:
 
 	void Set_Audio_Observer()
 	{
-		Sound_Engine->setListenerPosition(Get_Klang_Vector(Position * Audio_Position_Multiplier), Get_Klang_Vector(Camera_Direction), { 0, 0, 0 }, { 0, -1, 0 });
-
 		Sound_Engine->setSoundVolume(0.1);
 
-		Sound_Engine->setRolloffFactor(10);
+		Current_Listener_Right_Ear_Vector = glm::cross(Camera_Direction, Camera_Up_Direction);
 	}
 
 	void Set_Projection_Matrix()

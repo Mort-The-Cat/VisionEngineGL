@@ -145,8 +145,6 @@ void Setup_Test_Scene()
 	Initialise_Job_System();
 }
 
-float Time_Elapsed_Since_FPS_Update = 0;
-
 void Engine_Loop()
 {
 	Setup_Test_Scene();

@@ -6,6 +6,8 @@
 #include "Model_Declarations.h"
 #include "Hitdetection.h"
 
+#include "Audio_Handler_Declarations.h"
+
 void Wait_On_Physics();
 
 namespace Physics
@@ -28,6 +30,8 @@ namespace Physics
 	{
 	public:
 		Model* Object;
+
+		Audio::Audio_Source* SFX;
 
 		glm::vec3 Forces = glm::vec3(0, 0, 0);
 		glm::vec3 Velocity = glm::vec3(0, 0, 0);
@@ -89,6 +93,15 @@ namespace Physics
 			//{
 			//	Sound_Engine->play3D(Bump_Sound_Effect_Source, Get_Klang_Vector(Object->Position * Audio_Position_Multiplier));
 			//}
+
+			SFX->Position = Object->Position;
+
+			if (Force_Magnitude > Mass * 5)
+			{
+				SFX->Play_Sound(Bump_Sound_Effect_Source);
+				SFX->Volume = Fast::Sqrt(Force_Magnitude);
+				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.5 + 0.75);
+			}
 
 			Forces *= Inv_Mass * 0.5;
 
@@ -243,6 +256,8 @@ public:
 
 		Physics::Scene_Physics_Objects.push_back(Physics_Info);
 
+		Physics_Info->SFX = Audio::Create_Audio_Source(Object->Position, 1);
+
 		Physics_Info->Object = Object;
 	}
 
@@ -255,6 +270,7 @@ public:
 		Object->Flags[MF_TO_BE_DELETED] |= Should_Delete;
 		Physics_Info->Flags[PF_TO_BE_DELETED] |= Should_Delete;
 		Object->Hitbox->Flags[HF_TO_BE_DELETED] |= Should_Delete;
+		Physics_Info->Flags[ASF_TO_BE_DELETED] |= Should_Delete;
 	}
 };
 

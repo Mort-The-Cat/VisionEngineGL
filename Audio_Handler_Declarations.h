@@ -6,7 +6,6 @@
 #include "irrKlang.h"
 #include "glm/glm.hpp"
 #include <vector>
-#include "Deletion_Handler.h"
 
 #include "OpenGL_Declarations.h"
 
@@ -26,6 +25,14 @@ namespace Audio
 		std::vector<irrklang::ISound*> Sounds;
 		bool Flags[1];
 
+		~Audio_Source()
+		{
+			// Just delete all sounds
+			for (size_t W = 0; W < Sounds.size(); W++)
+				Sounds[W]->drop();
+			Sounds.clear();
+		}
+
 		void Play_Sound(irrklang::ISoundSource* Sound_Source)
 		{
 			irrklang::ISound* Sound = Sound_Engine->play2D(Sound_Source, false, true, false, true);
@@ -35,15 +42,15 @@ namespace Audio
 
 		void Update(const Camera& Camera)
 		{
-			glm::vec3 Delta_Vector = Position - Camera.Position;
+			glm::vec3 Delta_Vector = Position + Camera.Position;
 
-			float Delta_Inverse_Length = 1.0f / Fast::Sqrt(glm::dot(Delta_Vector, Delta_Vector));
+			float Delta_Inverse_Length = (Fast::Sqrt(glm::dot(Delta_Vector, Delta_Vector)));
 
-			float Panning = glm::dot(Current_Listener_Right_Ear_Vector, Delta_Vector * glm::vec3(Delta_Inverse_Length));
+			float Panning = std::fminf(1, std::fmaxf(-1, glm::dot(Current_Listener_Right_Ear_Vector, Delta_Vector * glm::vec3(1.0f / Delta_Inverse_Length))));
 
 			Panning *= Panning * Panning;
 			
-			float Perceived_Volume = Volume * Delta_Inverse_Length;
+			float Perceived_Volume = Volume / (1 + Delta_Inverse_Length);
 
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
@@ -67,6 +74,19 @@ namespace Audio
 	};
 
 	std::vector<Audio_Source*> Audio_Sources;
+
+	void Handle_Audio_Deletions()
+	{
+		for(size_t W = 0; W < Audio_Sources.size(); W++)
+			if (Audio_Sources[W]->Flags[ASF_TO_BE_DELETED])
+			{
+				delete Audio_Sources[W];
+				Audio_Sources[W] = nullptr;
+			}
+
+		auto Deleted_Sound_Sources = std::remove_if(Audio_Sources.begin(), Audio_Sources.end(), Is_Deleted);
+		Audio_Sources.erase(Deleted_Sound_Sources, Audio_Sources.end());
+	}
 
 	Audio_Source* Create_Audio_Source(glm::vec3 Position, float Volume)
 	{

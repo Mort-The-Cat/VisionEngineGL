@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="Asset_Loading_Cache.h" />
     <ClInclude Include="Audio_Declarations.h" />
+    <ClInclude Include="Audio_Handler_Declarations.h" />
     <ClInclude Include="Bool_Array.h" />
     <ClInclude Include="Deletion_Handler.h" />
     <ClInclude Include="Engine_Loop.h" />

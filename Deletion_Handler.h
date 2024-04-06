@@ -6,10 +6,7 @@
 #include "Model_Declarations.h"
 #include "Physics_Engine.h"
 
-bool Is_Deleted(void* Pointer)
-{
-	return Pointer == nullptr;
-}
+#include "Audio_Handler_Declarations.h"
 
 void Handle_Deletions()
 {
@@ -64,6 +61,8 @@ void Handle_Deletions()
 
 	auto Deleted_Hitboxes = std::remove_if(Scene_Hitboxes.begin(), Scene_Hitboxes.end(), Is_Deleted);
 	Scene_Hitboxes.erase(Deleted_Hitboxes, Scene_Hitboxes.end());
+
+	Audio::Handle_Audio_Deletions();
 }
 
 #endif
