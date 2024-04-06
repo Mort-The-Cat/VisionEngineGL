@@ -42,7 +42,7 @@ namespace Audio
 
 		void Update(const Camera& Camera)
 		{
-			glm::vec3 Delta_Vector = Position + Camera.Position;
+			glm::vec3 Delta_Vector = -Position + Camera.Position;
 
 			float Delta_Inverse_Length = (Fast::Sqrt(glm::dot(Delta_Vector, Delta_Vector)));
 
@@ -54,18 +54,19 @@ namespace Audio
 
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
-				if (Sounds[W]->isFinished()) // If the sound has completed.
-				{
-					Sounds[W]->drop();
-					Sounds[W] = nullptr;
-				}
-				else
-				{
-					Sounds[W]->setPan(Panning);
-					Sounds[W]->setVolume(Perceived_Volume);
+				if(Sounds[W] != nullptr) // Some error handling is highly adviced if you're going to use multithreading with this
+					if (Sounds[W]->isFinished()) // If the sound has completed.
+					{
+						Sounds[W]->drop();
+						Sounds[W] = nullptr;
+					}
+					else
+					{
+						Sounds[W]->setPan(Panning);
+						Sounds[W]->setVolume(Perceived_Volume);
 
-					Sounds[W]->setIsPaused(false);
-				}
+						Sounds[W]->setIsPaused(false);
+					}
 			}
 
 			auto Completed_Sounds = std::remove_if(Sounds.begin(), Sounds.end(), Is_Deleted);

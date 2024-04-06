@@ -99,7 +99,7 @@ namespace Physics
 			if (Force_Magnitude > Mass * 5)
 			{
 				SFX->Play_Sound(Bump_Sound_Effect_Source);
-				SFX->Volume = Fast::Sqrt(Force_Magnitude);
+				SFX->Volume = std::fminf(3, Fast::Sqrt(Force_Magnitude));
 				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.5 + 0.75);
 			}
 
