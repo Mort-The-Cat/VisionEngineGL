@@ -96,11 +96,11 @@ namespace Physics
 
 			SFX->Position = Object->Position;
 
-			if (Force_Magnitude > Mass * 5)
+			if (Force_Magnitude > Mass * 4.9)
 			{
 				SFX->Play_Sound(Bump_Sound_Effect_Source);
-				SFX->Volume = std::fminf(2, Fast::Sqrt(Force_Magnitude));
-				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.5 + 0.75);
+				SFX->Volume = 0.25 * std::fminf(10, Fast::Sqrt(Force_Magnitude));
+				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.25 + 1);
 			}
 
 			Forces *= Inv_Mass * 0.5;
@@ -270,7 +270,7 @@ public:
 		Object->Flags[MF_TO_BE_DELETED] |= Should_Delete;
 		Physics_Info->Flags[PF_TO_BE_DELETED] |= Should_Delete;
 		Object->Hitbox->Flags[HF_TO_BE_DELETED] |= Should_Delete;
-		Physics_Info->Flags[ASF_TO_BE_DELETED] |= Should_Delete;
+		Physics_Info->SFX->Flags[ASF_TO_BE_DELETED] |= Should_Delete;
 	}
 };
 

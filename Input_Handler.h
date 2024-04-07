@@ -153,12 +153,12 @@ void Player_Movement()
 	float Movement_X = sin(Angle) * Speed;
 	float Movement_Z = cos(Angle) * Speed;
 
-	if (Inputs[Controls::Auxilliary] && Frame_Counter % 10 == 0)
-	{
-		Audio::Audio_Sources.back()->Play_Sound(Sound_Effect_Source);
+	//if (Inputs[Controls::Auxilliary] && Frame_Counter % 10 == 0)
+	//{
+		//Audio::Audio_Sources.back()->Play_Sound(Sound_Effect_Source);
 
-		Billboard_Smoke_Particles.Particles.Spawn_Particle(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-	}
+		//Billboard_Smoke_Particles.Particles.Spawn_Particle(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+	//}
 
 	if (Mouse_Inputs[0]) // If left-click,
 	{

@@ -42,7 +42,7 @@ namespace Audio
 
 		void Update(const Camera& Camera)
 		{
-			glm::vec3 Delta_Vector = -Position + Camera.Position;
+			glm::vec3 Delta_Vector = Position - Camera.Position;
 
 			float Delta_Inverse_Length = (Fast::Sqrt(glm::dot(Delta_Vector, Delta_Vector)));
 

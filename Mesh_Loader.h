@@ -4,6 +4,11 @@
 #include "OpenGL_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
 
+#include "assimp/Importer.hpp"
+#include "assimp/code/Importer.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
 glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Origin)
 {
 	//Model_Vertex Origin = Target_Mesh->Vertices[Target_Mesh->Indices[W]];
@@ -24,9 +29,53 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 	return glm::normalize(A_Scale * Delta_A.Position + B_Scale * Delta_B.Position);
 }
 
-void Load_Mesh_Gltf(const char* File_Name, Model_Mesh* Target_Mesh)
+void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 {
+	// Assimp::Importer Importer;
+	const aiScene* Scene; // = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
 
+	if (Scene == nullptr)
+	{
+		Throw_Error(" >> Failed to load fbx with assimp!");
+	}
+
+	// Then, we handle all of the meshes
+
+	std::unordered_map<Model_Vertex, uint32_t> Unique_Vertices{};
+
+	for (size_t W = 0; W < Scene->mNumMeshes; W++)
+	{
+		const aiMesh* Mesh = Scene->mMeshes[W];
+		for (size_t V = 0; V < Mesh->mNumFaces; V++)
+			for (size_t U = 0; U < 3; U++)
+			{
+				Model_Vertex Vertex;
+
+				size_t Index = Mesh->mFaces[V].mIndices[U];
+
+				Vertex.Position = glm::vec3(
+					Mesh->mVertices[Index].x, 
+					-Mesh->mVertices[Index].y, 
+					Mesh->mVertices[Index].z);
+
+				Vertex.Normal = glm::vec3(
+					Mesh->mNormals[Index].x,
+					-Mesh->mNormals[Index].y,
+					Mesh->mNormals[Index].z);
+
+				Vertex.UV = glm::vec2(
+					Mesh->mTextureCoords[Index]->x,
+					1.0f - Mesh->mTextureCoords[Index]->y);
+
+				if (Unique_Vertices.count(Vertex) == 0) // If we don't have it already
+				{
+					Unique_Vertices[Vertex] = Target_Mesh->Vertices.size();
+					Target_Mesh->Vertices.push_back(Vertex);
+				}
+
+				Target_Mesh->Indices.push_back(Unique_Vertices[Vertex]);
+			}
+	}
 }
 
 void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)

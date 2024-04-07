@@ -138,10 +138,6 @@ void Setup_Test_Scene()
 
 	//
 
-	Audio::Create_Audio_Source(glm::vec3(0, 0, 0), 1);
-
-	//
-
 	Initialise_Job_System();
 }
 
@@ -170,6 +166,8 @@ void Engine_Loop()
 
 		Scene_Lights[0]->Blur = 45 + 45 * sinf(glfwGetTime());
 
+		Audio::Handle_Audio(Player_Camera);
+
 		Physics::Record_Collisions();
 		
 		Handle_Scene();
@@ -183,8 +181,6 @@ void Engine_Loop()
 		Player_Camera.Set_Projection_Matrix();
 		Player_Camera.Set_Audio_Observer();
 		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
-
-		Audio::Handle_Audio(Player_Camera);
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_CCW);

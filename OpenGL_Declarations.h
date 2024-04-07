@@ -101,7 +101,7 @@ public:
 	{
 		Sound_Engine->setSoundVolume(0.1);
 
-		Current_Listener_Right_Ear_Vector = glm::cross(Camera_Direction, Camera_Up_Direction);
+		Current_Listener_Right_Ear_Vector = -glm::cross(Camera_Direction, Camera_Up_Direction);
 	}
 
 	void Set_Projection_Matrix()
