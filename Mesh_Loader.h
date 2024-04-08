@@ -4,8 +4,10 @@
 #include "OpenGL_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
 
+#include "zlib/zlib.h"
+
 #include "assimp/Importer.hpp"
-#include "assimp/code/Importer.h"
+// #include "assimp/code/Importer.h"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
@@ -31,8 +33,8 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 
 void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 {
-	// Assimp::Importer Importer;
-	const aiScene* Scene; // = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
+	;//  Assimp::Importer Importer;
+	const aiScene* Scene = nullptr; // = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
 
 	if (Scene == nullptr)
 	{

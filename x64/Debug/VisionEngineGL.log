@@ -11,69 +11,112 @@ C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(104,11): warning C4244: '+=': conv
 C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(126,11): warning C4244: '*=': conversion from 'float' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(128,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Audio_Declarations.h(32,31): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(102,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(146,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(208,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(102,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(74,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(39,21): warning C4305: '=': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(131,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(83,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(182,21): warning C4305: '=': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305: 'argument': truncation from 'double' to 'T'
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         with
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         [
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:             T=float
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(131,102): warning C4305:         ]
+C:\VisionEngineGL\VisionEngineGL\Audio_Handler_Declarations.h(59,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(134,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(88,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(143,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(102,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(143,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(103,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(143,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         with
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         [
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:             T=float
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(146,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         with
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         [
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:             T=float
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(118,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(149,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
-  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(118,83):
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(31,98): warning C4305: 'argument': truncation from 'double' to 'float'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(31,92): warning C4305: 'argument': truncation from 'double' to 'float'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(31,86): warning C4305: 'argument': truncation from 'double' to 'float'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(31,79): warning C4305: 'argument': truncation from 'double' to 'float'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(153,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(167,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  (compiling source file 'Main.cpp')
+  C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,83):
   the template instantiation context (the oldest one first) is
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(133,40):
-  	see reference to class template instantiation 'Particle_Renderer<Smoke_Particle_Info>' being compiled
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(99,8):
-  	while compiling class template member function 'void Particle_Renderer<Smoke_Particle_Info>::Render(void)'
-  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(48,24):
-  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info>::Render' in 'Render_All'
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(133,65):
+  	see reference to class template instantiation 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>' being compiled
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(97,8):
+  	while compiling class template member function 'void Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render(void)'
+  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(65,34):
+  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
 C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   (compiling source file 'Main.cpp')
   C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40):
   the template instantiation context (the oldest one first) is
-  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(56,36):
+  	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(54,36):
   	see reference to class template instantiation 'Particle_Info<Smoke_Particle>' being compiled
   	C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(44,9):
   	while compiling class template member function 'size_t Particle_Info<Smoke_Particle>::Parse_Values(size_t)'
-  		C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,18):
-  		see the first reference to 'Particle_Info<Smoke_Particle>::Parse_Values' in 'Particle_Renderer<Smoke_Particle_Info>::Render'
-  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(48,24):
-  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info>::Render' in 'Render_All'
+  		C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(114,18):
+  		see the first reference to 'Particle_Info<Smoke_Particle>::Parse_Values' in 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render'
+  		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(65,34):
+  		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
-C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(127): warning C4715: 'Get_File_Contents': not all control paths return a value
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(163): warning C4715: 'Get_File_Contents': not all control paths return a value
   VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

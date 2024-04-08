@@ -29,14 +29,20 @@ namespace Audio
 		{
 			// Just delete all sounds
 			for (size_t W = 0; W < Sounds.size(); W++)
+			{
+				Sounds[W]->stop();
 				Sounds[W]->drop();
+				//delete Sounds[W];
+			}
 			Sounds.clear();
 		}
 
 		void Play_Sound(irrklang::ISoundSource* Sound_Source)
 		{
-			irrklang::ISound* Sound = Sound_Engine->play2D(Sound_Source, false, true, false, true);
-
+			irrklang::ISound* Sound = nullptr;
+			while(Sound == nullptr)
+				Sound = Sound_Engine->play2D(Sound_Source, false, true, false, true);
+			//Sound_Engine->play3D(Sound_Source, irrklang::vec3df(Position.x, Position.y, Position.z), false, false, false, false);
 			Sounds.push_back(Sound);
 		}
 
@@ -54,10 +60,12 @@ namespace Audio
 
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
-				if(Sounds[W] != nullptr) // Some error handling is highly adviced if you're going to use multithreading with this
+				if(!Flags[ASF_TO_BE_DELETED]) // Some error handling is highly adviced if you're going to use multithreading with this
 					if (Sounds[W]->isFinished()) // If the sound has completed.
 					{
+						Sounds[W]->stop();
 						Sounds[W]->drop();
+						//delete Sounds[W];
 						Sounds[W] = nullptr;
 					}
 					else
@@ -65,7 +73,8 @@ namespace Audio
 						Sounds[W]->setPan(Panning);
 						Sounds[W]->setVolume(Perceived_Volume);
 
-						Sounds[W]->setIsPaused(false);
+						if(Sounds[W]->getIsPaused())
+							Sounds[W]->setIsPaused(false);
 					}
 			}
 
@@ -126,6 +135,11 @@ namespace Audio
 
 	void Handle_Audio(Camera& Listener)
 	{
+		Sound_Engine->update();
+
+		// for (size_t W = 0; W < Audio_Sources.size(); W++)
+		// 	Audio_Sources[W]->Update(Listener);
+
 		for (size_t W = 0; W < NUMBER_OF_WORKERS; W++)
 			Job_System::Submit_Job(Job_System::Job(Job_Handle_Audio_Task, new Job_Handle_Audio_Parameters(W, &Listener)));
 	}

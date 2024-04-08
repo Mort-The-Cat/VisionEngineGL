@@ -101,6 +101,8 @@ public:
 	{
 		Sound_Engine->setSoundVolume(0.1);
 
+		// Sound_Engine->setListenerPosition(Get_Klang_Vector(Position), Get_Klang_Vector(Camera_Direction), Get_Klang_Vector(glm::vec3(0)), Get_Klang_Vector(Camera_Up_Direction));
+
 		Current_Listener_Right_Ear_Vector = -glm::cross(Camera_Direction, Camera_Up_Direction);
 	}
 

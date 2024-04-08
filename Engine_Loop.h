@@ -110,7 +110,7 @@ void Setup_Test_Scene()
 	Scene_Models.back()->Position = glm::vec3(5, -5, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
 
-	if(false)
+	//if(false)
 	{
 		Scene_Models.push_back(new Model({ MF_SOLID }));
 		Scene_Models.back()->Position = glm::vec3(-5, -5, -3);
@@ -126,9 +126,9 @@ void Setup_Test_Scene()
 
 	}
 
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(0, -5, -5);
-	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Ramp.obj").Mesh));
+	//Scene_Models.push_back(new Model({ MF_SOLID }));
+	//Scene_Models.back()->Position = glm::vec3(0, -5, -5);
+	//Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Ramp.obj").Mesh));
 
 	Scene_Object_Shader.Activate();
 
