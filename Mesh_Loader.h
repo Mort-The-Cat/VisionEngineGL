@@ -4,8 +4,6 @@
 #include "OpenGL_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
 
-#include "zlib/zlib.h"
-
 #include "assimp/Importer.hpp"
 // #include "assimp/code/Importer.h"
 #include "assimp/scene.h"
@@ -33,8 +31,8 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 
 void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 {
-	;//  Assimp::Importer Importer;
-	const aiScene* Scene = nullptr; // = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
+	Assimp::Importer Importer;
+	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
 
 	if (Scene == nullptr)
 	{
@@ -57,17 +55,17 @@ void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 
 				Vertex.Position = glm::vec3(
 					Mesh->mVertices[Index].x, 
-					-Mesh->mVertices[Index].y, 
-					Mesh->mVertices[Index].z);
+					-Mesh->mVertices[Index].z, 
+					-Mesh->mVertices[Index].y);
 
 				Vertex.Normal = glm::vec3(
 					Mesh->mNormals[Index].x,
-					-Mesh->mNormals[Index].y,
-					Mesh->mNormals[Index].z);
+					-Mesh->mNormals[Index].z,
+					-Mesh->mNormals[Index].y);
 
 				Vertex.UV = glm::vec2(
-					Mesh->mTextureCoords[Index]->x,
-					1.0f - Mesh->mTextureCoords[Index]->y);
+					Mesh->mTextureCoords[0][Index].x,
+					1.0f - Mesh->mTextureCoords[0][Index].y);
 
 				if (Unique_Vertices.count(Vertex) == 0) // If we don't have it already
 				{

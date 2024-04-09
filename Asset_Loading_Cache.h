@@ -198,7 +198,10 @@ Cache::Texture_Cache_Info Pull_Texture(const char* Texture_Directory)
 
 //
 
-Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory)
+#define LOAD_MESH_OBJ_BIT 0u
+#define LOAD_MESH_FBX_BIT 1u
+
+Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, char Flags = LOAD_MESH_OBJ_BIT)
 {
 	Cache::Mesh_Cache_Info Cache_Info;
 
@@ -207,7 +210,15 @@ Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory)
 
 	Cache_Info.Mesh = new Model_Mesh(); // This allocates the memory that is used by the load_mesh_obj function
 
-	Load_Mesh_Obj(Directory, Cache_Info.Mesh);
+	switch (Flags)
+	{
+	case LOAD_MESH_OBJ_BIT:
+		Load_Mesh_Obj(Directory, Cache_Info.Mesh);
+		break;
+	case LOAD_MESH_FBX_BIT:
+		Load_Mesh_Fbx(Directory, Cache_Info.Mesh);
+		break;
+	}
 
 	Cache_Info.Directory = Directory;
 	Cache_Info.Vertex_Buffer.Create_Buffer();
