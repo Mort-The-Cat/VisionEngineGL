@@ -22,12 +22,14 @@ namespace Audio
 	public:
 		glm::vec3 Position;
 		float Volume;
+		std::mutex Sounds_Mutex;
 		std::vector<irrklang::ISound*> Sounds;
 		bool Flags[1];
 
 		~Audio_Source()
 		{
 			// Just delete all sounds
+			Sounds_Mutex.lock();
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
 				Sounds[W]->stop();
@@ -35,15 +37,18 @@ namespace Audio
 				//delete Sounds[W];
 			}
 			Sounds.clear();
+			Sounds_Mutex.unlock();
 		}
 
 		void Play_Sound(irrklang::ISoundSource* Sound_Source)
 		{
 			irrklang::ISound* Sound = nullptr;
+			Sounds_Mutex.lock();
 			while(Sound == nullptr)
 				Sound = Sound_Engine->play2D(Sound_Source, false, true, false, true);
 			//Sound_Engine->play3D(Sound_Source, irrklang::vec3df(Position.x, Position.y, Position.z), false, false, false, false);
 			Sounds.push_back(Sound);
+			Sounds_Mutex.unlock();
 		}
 
 		void Update(const Camera& Camera)
@@ -58,6 +63,7 @@ namespace Audio
 			
 			float Perceived_Volume = Volume / (1 + 0.5 * Delta_Inverse_Length);
 
+			Sounds_Mutex.lock();
 			for (size_t W = 0; W < Sounds.size(); W++)
 			{
 				if(!Flags[ASF_TO_BE_DELETED]) // Some error handling is highly adviced if you're going to use multithreading with this
@@ -80,6 +86,8 @@ namespace Audio
 
 			auto Completed_Sounds = std::remove_if(Sounds.begin(), Sounds.end(), Is_Deleted);
 			Sounds.erase(Completed_Sounds, Sounds.end());
+
+			Sounds_Mutex.unlock();
 		}
 	};
 
@@ -137,8 +145,8 @@ namespace Audio
 	{
 		Sound_Engine->update();
 
-		// for (size_t W = 0; W < Audio_Sources.size(); W++)
-		// 	Audio_Sources[W]->Update(Listener);
+		 for (size_t W = 0; W < Audio_Sources.size(); W++)
+		 	Audio_Sources[W]->Update(Listener);
 
 		for (size_t W = 0; W < NUMBER_OF_WORKERS; W++)
 			Job_System::Submit_Job(Job_System::Job(Job_Handle_Audio_Task, new Job_Handle_Audio_Parameters(W, &Listener)));
