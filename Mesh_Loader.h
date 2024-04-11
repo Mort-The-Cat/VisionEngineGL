@@ -29,10 +29,26 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 	return glm::normalize(A_Scale * Delta_A.Position + B_Scale * Delta_B.Position);
 }
 
+aiVertexWeight Get_Optimal_Bone(const aiMesh* Mesh, size_t Vertex_Index)
+{
+	aiVertexWeight Optimal_Bone;
+	Optimal_Bone.mWeight = -1;
+	for(size_t W = 0; W < Mesh->mNumBones; W++)
+		for (size_t V = 0; V < Mesh->mBones[W]->mNumWeights; V++)
+			if (Mesh->mBones[W]->mWeights[V].mVertexId == Vertex_Index)
+			{
+				if (Mesh->mBones[W]->mWeights[V].mWeight >= Optimal_Bone.mWeight)
+					Optimal_Bone = Mesh->mBones[W]->mWeights[V];
+
+				break;
+			}
+	return Optimal_Bone;
+}
+
 void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 {
 	Assimp::Importer Importer;
-	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices));
+	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals));
 
 	if (Scene == nullptr)
 	{
@@ -70,12 +86,17 @@ void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 				if (Unique_Vertices.count(Vertex) == 0) // If we don't have it already
 				{
 					Unique_Vertices[Vertex] = Target_Mesh->Vertices.size();
+					aiVertexWeight Weight = Get_Optimal_Bone(Mesh, Index);
+					Vertex.Bone_Rigging_Index = Weight.mVertexId;
+					Vertex.Bone_Rigging_Weight = Weight.mWeight;
 					Target_Mesh->Vertices.push_back(Vertex);
 				}
 
 				Target_Mesh->Indices.push_back(Unique_Vertices[Vertex]);
 			}
 	}
+
+	Importer.FreeScene();
 }
 
 void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)

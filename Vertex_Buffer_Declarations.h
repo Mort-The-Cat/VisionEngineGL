@@ -48,6 +48,9 @@ struct Model_Vertex
 	// glm::vec3 UV_Tangent; // This is the tangent of the surface normal, aligned to the UV plane
 
 	glm::vec2 UV;
+	
+	float Bone_Rigging_Weight = 0;
+	unsigned int Bone_Rigging_Index = 0;
 
 	// float Occlusion = 1;
 
@@ -215,6 +218,12 @@ public:
 
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
 		glEnableVertexAttribArray(2);
+
+		glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 8)); // Bone rigging weight
+		glEnableVertexAttribArray(3);
+
+		glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 9));
+		glEnableVertexAttribArray(4);
 	}
 };
 

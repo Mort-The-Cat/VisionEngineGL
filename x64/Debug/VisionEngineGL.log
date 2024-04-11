@@ -17,19 +17,19 @@ C:\VisionEngineGL\VisionEngineGL\Audio_Declarations.h(32,31): warning C4305: 'ar
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(102,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(146,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(149,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(208,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(211,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(74,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(88,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(131,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(150,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data

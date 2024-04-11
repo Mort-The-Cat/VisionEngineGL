@@ -168,6 +168,7 @@
     <ClInclude Include="Job_System.h" />
     <ClInclude Include="Job_System_Declarations.h" />
     <ClInclude Include="Lighting_Handler.h" />
+    <ClInclude Include="Mesh_Animator_Declarations.h" />
     <ClInclude Include="Mesh_Loader.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Model_Declarations.h" />
