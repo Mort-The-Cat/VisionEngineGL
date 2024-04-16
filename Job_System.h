@@ -6,6 +6,27 @@
 #include "Model_Declarations.h"
 #include "Lighting_Handler.h"
 
+#include "Mesh_Animator_Declarations.h"
+
+class Test_Animation_Controller : public Controller
+{
+	Mesh_Animator Animator;
+
+	virtual void Control_Function() override
+	{
+		Animator.Update_Skeleton();
+	}
+	virtual void Initialise_Control(Model* Objectp) override
+	{
+		Object = Objectp;
+		Animator.Skeleton_Uniforms = &Object->Uniforms.Model_Bones;
+
+		Load_Mesh_Animator_Fbx("Assets/Models/Test_Animation.fbx", &Animator);
+
+		Animator.Time = 0;
+	}
+};
+
 class Test_Deletion_Controller : public Controller
 {
 public:
