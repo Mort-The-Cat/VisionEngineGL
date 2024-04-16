@@ -7,6 +7,8 @@
 #include "Texture_Declarations.h"
 #include "Job_System_Declarations.h"
 
+#include "Mesh_Animator_Declarations.h"
+
 #include "Hitdetection.h"
 
 #define MF_TO_BE_DELETED 0
@@ -56,7 +58,7 @@ public:
 
 		Uniforms.Model_Position = Position;
 
-		Uniforms.Update_Buffer();
+		Uniforms.Update_Buffer(Model_Uniform_Location);
 
 		Albedo.Parse_Texture(Shader, "Albedo", 0);
 		Albedo.Bind_Texture();

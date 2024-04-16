@@ -22,6 +22,8 @@ in vec2 UV;
 
 in float Lighting_Transparency;
 
+in float Vertex_Transparency;
+
 vec3 Final_Normal;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
@@ -112,7 +114,7 @@ void main()
 
 	float Reflectivity = texture(Material, UV).g;
 
-	float Opacity = texture(Albedo, UV).a;
+	float Opacity = texture(Albedo, UV).a * Vertex_Transparency;
 
 	//Out_Colour = vec4(Final_Normal, 0.5); //texture(Material, UV);
 	

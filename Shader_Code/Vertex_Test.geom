@@ -15,9 +15,13 @@ in DATA
 	mat4 Projection_Matrix;
 	vec2 UV;
 	float Lighting_Transparency;
+	
+	float Vertex_Transparency;
 } data_in[];
 
 out float Lighting_Transparency;
+
+out float Vertex_Transparency;
 
 void main()
 {
@@ -77,6 +81,8 @@ void main()
 		UV_Bitangent = cross(Tangent, Normal);
 
 		Lighting_Transparency = data_in[W].Lighting_Transparency;
+		
+		Vertex_Transparency = data_in[W].Vertex_Transparency;
 
 		EmitVertex();
 	}

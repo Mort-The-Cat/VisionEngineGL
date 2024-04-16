@@ -119,9 +119,18 @@ void Shoot_Fire(float Angle)
 
 		Scene_Lights.push_back(new Lightsource(Info.Collision_Position - Info.Collision_Normal * glm::vec3(0.1), glm::vec3(RNG() * 1 + 2, RNG() + 1, RNG()), Info.Collision_Normal, 360, 1));
 		Scene_Lights.back()->Flags[LF_TO_BE_DELETED] = true;
-
-		for (size_t W = 0; W < 1; W++)
-			Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		
+		//if ((Frame_Counter & 8u) == 0)
+		{
+			Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+			Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
+		}
+		
+		//for (size_t W = 0; W < 1; W++)
+		//{
+			//Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		//	Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		//}
 
 		if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
 		{
@@ -163,7 +172,7 @@ void Player_Movement()
 	if (Mouse_Inputs[0]) // If left-click,
 	{
 		// we wanna apply a force onto some objects!
-
+		
 		Shoot_Fire(Angle);
 	}
 	else

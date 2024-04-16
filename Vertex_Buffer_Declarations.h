@@ -222,8 +222,9 @@ public:
 		glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 8)); // Bone rigging weight
 		glEnableVertexAttribArray(3);
 
-		glVertexAttribPointer(4, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 9));
+		glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Model_Vertex), (void*)(sizeof(float) * 9));
 		glEnableVertexAttribArray(4);
+
 	}
 };
 

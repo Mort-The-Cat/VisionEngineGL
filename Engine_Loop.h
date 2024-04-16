@@ -12,6 +12,7 @@
 #include "Lighting_Handler.h"
 #include "Job_System.h"
 #include "Deletion_Handler.h"
+#include "Mesh_Animator_Declarations.h"
 #include "Particle_System_Declarations.h"
 
 #include "Audio_Handler_Declarations.h"
@@ -23,16 +24,25 @@ void Initialise_Particles()
 	Shader Smoke_Particle_Shader;
 	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Test_Smoke.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke_Noise.png").Texture, Pull_Texture("Black").Texture, &Smoke_Particles);
+	Create_Particle_Renderer(Smoke_Particle_Shader, Pull_Mesh("Assets/Models/Smoke.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke_Noise.png").Texture, Pull_Texture("Black").Texture, &Smoke_Particles);
 
 	Shader Billboard_Particle_Shader;
 	Billboard_Particle_Shader.Create_Shader("Shader_Code/Billboard_Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
 	Create_Particle_Renderer(Billboard_Particle_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, &Billboard_Smoke_Particles);
+
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
+	Shader Billboard_Fire_Shader;
+	Billboard_Fire_Shader.Create_Shader("Shader_Code/Billboard_Fire_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
+
+	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Fire.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
 }
 
 void Render_All()
 {
+	glDisable(GL_BLEND);
+
 	Test_Cubemap.Parse_Texture(Scene_Object_Shader, "Cubemap", 0);
 	Test_Cubemap.Bind_Texture();
 
@@ -49,10 +59,14 @@ void Render_All()
 
 	Smoke_Particles.Shader.Activate();
 
+	glEnable(GL_BLEND);
+
 	glDepthMask(GL_FALSE);
 
 	Test_Cubemap.Parse_Texture(Smoke_Particles.Shader, "Cubemap", 0);
 	Test_Cubemap.Bind_Texture();
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Smoke_Particles.Render();
 
@@ -63,6 +77,12 @@ void Render_All()
 	Test_Cubemap.Parse_Texture(Billboard_Smoke_Particles.Shader, "Cubemap", 0);
 	Test_Cubemap.Bind_Texture();
 	Billboard_Smoke_Particles.Render();
+
+	//
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
+	Billboard_Fire_Particles.Shader.Activate();
+	Billboard_Fire_Particles.Render();
 }
 
 void Setup_Test_Scene()
@@ -72,6 +92,7 @@ void Setup_Test_Scene()
 	Cursor_Reset = true;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);						// Purely additive blending
 
 	Scene_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 	Scene_Object_Shader.Activate();
@@ -101,6 +122,8 @@ void Setup_Test_Scene()
 	Scene_Models.push_back(new Model({ MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+
+	Load_Mesh_Animator_Fbx("Assets/Models/Test_Animation.fbx", nullptr);
 
 	Scene_Models.push_back(new Model( { MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
@@ -175,6 +198,7 @@ void Engine_Loop()
 		Smoke_Particles.Update();
 
 		Billboard_Smoke_Particles.Update();
+		Billboard_Fire_Particles.Update();
 
 		Scene_Object_Shader.Activate();
 
@@ -188,7 +212,6 @@ void Engine_Loop()
 
 		//
 
-		glEnable(GL_BLEND);
 
 		Render_All();
 

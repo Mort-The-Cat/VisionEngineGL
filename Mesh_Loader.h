@@ -38,7 +38,10 @@ aiVertexWeight Get_Optimal_Bone(const aiMesh* Mesh, size_t Vertex_Index)
 			if (Mesh->mBones[W]->mWeights[V].mVertexId == Vertex_Index)
 			{
 				if (Mesh->mBones[W]->mWeights[V].mWeight >= Optimal_Bone.mWeight)
+				{
 					Optimal_Bone = Mesh->mBones[W]->mWeights[V];
+					Optimal_Bone.mVertexId = W;
+				}
 
 				break;
 			}

@@ -58,7 +58,7 @@ public:
 
 	Smoke_Particle_Info()
 	{
-		Particles_Per_Call = 200;
+		Particles_Per_Call = 300;
 	}
 
 	void Spawn_Particle(glm::vec3 Position, glm::vec3 Velocity)
@@ -131,5 +131,7 @@ template<typename Particle, typename Vertex_Buffer>
 Particle_Renderer<Smoke_Particle_Info, Model_Vertex_Buffer> Smoke_Particles;
 
 Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Smoke_Particles;
+
+Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Fire_Particles;
 
 #endif
