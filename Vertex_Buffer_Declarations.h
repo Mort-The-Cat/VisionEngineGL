@@ -96,6 +96,7 @@ public:
 	Billboard_Vertex_Buffer(float X1, float Y1, float X2, float Y2)
 	{
 		Mesh.Vertices.resize(4);
+
 		Mesh.Vertices[0] = { glm::vec2(X1, Y1), glm::vec2(0, 0) };
 		Mesh.Vertices[1] = { glm::vec2(X2, Y1), glm::vec2(1, 0) };
 		Mesh.Vertices[2] = { glm::vec2(X2, Y2), glm::vec2(1, 1) };
