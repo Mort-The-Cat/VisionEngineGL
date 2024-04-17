@@ -36,7 +36,7 @@ void Initialise_Particles()
 	Shader Billboard_Fire_Shader;
 	Billboard_Fire_Shader.Create_Shader("Shader_Code/Billboard_Fire_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Fire.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
+	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Fire_2.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
 }
 
 void Render_All()

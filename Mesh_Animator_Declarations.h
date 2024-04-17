@@ -45,11 +45,11 @@ public:
 
 	std::vector<Bone> Bones;
 
-	float Time;
+	float Time = 0;
 
 	void Update_Skeleton()
 	{
-		Time += Tick;
+		//Time += Tick;
 		
 		Skeleton_Uniforms->Bone_Matrix[0] = glm::mat4(1.0f);
 		Bones[0].Calculate_Transformations(this, 0);
@@ -129,7 +129,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 	std::unordered_map<std::string, size_t> Bone_Indices;
 
-	Recursively_Add_Bones(Scene->mMeshes[0]->mBones[0]->mArmature, Target_Animator, Bone_Indices);
+	Recursively_Add_Bones(Scene->mMeshes[0]->mBones[0]->mArmature->mChildren[0], Target_Animator, Bone_Indices);
 
 	for (size_t W = 0; W < Scene->mNumAnimations; W++)
 	{
