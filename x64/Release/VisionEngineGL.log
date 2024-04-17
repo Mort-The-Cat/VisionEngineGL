@@ -23,21 +23,21 @@ C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(150,36): warning C
 C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(212,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(112,45): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(108,45): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(117,84): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(117,84): warning C4267:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(117,84): warning C4267:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(117,84): warning C4267:             _Ty=unsigned char
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(117,84): warning C4267:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(113,84): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(113,84): warning C4267:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(113,84): warning C4267:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(113,84): warning C4267:             _Ty=unsigned char
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(113,84): warning C4267:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(146,48): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(146,48): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(146,48): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(146,48): warning C4244:             _Ty=tinyobj::real_t
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(146,48): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(142,48): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(142,48): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(142,48): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(142,48): warning C4244:             _Ty=tinyobj::real_t
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(142,48): warning C4244:         ]
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data

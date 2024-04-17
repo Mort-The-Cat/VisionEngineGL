@@ -49,7 +49,10 @@ public:
 
 	void Update_Skeleton()
 	{
-		//Time += Tick;
+		Time += Tick * 5;
+
+		if (Time > 100) // Simple loop lol
+			Time = 0;
 		
 		Skeleton_Uniforms->Bone_Matrix[0] = glm::mat4(1.0f);
 		Bones[0].Calculate_Transformations(this, 0);
@@ -66,20 +69,13 @@ void Bone::Calculate_Transformations(Mesh_Animator* Animator, unsigned char Pare
 		return;
 	}
 
-	while (Time > Durations[Keyframe_Index] && Keyframe_Index < Durations.size())
-	{
-		Time -= Durations[Keyframe_Index];
+	while (Animator->Time >= Durations[Keyframe_Index] && Keyframe_Index < Durations.size())
 		Keyframe_Index++;
-	}
 
-	if (Keyframe_Index == Durations.size())
-	{
-		Time = 1;	// This just caps the time so we don't need to do any different kinda interpolation code
-		Keyframe_Index--;
-	}
+	Time = Durations[Keyframe_Index] - Animator->Time;
 
 	{
-		float Scalar = Time / Durations[Keyframe_Index]; // This normalises the time for this current keyframe between 0-1
+		float Scalar = Time / (Durations[Keyframe_Index] - Durations[Keyframe_Index - 1]); // This normalises the time for this current keyframe between 0-1
 
 		Quaternion::Quaternion Current_Rotation = Quaternion::Sphere_Interpolate(Rotations[Keyframe_Index], Rotations[Keyframe_Index + 1], Scalar);
 
@@ -88,8 +84,8 @@ void Bone::Calculate_Transformations(Mesh_Animator* Animator, unsigned char Pare
 		glm::vec3 Current_Position = Transformation[Keyframe_Index] * (1.0f - Scalar) + Transformation[Keyframe_Index + 1] * Scalar;
 
 		Animator->Skeleton_Uniforms->Bone_Matrix[Index] =
-			glm::translate(Current_Rotation.Get_Rotation_Matrix(), Current_Position) *
-			Animator->Skeleton_Uniforms->Bone_Matrix[Parent_Index];
+			Animator->Skeleton_Uniforms->Bone_Matrix[Parent_Index] * glm::translate(Current_Rotation.Get_Rotation_Matrix(), Current_Position);
+
 
 		// This sets our bone's transformation matrix
 	}
