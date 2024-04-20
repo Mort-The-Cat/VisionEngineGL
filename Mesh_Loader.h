@@ -32,7 +32,7 @@ glm::vec3 Calculate_UV_Tangent(Model_Vertex A, Model_Vertex B, Model_Vertex Orig
 aiVertexWeight Get_Optimal_Bone(const aiMesh* Mesh, size_t Vertex_Index)
 {
 	aiVertexWeight Optimal_Bone;
-	Optimal_Bone.mWeight = -1;
+	Optimal_Bone.mWeight = 0;
 	for(size_t W = 0; W < Mesh->mNumBones; W++)
 		for (size_t V = 0; V < Mesh->mBones[W]->mNumWeights; V++)
 			if (Mesh->mBones[W]->mWeights[V].mVertexId == Vertex_Index)
@@ -45,13 +45,14 @@ aiVertexWeight Get_Optimal_Bone(const aiMesh* Mesh, size_t Vertex_Index)
 
 				break;
 			}
+
 	return Optimal_Bone;
 }
 
 void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 {
 	Assimp::Importer Importer;
-	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals));
+	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_PopulateArmatureData));
 
 	if (Scene == nullptr)
 	{

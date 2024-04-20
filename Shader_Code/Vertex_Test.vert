@@ -13,6 +13,7 @@ uniform mat4 Projection_Matrix;
 uniform vec3 Model_Position;
 
 uniform mat4 Model_Bones[16];
+uniform vec3 Model_Bones_Origin[16];
 
 out DATA
 {
@@ -30,16 +31,21 @@ out DATA
 
 void main()
 {
-	mat4 Calculated_Matrix = Model_Matrix * Model_Bones[In_Bone_Index]; //0 * In_Bone_Index]; // * Model_Matrix;
-	vec3 Calculated_Position = Calculated_Matrix[3].xyz;
+	mat4 Weighted_Matrix = Model_Bones[In_Bone_Index] * In_Bone_Weight + mat4(1.0f) * (1.0f - In_Bone_Weight);
+	mat4 Combined_Matrix = (Weighted_Matrix) + Model_Matrix; //0 * In_Bone_Index]; // * Model_Matrix;
+	vec3 Combined_Position = Combined_Matrix[3].xyz;
 
-	vec4 Transformed_Position = Calculated_Matrix * vec4(In_Position, 1);
+	vec4 Transformed_Position = (Weighted_Matrix) * vec4(In_Position - Model_Bones_Origin[In_Bone_Index], 1);
+	Transformed_Position.xyz += Model_Bones_Origin[In_Bone_Index];
+	Transformed_Position = Model_Matrix * Transformed_Position;
+
+	// vec4 Transformed_Position = Calculated_Matrix * vec4(In_Position, 1);
 	
 	gl_Position = Transformed_Position;	// The projection matrix is applied in the geometry shader, so we just want the transformed position for now.
 	
 	// Position = Transformed_Position.xyz;
 	
-	data_out.Normal = (Calculated_Matrix * vec4(In_Normal, 1)).xyz - Calculated_Position;
+	data_out.Normal = normalize((Combined_Matrix * vec4(In_Normal, 1)).xyz - Combined_Position);
 	data_out.UV = In_UV;
 	data_out.Projection_Matrix = Projection_Matrix;
 	

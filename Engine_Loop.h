@@ -120,7 +120,7 @@ void Setup_Test_Scene()
 	Initialise_Particles();
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
+	Scene_Models.back()->Position = glm::vec3(-6, 0, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 	//Mesh_Animator Test;

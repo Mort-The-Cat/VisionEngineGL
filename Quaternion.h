@@ -59,8 +59,10 @@ namespace Quaternion
 		{
 			// Need to write this function
 
-			glm::quat Quat(W, X, Y, Z);
+			// return glm::mat4(1.0f);
 
+			glm::quat Quat(W, X, Y, Z);
+			
 			return glm::mat4_cast(Quat);
 		}
 
