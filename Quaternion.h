@@ -55,6 +55,15 @@ namespace Quaternion
 			Z = Zp;
 		}
 
+		void Normalise()
+		{
+			float Inverse_Magnitude = 1.0f / sqrtf(W * W + X * X + Y * Y + Z * Z);
+			W *= Inverse_Magnitude;
+			X *= Inverse_Magnitude;
+			Y *= Inverse_Magnitude;
+			Z *= Inverse_Magnitude;
+		}
+
 		glm::mat4 Get_Rotation_Matrix()
 		{
 			// Need to write this function
