@@ -29,7 +29,7 @@ void Initialise_Sound_Engine()
 {
 	Sound_Engine = irrklang::createIrrKlangDevice();
 
-	Sound_Engine->setSoundVolume(0.1);
+	Sound_Engine->setSoundVolume(0.01);
 
 	Sound_Engine->play2D("Assets/Audio/PC.wav", false);
 

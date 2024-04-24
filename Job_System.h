@@ -11,6 +11,13 @@
 class Test_Animation_Controller : public Controller
 {
 	Mesh_Animator Animator;
+	std::string Animation_Name;
+
+public:
+	Test_Animation_Controller(const char* Directory)
+	{
+		Animation_Name = Directory;
+	}
 
 	virtual void Control_Function() override
 	{
@@ -21,7 +28,7 @@ class Test_Animation_Controller : public Controller
 		Object = Objectp;
 		Animator.Skeleton_Uniforms = &Object->Uniforms.Model_Bones;
 
-		Load_Mesh_Animator_Fbx("Assets/Models/Test_Animation.fbx", &Animator);
+		Load_Mesh_Animator_Fbx(Animation_Name.c_str(), &Animator);
 
 		Animator.Time = 0;
 	}

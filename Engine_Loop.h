@@ -111,7 +111,7 @@ void Setup_Test_Scene()
 
 	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Brick");
 
-	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Stone");
+	Push_Merged_Material("Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Test_Normal.png", "Stone");
 
 	Push_Merged_Material("Assets/Textures/Floor_Tile_Spec.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Floor_Tiles_Normal.png", "Floor");
 
@@ -120,10 +120,17 @@ void Setup_Test_Scene()
 	Initialise_Particles();
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(-6, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	Scene_Models.back()->Position = glm::vec3(-12, 0, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Test_Animation.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+
+	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
+	Scene_Models.back()->Position = glm::vec3(-2, -1, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Two_Bone_Test.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Two_Bone_Test.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
+
+	Scene_Lights.push_back(new Lightsource(glm::vec3(-5, -3, 2), glm::vec3(4, 3, 3), glm::normalize(glm::vec3(1, 0.5, 1)), 100, 0.1));
 
 	//Mesh_Animator Test;
 	//Load_Mesh_Animator_Fbx("Assets/Models/Test_Animation.fbx", &Test);

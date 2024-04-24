@@ -23,33 +23,46 @@ C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(150,36): warning C
 C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(212,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(126,45): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(148,67): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(134,84): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(134,84): warning C4267:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(134,84): warning C4267:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(134,84): warning C4267:             _Ty=unsigned char
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(134,84): warning C4267:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(153,64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(181,55): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(181,55): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(181,55): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(181,55): warning C4244:             _Ty=tinyobj::real_t
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(181,55): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(183,55): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(183,55): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(183,55): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(183,55): warning C4244:             _Ty=tinyobj::real_t
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(183,55): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(251,45): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(256,84): warning C4267: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(256,84): warning C4267:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(256,84): warning C4267:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(256,84): warning C4267:             _Ty=unsigned char
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(256,84): warning C4267:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(301,55): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(301,55): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(301,55): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(301,55): warning C4244:             _Ty=tinyobj::real_t
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(301,55): warning C4244:         ]
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(45,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(43,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(99,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(92,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(161,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(154,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
@@ -111,19 +124,22 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(39,82): warning C4305: 'argument'
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(39,75): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(177,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(133,126): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(188,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(186,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(188,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(197,26): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(188,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(197,21): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(191,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(197,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(200,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(116,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
@@ -151,19 +167,4 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(163): warning C4715: 'Get_File_Contents': not all control paths return a value
-glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
-glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
-glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
-glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
-glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
-glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
-glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
   VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

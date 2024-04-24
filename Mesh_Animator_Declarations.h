@@ -52,9 +52,9 @@ class Bone
 public:
 	std::vector <Quaternion::Quaternion> Rotations;
 	std::vector<glm::vec3> Transformation;
-	
+
 	// std::vector<glm::vec3> Scaling; (This'll probably remain unused but I can implement it properly later.)
-	
+
 	std::vector<float> Durations; // Iterate through these when applying animation transformations to find the transformation in question and apply it accordingly
 
 	std::vector<unsigned char> Child_Indices;
@@ -64,7 +64,9 @@ public:
 	glm::mat4 Offset_Matrix;
 
 	void Calculate_Transformations(Mesh_Animator* Animator, unsigned char Parent_Index);
-}; 
+
+	void Calculate_Transformation(Mesh_Animator* Animator);
+};
 
 #define ANIMF_TO_BE_DELETED 0u
 #define ANIMF_LOOP 1u
@@ -76,19 +78,138 @@ public:
 
 	std::vector<Bone> Bones;
 
+	float Duration = 0;
+
 	float Time = 0;
 
 	void Update_Skeleton()
 	{
 		Time += Tick;
 
-		if (Time > 6) // Simple loop lol
+		if (Time > Duration)
 			Time = 0;
-		
-		//Skeleton_Uniforms->Bone_Matrix[0] = glm::mat4(1.0f);// glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.f)), 0.0f, glm::vec3(0, 1, 0)); //glm::lookAt(glm::vec3(0, -1, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-		Bones[0].Calculate_Transformations(this, 0);
+
+		for (size_t W = 0; W < Bones.size(); W++)
+			Bones[W].Calculate_Transformation(this);
 	}
 };
+
+void Bone::Calculate_Transformation(Mesh_Animator* Animator)
+{
+	uint16_t Keyframe_Index = 0;
+	float Time = 0;
+
+	while (Animator->Time >= Durations[Keyframe_Index] && Keyframe_Index < Durations.size() - 1)
+		Keyframe_Index++;
+
+	Time = Animator->Time - Durations[Keyframe_Index];
+
+	{
+		float Scalar = Time / (Durations[Keyframe_Index] - Durations[Keyframe_Index - 1]); // This normalises the time for this current keyframe between 0-1
+
+		Quaternion::Quaternion Current_Rotation = Quaternion::Sphere_Interpolate(Rotations[Keyframe_Index - 1], Rotations[Keyframe_Index], Scalar);
+
+		Current_Rotation.Normalise();
+
+		// This interpolates the rotation
+
+		glm::vec3 Current_Position = Transformation[Keyframe_Index] * (Scalar)+Transformation[Keyframe_Index - 1] * (1.0f - Scalar);
+
+		Animator->Skeleton_Uniforms->Bone_Matrix[Index] = (glm::rotate(Current_Rotation.Get_Rotation_Matrix(), 0.0f * 3.14159f, glm::vec3(0, 1, 0)) * Offset_Matrix);
+		Animator->Skeleton_Uniforms->Bone_Matrix[Index][3] = glm::vec4(Current_Position, 1.0f);
+
+		// This sets our bone's transformation matrix
+	}
+}
+
+aiBone* Get_Bone(aiBone** Bones, size_t Length, std::string Name)
+{
+	for (size_t W = 0; W < Length; W++)
+		if (std::string(Bones[W]->mName.C_Str()) == Name)
+			return Bones[W];
+	return nullptr;
+}
+
+void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animator)
+{
+	Assimp::Importer Importer;
+	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_PopulateArmatureData));
+
+	if (Scene == nullptr)
+		Throw_Error(" >> Failed to load FBX file!\n");
+
+	std::unordered_map<std::string, size_t> Bone_Indices;
+
+	for (size_t W = 0; W < Scene->mMeshes[0]->mNumBones; W++)
+	{
+		Bone_Indices[Scene->mMeshes[0]->mBones[W]->mName.C_Str()] = W;
+
+		Target_Animator->Bones.push_back(Bone());
+		Target_Animator->Bones[W].Index = Target_Animator->Bones.size() - 1;
+	}
+
+	for (size_t W = 0; W < 1; W++)
+	{
+		Target_Animator->Duration = Scene->mAnimations[W]->mDuration / Scene->mAnimations[W]->mTicksPerSecond;
+
+		for (size_t V = 1; V < Scene->mAnimations[W]->mNumChannels; V++)
+		{
+			aiNodeAnim* Node = Scene->mAnimations[W]->mChannels[V];
+
+			Bone* Bone = &Target_Animator->Bones[Bone_Indices[Node->mNodeName.C_Str()]];
+
+			aiBone* Bone_Assimp = Get_Bone(Scene->mMeshes[0]->mBones, Scene->mMeshes[0]->mNumBones, Node->mNodeName.C_Str());
+
+			Bone->Durations.resize(Node->mNumRotationKeys);
+			Bone->Rotations.resize(Node->mNumRotationKeys);
+			Bone->Transformation.resize(Node->mNumRotationKeys);
+
+			Bone->Offset_Matrix = glm::inverse(Assimp_Matrix_To_Mat4(Bone_Assimp->mOffsetMatrix));
+
+			aiVector3D Translation;
+			aiQuaternion Rotation;
+			Bone_Assimp->mOffsetMatrix.DecomposeNoScaling(Rotation, Translation);
+
+			Bone->Offset_Matrix[3] = glm::vec4(0, 0, 0, 1);
+
+			Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] = glm::vec4(Translation.x, Translation.y, Translation.z, 0);
+
+
+
+			Bone->Offset_Matrix = Bone->Offset_Matrix * Quaternion::Quaternion(Node->mRotationKeys[0].mValue.w, Node->mRotationKeys[0].mValue.x, Node->mRotationKeys[0].mValue.y, Node->mRotationKeys[0].mValue.z).Get_Rotation_Matrix();
+
+
+			Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] += glm::vec3(glm::vec4(Node->mPositionKeys[0].mValue.x, Node->mPositionKeys[0].mValue.y, Node->mPositionKeys[0].mValue.z, 1.0f) * Bone->Offset_Matrix);
+
+
+			for (size_t U = 0; U < Scene->mAnimations[W]->mChannels[V]->mNumRotationKeys; U++)
+			{
+				Bone->Durations[U] = Node->mPositionKeys[U].mTime / Scene->mAnimations[0]->mTicksPerSecond;;
+
+				Bone->Transformation[U] = glm::vec4(Node->mPositionKeys[U].mValue.x, Node->mPositionKeys[U].mValue.y, Node->mPositionKeys[U].mValue.z, 1.0f) * Bone->Offset_Matrix;
+
+				Bone->Rotations[U] = Quaternion::Quaternion(Node->mRotationKeys[U].mValue.w, Node->mRotationKeys[U].mValue.x, Node->mRotationKeys[U].mValue.z, Node->mRotationKeys[U].mValue.y);
+			}
+		}
+	}
+
+	Importer.FreeScene();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Old code
 
 void Bone::Calculate_Transformations(Mesh_Animator* Animator, unsigned char Parent_Index)
 {
@@ -112,17 +233,9 @@ void Bone::Calculate_Transformations(Mesh_Animator* Animator, unsigned char Pare
 
 		Current_Rotation.Normalise();
 
-		// Current_Rotation = Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
-
 		// This interpolates the rotation
 
-		glm::vec3 Current_Position = Transformation[Keyframe_Index - 1] * (Scalar) + Transformation[Keyframe_Index] * (1.0f - Scalar);
-
-		// Current_Position = glm::vec3(0.0f);
-
-		// Current_Position -= Animator->Skeleton_Uniforms->Bone_Origins[Index];
-
-		// Animator->Skeleton_Uniforms->Bone_Matrix[Index] = (glm::translate(glm::rotate(Current_Rotation.Get_Rotation_Matrix(), 3.14159f, glm::vec3(0, 1, 0)) * Offset_Matrix, Current_Position));
+		glm::vec3 Current_Position = Transformation[Keyframe_Index - 1] * (Scalar)+Transformation[Keyframe_Index] * (1.0f - Scalar);
 
 		Animator->Skeleton_Uniforms->Bone_Matrix[Index] = (glm::rotate(Current_Rotation.Get_Rotation_Matrix(), 3.14159f, glm::vec3(0, 1, 0)) * Offset_Matrix);
 		Animator->Skeleton_Uniforms->Bone_Matrix[Index][3] = glm::vec4(Current_Position, 1.0f);
@@ -132,18 +245,15 @@ void Bone::Calculate_Transformations(Mesh_Animator* Animator, unsigned char Pare
 	// This recursively handles all of the bone transformations in a way that's still nice on the heap's memory
 }
 
+
 void Recursively_Add_Bones(aiNode* Node, Mesh_Animator* Target_Animator, std::unordered_map<std::string, size_t>& Bone_Indices, size_t Parent_Index)
 {
 	size_t Bone_Index = Target_Animator->Bones.size();
-	
+
 	Bone_Indices[Node->mName.C_Str()] = Bone_Index;
 	Target_Animator->Bones.push_back(Bone());
 	Target_Animator->Bones[Bone_Index].Index = Bone_Index;
 	Target_Animator->Bones[Bone_Index].Child_Indices.resize(Node->mNumChildren);
-
-	// Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone_Index] = Assimp_Matrix_To_Mat4(Node->mTransformation) * glm::vec4(0.0f);
-
-	//Target_Animator->Bones[Bone_Index].Offset_Matrix = Node->
 
 	for (size_t W = 0; W < Node->mNumChildren; W++)
 	{
@@ -152,15 +262,7 @@ void Recursively_Add_Bones(aiNode* Node, Mesh_Animator* Target_Animator, std::un
 	}
 }
 
-aiBone* Get_Bone(aiBone** Bones, size_t Length, std::string Name)
-{
-	for (size_t W = 0; W < Length; W++)
-		if (std::string(Bones[W]->mName.C_Str()) == Name)
-			return Bones[W];
-	return nullptr;
-}
-
-void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animator)
+void Load_Mesh_Animator_Fbx_Old(const char* File_Name, Mesh_Animator* Target_Animator)
 {
 	Assimp::Importer Importer;
 	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_PopulateArmatureData));
@@ -188,19 +290,13 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			Bone->Transformation.resize(Node->mNumRotationKeys);
 			Bone->Rotations.resize(Node->mNumRotationKeys);
 
-			Bone->Offset_Matrix = Assimp_Matrix_To_Mat4(Bone_Assimp->mOffsetMatrix); 
+			Bone->Offset_Matrix = Assimp_Matrix_To_Mat4(Bone_Assimp->mOffsetMatrix);
 
 			aiVector3D Translation;
 			aiQuaternion Rotation;
 			Bone_Assimp->mOffsetMatrix.DecomposeNoScaling(Rotation, Translation);
 
 			Bone->Offset_Matrix[3] = glm::vec4(0, 0, 0, 1);
-
-			// Bone->Offset_Matrix = glm::translate(Bone->Offset_Matrix, glm::vec3(0.0f));
-
-			// Bone->Offset_Matrix = glm::translate(Bone->Offset_Matrix, -glm::vec3(Translation.x, Translation.y, Translation.z));
-
-			//Bone->Offset_Matrix = glm::translate(Bone->Offset_Matrix, glm::vec3(Translation.x, Translation.y, Translation.z));
 
 			Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] = glm::vec4(Translation.x, Translation.y, Translation.z, 0.0f); // *Bone->Offset_Matrix;
 
