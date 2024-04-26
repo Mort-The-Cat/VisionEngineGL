@@ -130,7 +130,7 @@ void Setup_Test_Scene()
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
 
-	Scene_Lights.push_back(new Lightsource(glm::vec3(-5, -3, 2), glm::vec3(4, 3, 3), glm::normalize(glm::vec3(1, 0.5, 1)), 100, 0.1));
+	Scene_Lights.push_back(new Lightsource(glm::vec3(-5, -3, 2), glm::vec3(4, 3, 3), glm::normalize(glm::vec3(0.75, 0.5, 1)), 100, 0.1));
 
 	//Mesh_Animator Test;
 	//Load_Mesh_Animator_Fbx("Assets/Models/Test_Animation.fbx", &Test);
