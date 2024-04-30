@@ -44,7 +44,7 @@ void main()
 
 	vec4 Transformed_Position = (Weighted_Matrix) * vec4(In_Position - (Model_Bones_Origin[In_Bone_Index]), 1);
 
-	Transformed_Position.xyz += Model_Bones_Origin[In_Bone_Index] + Translation; // + Translation;
+	Transformed_Position.xyz += Translation + Model_Bones_Origin[In_Bone_Index];
 	Transformed_Position = Model_Matrix * Transformed_Position;
 	
 	gl_Position = Transformed_Position;	// The projection matrix is applied in the geometry shader, so we just want the transformed position for now.

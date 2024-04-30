@@ -190,9 +190,9 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 		Matrix_Translation = Matrix_Rotation.Rotate(Matrix_Translation);
 
-		Matrix_Translation.x /= Scaling.x;
-		Matrix_Translation.y /= Scaling.y;
-		Matrix_Translation.z /= Scaling.z;
+		// Matrix_Translation.x /= Scaling.x;
+		// Matrix_Translation.y /= Scaling.y;
+		// Matrix_Translation.z /= Scaling.z;
 
 		// Transform_Translation = Transform_Rotation.Rotate(Transform_Translation);
 
@@ -207,11 +207,20 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 		Bone->Offset_Matrix = glm::scale(Bone->Offset_Matrix, Scaling); // We reverse all of the scaling because we don't want the scaling to affect the model at all
 
-		Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] = glm::vec3(0, 0, 0); // I also won't worry about these rn
+		Translation *= Scaling;
+
+		//Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] = glm::vec3(0, 0, 0); // I also won't worry about these rn
+
+		Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] = glm::vec4(Node->mPositionKeys[0].mValue.x, Node->mPositionKeys[0].mValue.y, -Node->mPositionKeys[0].mValue.z, 1.0f) * Bone->Offset_Matrix;
+
+		Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] *= Scaling;
+
+		Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] += glm::vec3(Matrix_Translation.x, Matrix_Translation.y, Matrix_Translation.z);
+
+		Target_Animator->Skeleton_Uniforms->Bone_Origins[Bone->Index] += Translation;
 
 		// Matrix_Translation = Matrix_Rotation.Rotate()
 
-		Translation *= Scaling;
 
 		for (size_t V = 0; V < Node->mNumRotationKeys; V++)
 		{
@@ -219,15 +228,18 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			
 			Bone->Transformation[V] *= Scaling; // We don't really want the scaling to affect anything
 
-			Bone->Transformation[V] += glm::vec3(Matrix_Translation.x, Matrix_Translation.y, Matrix_Translation.z);
+			//Bone->Transformation[V] += glm::vec3(Matrix_Translation.x, Matrix_Translation.y, Matrix_Translation.z);
 
-			Bone->Transformation[V] += glm::vec3(glm::vec4(Translation, 1.0f)); // *Bone->Offset_Matrix); //Scaling * Translation;
-
+			//Bone->Transformation[V] += glm::vec3(glm::vec4(Translation, 1.0f)); // *Bone->Offset_Matrix); //Scaling * Translation;
 
 			Bone->Rotations[V] = Quaternion::Quaternion(1, 0, 0, 0); // I won't worry about this rn
 
+			Bone->Rotations[V] = Quaternion::Quaternion(-Node->mRotationKeys[V].mValue.w, Node->mRotationKeys[V].mValue.x, Node->mRotationKeys[V].mValue.y, Node->mRotationKeys[V].mValue.z);
+
 			Bone->Durations[V] = Node->mRotationKeys[V].mTime / Scene->mAnimations[0]->mTicksPerSecond;
 		}
+
+		Bone->Offset_Matrix[3] = glm::vec4(0, 0, 0, 1);
 	}
 
 	Importer.FreeScene();

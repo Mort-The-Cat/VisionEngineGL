@@ -29,24 +29,24 @@ C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(149,67): warning C
 C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(154,63): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(229,54): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(229,54): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(229,54): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(229,54): warning C4244:             _Ty=tinyobj::real_t
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(229,54): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(239,54): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(239,54): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(239,54): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(239,54): warning C4244:             _Ty=tinyobj::real_t
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(239,54): warning C4244:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(261,67): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(273,67): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(266,64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(278,64): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(313,55): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(313,55): warning C4244:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(313,55): warning C4244:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(313,55): warning C4244:             _Ty=tinyobj::real_t
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(313,55): warning C4244:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(325,55): warning C4244: '=': conversion from 'double' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(325,55): warning C4244:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(325,55): warning C4244:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(325,55): warning C4244:             _Ty=tinyobj::real_t
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(325,55): warning C4244:         ]
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
@@ -166,7 +166,7 @@ LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; u
   Generating code
   2 of 3576 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    31 functions had inline decision re-evaluated but remain unchanged
+    36 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
