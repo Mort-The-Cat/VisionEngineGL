@@ -34,7 +34,6 @@ struct Model_Uniform_Location_Object
 	int Model_Position;
 
 	int Model_Bones;
-	int Model_Bones_Origin;
 } Model_Uniform_Location;
 
 Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader Shader)
@@ -45,7 +44,6 @@ Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader S
 	Location.Model_Position = glGetUniformLocation(Shader.Program_ID, "Model_Position");
 
 	Location.Model_Bones = glGetUniformLocation(Shader.Program_ID, "Model_Bones");
-	Location.Model_Bones_Origin = glGetUniformLocation(Shader.Program_ID, "Model_Bones_Origin");
 	return Location;
 }
 
@@ -59,7 +57,6 @@ public:
 	{
 		for (size_t W = 0; W < NUMBER_OF_ANIMATOR_BONES; W++)
 		{
-			Model_Bones.Bone_Origins[W] = glm::vec3(0.0f);
 			Model_Bones.Bone_Matrix[W] = glm::mat4(1.0f);// glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.1f * W, 0)), DTR * W * 5, glm::vec3(0, 1, 0));		// This just sets all of the matrices to a nice default value
 		}
 		//Model_Bones.Bone_Matrix[2] = glm::rotate(glm::mat4(1.0f), DTR * 90.0f, glm::vec3(1, 0, 0));
@@ -72,9 +69,6 @@ public:
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Matrix, 1, GL_FALSE, glm::value_ptr(Model_Matrix));
 
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Bones, NUMBER_OF_ANIMATOR_BONES, GL_FALSE, glm::value_ptr(Model_Bones.Bone_Matrix[0]));
-
-		glUniform3fv(Model_Uniform_Location.Model_Bones_Origin, NUMBER_OF_ANIMATOR_BONES, glm::value_ptr(Model_Bones.Bone_Origins[0]));
-
 		//glUniformMatrix4fv(Model_Uniform_Location.Projection_Matrix, 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
 	}
 };
