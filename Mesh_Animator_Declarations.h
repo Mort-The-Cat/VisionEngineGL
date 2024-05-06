@@ -13,17 +13,17 @@
 
 glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 {
-	//return glm::mat4(
-	//	Matrix.a1, Matrix.b1, Matrix.c1, Matrix.d1,
-	//	Matrix.a2, Matrix.b2, Matrix.c2, Matrix.d2,
-	//	Matrix.a3, Matrix.b3, Matrix.c3, Matrix.d3,
-	//	Matrix.a4, Matrix.b4, Matrix.c4, Matrix.d4);
-
 	return glm::mat4(
+		Matrix.a1, Matrix.b1, Matrix.c1, Matrix.d1,
+		Matrix.a2, Matrix.b2, Matrix.c2, Matrix.d2,
+		Matrix.a3, Matrix.b3, Matrix.c3, Matrix.d3,
+		Matrix.a4, Matrix.b4, Matrix.c4, Matrix.d4);
+
+	/*return glm::mat4(
 		Matrix.a1, Matrix.c1, Matrix.b1, Matrix.d1,
 		Matrix.a3, Matrix.c3, Matrix.b3, Matrix.d3,
 		Matrix.a2, Matrix.c2, Matrix.b2, Matrix.d2,
-		Matrix.a4, Matrix.c4, Matrix.b4, Matrix.d4);
+		Matrix.a4, Matrix.c4, Matrix.b4, Matrix.d4);*/
 
 	//return glm::mat4(
 	//	Matrix.d4, Matrix.c4, Matrix.b4, Matrix.a4,
@@ -31,12 +31,12 @@ glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 	//	Matrix.d2, Matrix.c2, Matrix.b2, Matrix.a2,
 	//	Matrix.d1, Matrix.c1, Matrix.b1, Matrix.a1);
 
-	/*return glm::mat4(
+	return glm::mat4(
 		Matrix.a1, Matrix.a2, Matrix.a3, Matrix.a4,
 		Matrix.b1, Matrix.b2, Matrix.b3, Matrix.b4,
 		Matrix.c1, Matrix.c2, Matrix.c3, Matrix.c4,
 		Matrix.d1, Matrix.d2, Matrix.d3, Matrix.d4
-	);*/
+	);
 }
 
 struct Bones_Uniform_Buffer
@@ -115,6 +115,7 @@ public:
 		Factor /= Time_Length;
 
 		Quaternion::Quaternion Rotation = Quaternion::Sphere_Interpolate(Rotations[Keyframe_Index - 1].Rotation, Rotations[Keyframe_Index].Rotation, Factor);
+		Rotation.Normalise();
 
 		//
 
@@ -198,9 +199,11 @@ public:
 
 	std::map<std::string, Bone_Info> Bone_Info_Map;
 
+	glm::mat4 Global_Inverse_Matrix;
+
 	float Duration = 0;
 
-	float Time = 0;
+	float Time = 5;
 
 	Bone* Find_Bone(const std::string& Name)
 	{
@@ -223,12 +226,12 @@ public:
 			Node_Matrix = Bone->Local_Matrix;
 		}
 		else
-			Node_Matrix = glm::mat4(1.0f);
+			Node_Matrix = Node->Transformation;
 
 		glm::mat4 Global_Matrix = Parent_Matrix * Node_Matrix;
 
 		if (Bone_Info_Map.find(Node->Name) != Bone_Info_Map.end())
-			Skeleton_Uniforms->Bone_Matrix[Bone_Info_Map[Node->Name].Index] = Global_Matrix * Bone_Info_Map[Node->Name].Offset;
+			Skeleton_Uniforms->Bone_Matrix[Bone_Info_Map[Node->Name].Index] = Global_Inverse_Matrix * Global_Matrix * Bone_Info_Map[Node->Name].Offset;
 
 		for (size_t W = 0; W < Node->Children.size(); W++)
 			Calculate_Bone_Matrix(&Node->Children[W], Global_Matrix);
@@ -241,7 +244,7 @@ public:
 		if (Time > Duration)
 			Time = 0;
 
-		Calculate_Bone_Matrix(&Root_Node, glm::mat4(1.0f));
+		Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
 	}
 };
 
@@ -252,7 +255,7 @@ public:
 void Animator_Read_Hierarchy_Data(Node_Data* Target_Node_Data, const aiNode* Source_Node)
 {
 	Target_Node_Data->Name = Source_Node->mName.C_Str();
-	Target_Node_Data->Transformation = Assimp_Matrix_To_Mat4(Source_Node->mTransformation);
+	Target_Node_Data->Transformation = (Assimp_Matrix_To_Mat4(Source_Node->mTransformation));
 	Target_Node_Data->Children.resize(Source_Node->mNumChildren);
 
 	for (size_t W = 0; W < Source_Node->mNumChildren; W++)
@@ -276,6 +279,8 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 		Target_Animator->Duration = Animation->mDuration / Animation->mTicksPerSecond;
 		Animator_Read_Hierarchy_Data(&Target_Animator->Root_Node, Scene->mRootNode);
 
+		Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
+
 		size_t Bone_Count = 0;
 
 		for (size_t W = 0; W < Scene->mMeshes[0]->mNumBones; W++)
@@ -284,6 +289,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			std::string Name = Channel->mNodeName.C_Str();
 
 			Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
+			Target_Animator->Bone_Info_Map[Name].Name = Name;
 			Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Scene->mMeshes[0]->mBones[W]->mOffsetMatrix);
 			Bone_Count++;
 		}
@@ -293,9 +299,11 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			auto Channel = Animation->mChannels[W];
 			std::string Name = Channel->mNodeName.C_Str();
 
-			if (Target_Animator->Bone_Info_Map.find(Name) != Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
+			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
 			{
 				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
+				Target_Animator->Bone_Info_Map[Name].Name = Name;
+				Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
 				Bone_Count++;
 			}
 
