@@ -115,6 +115,8 @@ void Setup_Test_Scene()
 
 	Push_Merged_Material("Assets/Textures/Floor_Tile_Spec.png", "Assets/Textures/Brick_Reflectivity.png", "Assets/Textures/Floor_Tiles_Normal.png", "Floor");
 
+	Push_Merged_Material("Assets/Textures/Brick_Specular.png", "Assets/Textures/Flat_Reflectivity.png", "Assets/Textures/Brick_Normal_Test.png", "Floor_Reflect");
+
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 
 	Initialise_Particles();
@@ -126,7 +128,6 @@ void Setup_Test_Scene()
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(-2, -1, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Two_Bone_Test.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Two_Bone_Test.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
-
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
 
@@ -142,6 +143,10 @@ void Setup_Test_Scene()
 	Scene_Models.push_back(new Model({ MF_SOLID }));
 	Scene_Models.back()->Position = glm::vec3(5, -5, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
+
+	Scene_Models.push_back(new Model({ MF_SOLID }));
+	Scene_Models.back()->Position = glm::vec3(18, -5, -3);
+	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor_Reflect").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
 
 	if(false)
 	{

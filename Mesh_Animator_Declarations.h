@@ -95,7 +95,7 @@ public:
 	void Update(float Time)
 	{
 		size_t Keyframe_Index = 0;
-		while (Translations[Keyframe_Index].Time < Time)
+		while (Translations[Keyframe_Index].Time <= Time && Translations.size() > Keyframe_Index + 1)
 			Keyframe_Index++;
 
 		float Time_Length = Translations[Keyframe_Index].Time - Translations[Keyframe_Index - 1].Time;
@@ -107,7 +107,7 @@ public:
 		//
 
 		Keyframe_Index = 0;
-		while (Rotations[Keyframe_Index].Time < Time)
+		while (Rotations[Keyframe_Index].Time <= Time && Rotations.size() > Keyframe_Index + 1)
 			Keyframe_Index++;
 
 		Time_Length = Rotations[Keyframe_Index].Time - Rotations[Keyframe_Index - 1].Time;
@@ -120,7 +120,7 @@ public:
 		//
 
 		Keyframe_Index = 0;
-		while (Scalings[Keyframe_Index].Time < Time)
+		while (Scalings[Keyframe_Index].Time <= Time && Scalings.size() > Keyframe_Index + 1)
 			Keyframe_Index++;
 
 		Time_Length = Scalings[Keyframe_Index].Time - Scalings[Keyframe_Index - 1].Time;
@@ -139,7 +139,7 @@ public:
 		Local_Matrix = glm::mat4(1.0f);
 	}
 
-	Bone(const std::string& Namep, unsigned char Indexp, const aiNodeAnim* Channel)
+	Bone(const std::string& Namep, unsigned char Indexp, const aiNodeAnim* Channel, float Ticks_Per_Second)
 	{
 		Translations.resize(Channel->mNumPositionKeys);
 		for (size_t W = 0; W < Translations.size(); W++)
@@ -147,7 +147,7 @@ public:
 			Translations[W].Translation.x = Channel->mPositionKeys[W].mValue.x;
 			Translations[W].Translation.y = Channel->mPositionKeys[W].mValue.y;
 			Translations[W].Translation.z = Channel->mPositionKeys[W].mValue.z;
-			Translations[W].Time = Channel->mPositionKeys[W].mTime;
+			Translations[W].Time = Channel->mPositionKeys[W].mTime / Ticks_Per_Second;
 		}
 
 		Rotations.resize(Channel->mNumRotationKeys);
@@ -158,7 +158,7 @@ public:
 			Rotations[W].Rotation.Y = Channel->mRotationKeys[W].mValue.y;
 			Rotations[W].Rotation.Z = Channel->mRotationKeys[W].mValue.z;
 
-			Rotations[W].Time = Channel->mRotationKeys[W].mTime;
+			Rotations[W].Time = Channel->mRotationKeys[W].mTime / Ticks_Per_Second;
 		}
 
 		Scalings.resize(Channel->mNumScalingKeys);
@@ -168,7 +168,7 @@ public:
 			Scalings[W].Scale.y = Channel->mScalingKeys[W].mValue.y;
 			Scalings[W].Scale.z = Channel->mScalingKeys[W].mValue.z;
 
-			Scalings[W].Time = Channel->mScalingKeys[W].mTime;
+			Scalings[W].Time = Channel->mScalingKeys[W].mTime / Ticks_Per_Second;
 		}
 
 		Index = Indexp;
@@ -241,7 +241,7 @@ public:
 	{
 		Time += Tick;
 
-		if (Time > Duration)
+		if (Time >= Duration)
 			Time = 0;
 
 		Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
@@ -288,10 +288,10 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			auto Channel = Animation->mChannels[W];
 			std::string Name = Channel->mNodeName.C_Str();
 
-			Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
+			Target_Animator->Bone_Info_Map[Name].Index = 15;// Bone_Count;
 			Target_Animator->Bone_Info_Map[Name].Name = Name;
 			Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Scene->mMeshes[0]->mBones[W]->mOffsetMatrix);
-			Bone_Count++;
+			//Bone_Count++;
 		}
 
 		for (size_t W = 0; W < Animation->mNumChannels; W++)
@@ -307,7 +307,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 				Bone_Count++;
 			}
 
-			Target_Animator->Bones.push_back(Bone(Name, Bone_Count, Channel)); // Only the bones in the animation channels have any animations
+			Target_Animator->Bones.push_back(Bone(Name, Bone_Count, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
 		}
 	}
 
