@@ -277,7 +277,6 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 	{
 		auto Animation = Scene->mAnimations[0];
 		Target_Animator->Duration = Animation->mDuration / Animation->mTicksPerSecond;
-		Animator_Read_Hierarchy_Data(&Target_Animator->Root_Node, Scene->mRootNode);
 
 		Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
 
@@ -285,13 +284,15 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 		for (size_t W = 0; W < Scene->mMeshes[0]->mNumBones; W++)
 		{
-			auto Channel = Animation->mChannels[W];
-			std::string Name = Channel->mNodeName.C_Str();
+			std::string Name = Scene->mMeshes[0]->mBones[W]->mName.C_Str();
 
-			Target_Animator->Bone_Info_Map[Name].Index = 15;// Bone_Count;
-			Target_Animator->Bone_Info_Map[Name].Name = Name;
-			Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Scene->mMeshes[0]->mBones[W]->mOffsetMatrix);
-			//Bone_Count++;
+			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end())
+			{
+				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
+				Target_Animator->Bone_Info_Map[Name].Name = Name;
+				Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Scene->mMeshes[0]->mBones[W]->mOffsetMatrix);
+			}
+			Bone_Count++;
 		}
 
 		for (size_t W = 0; W < Animation->mNumChannels; W++)
@@ -301,14 +302,19 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
 			{
+				if (Target_Animator->Bone_Info_Map[Name].Name.empty())
+					Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
+
 				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
 				Target_Animator->Bone_Info_Map[Name].Name = Name;
-				Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
+				//Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
 				Bone_Count++;
 			}
 
 			Target_Animator->Bones.push_back(Bone(Name, Bone_Count, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
 		}
+
+		Animator_Read_Hierarchy_Data(&Target_Animator->Root_Node, Scene->mRootNode);
 	}
 
 	//
