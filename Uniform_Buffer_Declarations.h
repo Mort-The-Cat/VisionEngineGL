@@ -34,6 +34,7 @@ struct Model_Uniform_Location_Object
 	int Model_Position;
 
 	int Model_Bones;
+	int Model_Bone_Offsets;
 } Model_Uniform_Location;
 
 Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader Shader)
@@ -44,6 +45,7 @@ Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader S
 	Location.Model_Position = glGetUniformLocation(Shader.Program_ID, "Model_Position");
 
 	Location.Model_Bones = glGetUniformLocation(Shader.Program_ID, "Model_Bones");
+	Location.Model_Bone_Offsets = glGetUniformLocation(Shader.Program_ID, "Bone_Offsets");
 	return Location;
 }
 
@@ -69,6 +71,7 @@ public:
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Matrix, 1, GL_FALSE, glm::value_ptr(Model_Matrix));
 
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Bones, NUMBER_OF_ANIMATOR_BONES, GL_FALSE, glm::value_ptr(Model_Bones.Bone_Matrix[0]));
+		glUniform3fv(Model_Uniform_Location.Model_Bone_Offsets, NUMBER_OF_ANIMATOR_BONES, glm::value_ptr(Model_Bones.Bone_Offsets[0]));
 		//glUniformMatrix4fv(Model_Uniform_Location.Projection_Matrix, 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
 	}
 };

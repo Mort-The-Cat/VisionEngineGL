@@ -42,6 +42,7 @@ glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 struct Bones_Uniform_Buffer
 {
 	glm::mat4 Bone_Matrix[NUMBER_OF_ANIMATOR_BONES]; // 256 'words' for the GPU
+	glm::vec3 Bone_Offsets[NUMBER_OF_ANIMATOR_BONES]; // 48 'words' for the GPU
 };
 
 struct Keyframe_Translation
@@ -214,7 +215,7 @@ public:
 		return nullptr;
 	}
 
-	void Calculate_Bone_Matrix(const Node_Data* Node, glm::mat4 Parent_Matrix)
+	void Calculate_Bone_Matrix_Old(const Node_Data* Node, glm::mat4 Parent_Matrix)
 	{
 		Bone* Bone = Find_Bone(Node->Name);
 
@@ -234,17 +235,27 @@ public:
 			Skeleton_Uniforms->Bone_Matrix[Bone_Info_Map[Node->Name].Index] = Global_Inverse_Matrix * Global_Matrix * Bone_Info_Map[Node->Name].Offset;
 
 		for (size_t W = 0; W < Node->Children.size(); W++)
-			Calculate_Bone_Matrix(&Node->Children[W], Global_Matrix);
+			Calculate_Bone_Matrix_Old(&Node->Children[W], Global_Matrix);
+	}
+
+	void Calculate_Bone_Matrix(Bone* Bone)
+	{
+		Bone->Update(Time);
+
+		Skeleton_Uniforms->Bone_Matrix[Bone->Index] = Bone->Local_Matrix * Bone_Info_Map[Bone->Name].Offset;
 	}
 
 	void Update_Skeleton()
 	{
-		Time += Tick;
+		Time += Tick * 0.5f;
 
 		if (Time >= Duration)
 			Time = 0;
 
-		Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
+		for (size_t W = 0; W < Bones.size(); W++)
+			Calculate_Bone_Matrix(&Bones[W]);
+
+		// Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
 	}
 };
 
@@ -252,16 +263,25 @@ public:
 
 // https://learnopengl.com/code_viewer_gh.php?code=src/8.guest/2020/skeletal_animation/skeletal_animation.cpp
 
-void Animator_Read_Hierarchy_Data(Node_Data* Target_Node_Data, const aiNode* Source_Node)
+void Animator_Read_Hierarchy_Data(Mesh_Animator* Target_Animator, Node_Data* Target_Node_Data, const aiNode* Source_Node)
 {
 	Target_Node_Data->Name = Source_Node->mName.C_Str();
 	Target_Node_Data->Transformation = (Assimp_Matrix_To_Mat4(Source_Node->mTransformation));
 	Target_Node_Data->Children.resize(Source_Node->mNumChildren);
 
+	if (Target_Animator->Bone_Info_Map.find(Source_Node->mName.C_Str()) != Target_Animator->Bone_Info_Map.end())
+	{
+		size_t Index = Target_Animator->Bone_Info_Map[Source_Node->mName.C_Str()].Index;
+
+		glm::vec3 Vector = glm::vec3(glm::vec4(0.f, 0.f, 0.f, 1.0f) * glm::scale(Target_Node_Data->Transformation, glm::vec3(1.f)));
+
+		Target_Animator->Skeleton_Uniforms->Bone_Offsets[Index] += glm::vec3(Vector.x, -Vector.z, Vector.y);
+	}
+
 	for (size_t W = 0; W < Source_Node->mNumChildren; W++)
 	{
 		Node_Data Data;
-		Animator_Read_Hierarchy_Data(&Data, Source_Node->mChildren[W]);
+		Animator_Read_Hierarchy_Data(Target_Animator, &Data, Source_Node->mChildren[W]);
 		Target_Node_Data->Children[W] = Data;
 	}
 }
@@ -278,7 +298,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 		auto Animation = Scene->mAnimations[0];
 		Target_Animator->Duration = Animation->mDuration / Animation->mTicksPerSecond;
 
-		Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
+		// Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
 
 		size_t Bone_Count = 0;
 
@@ -288,9 +308,19 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 
 			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end())
 			{
+				aiMatrix4x4 Matrix = Scene->mMeshes[0]->mBones[W]->mOffsetMatrix.Inverse();
+
+				aiQuaternion Quat;
+				aiVector3D Offset_AI_Vector;
+
+				Scene->mMeshes[0]->mBones[W]->mOffsetMatrix.DecomposeNoScaling(Quat, Offset_AI_Vector);
+
+				Target_Animator->Skeleton_Uniforms->Bone_Offsets[Bone_Count] = glm::vec3(Offset_AI_Vector.x, -Offset_AI_Vector.z, Offset_AI_Vector.y);
+
 				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
 				Target_Animator->Bone_Info_Map[Name].Name = Name;
-				Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Scene->mMeshes[0]->mBones[W]->mOffsetMatrix);
+				Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Matrix);
+				Target_Animator->Bone_Info_Map[Name].Offset[3] = glm::vec4(0.f, 0.f, 0.f, 1.0f);
 			}
 			Bone_Count++;
 		}
@@ -300,7 +330,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			auto Channel = Animation->mChannels[W];
 			std::string Name = Channel->mNodeName.C_Str();
 
-			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
+			/*if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
 			{
 				if (Target_Animator->Bone_Info_Map[Name].Name.empty())
 					Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
@@ -309,12 +339,20 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 				Target_Animator->Bone_Info_Map[Name].Name = Name;
 				//Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
 				Bone_Count++;
+			}*/
+
+			if (Target_Animator->Bone_Info_Map.find(Name) != Target_Animator->Bone_Info_Map.end())
+			{
+				Target_Animator->Bones.push_back(Bone(Name, Target_Animator->Bone_Info_Map[Name].Index, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
+			
+				aiVector3D Offset = Channel->mPositionKeys[0].mValue;
+
+				Target_Animator->Skeleton_Uniforms->Bone_Offsets[Target_Animator->Bone_Info_Map[Name].Index] += glm::vec3(Offset.x, -Offset.z, Offset.y);
 			}
 
-			Target_Animator->Bones.push_back(Bone(Name, Bone_Count, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
 		}
 
-		Animator_Read_Hierarchy_Data(&Target_Animator->Root_Node, Scene->mRootNode);
+		Animator_Read_Hierarchy_Data(Target_Animator, &Target_Animator->Root_Node, Scene->mRootNode);
 	}
 
 	//
