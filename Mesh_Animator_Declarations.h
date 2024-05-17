@@ -19,11 +19,11 @@ glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 		Matrix.a3, Matrix.b3, Matrix.c3, Matrix.d3,
 		Matrix.a4, Matrix.b4, Matrix.c4, Matrix.d4);
 
-	/*return glm::mat4(
-		Matrix.a1, Matrix.c1, Matrix.b1, Matrix.d1,
-		Matrix.a3, Matrix.c3, Matrix.b3, Matrix.d3,
-		Matrix.a2, Matrix.c2, Matrix.b2, Matrix.d2,
-		Matrix.a4, Matrix.c4, Matrix.b4, Matrix.d4);*/
+	//return glm::mat4(
+	//	Matrix.a1, Matrix.c1, Matrix.b1, Matrix.d1,
+	//	Matrix.a3, Matrix.c3, Matrix.b3, Matrix.d3,
+	//	Matrix.a2, Matrix.c2, Matrix.b2, Matrix.d2,
+	//	Matrix.a4, Matrix.c4, Matrix.b4, Matrix.d4);
 
 	//return glm::mat4(
 	//	Matrix.d4, Matrix.c4, Matrix.b4, Matrix.a4,
@@ -152,22 +152,25 @@ public:
 		}
 
 		Rotations.resize(Channel->mNumRotationKeys);
+
 		for (size_t W = 0; W < Rotations.size(); W++)
 		{
-			Rotations[W].Rotation.W = Channel->mRotationKeys[W].mValue.w;
+			Rotations[W].Rotation.W = -Channel->mRotationKeys[W].mValue.w;
 			Rotations[W].Rotation.X = Channel->mRotationKeys[W].mValue.x;
-			Rotations[W].Rotation.Y = Channel->mRotationKeys[W].mValue.y;
-			Rotations[W].Rotation.Z = Channel->mRotationKeys[W].mValue.z;
+			Rotations[W].Rotation.Y = -Channel->mRotationKeys[W].mValue.z;
+			Rotations[W].Rotation.Z = Channel->mRotationKeys[W].mValue.y;
 
 			Rotations[W].Time = Channel->mRotationKeys[W].mTime / Ticks_Per_Second;
 		}
 
+		float Inverse_Scale = 1.0f / Channel->mScalingKeys[0].mValue.x;
+
 		Scalings.resize(Channel->mNumScalingKeys);
 		for (size_t W = 0; W < Scalings.size(); W++)
 		{
-			Scalings[W].Scale.x = Channel->mScalingKeys[W].mValue.x;
-			Scalings[W].Scale.y = Channel->mScalingKeys[W].mValue.y;
-			Scalings[W].Scale.z = Channel->mScalingKeys[W].mValue.z;
+			Scalings[W].Scale.x = Channel->mScalingKeys[W].mValue.x * Inverse_Scale;
+			Scalings[W].Scale.y = Channel->mScalingKeys[W].mValue.y * Inverse_Scale;
+			Scalings[W].Scale.z = Channel->mScalingKeys[W].mValue.z * Inverse_Scale;
 
 			Scalings[W].Time = Channel->mScalingKeys[W].mTime / Ticks_Per_Second;
 		}
@@ -219,7 +222,7 @@ public:
 	{
 		Bone* Bone = Find_Bone(Node->Name);
 
-		glm::mat4 Node_Matrix;
+		glm::mat4 Node_Matrix = glm::mat4(1.0f);
 
 		if (Bone)
 		{
@@ -227,7 +230,7 @@ public:
 			Node_Matrix = Bone->Local_Matrix;
 		}
 		else
-			Node_Matrix = Node->Transformation;
+	 		Node_Matrix = Node->Transformation;
 
 		glm::mat4 Global_Matrix = Parent_Matrix * Node_Matrix;
 
@@ -252,8 +255,10 @@ public:
 		if (Time >= Duration)
 			Time = 0;
 
-		for (size_t W = 0; W < Bones.size(); W++)
-			Calculate_Bone_Matrix(&Bones[W]);
+		//for (size_t W = 0; W < Bones.size(); W++)
+		//	Calculate_Bone_Matrix(&Bones[W]);
+
+		Calculate_Bone_Matrix_Old(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
 
 		// Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
 	}
@@ -268,15 +273,6 @@ void Animator_Read_Hierarchy_Data(Mesh_Animator* Target_Animator, Node_Data* Tar
 	Target_Node_Data->Name = Source_Node->mName.C_Str();
 	Target_Node_Data->Transformation = (Assimp_Matrix_To_Mat4(Source_Node->mTransformation));
 	Target_Node_Data->Children.resize(Source_Node->mNumChildren);
-
-	if (Target_Animator->Bone_Info_Map.find(Source_Node->mName.C_Str()) != Target_Animator->Bone_Info_Map.end())
-	{
-		size_t Index = Target_Animator->Bone_Info_Map[Source_Node->mName.C_Str()].Index;
-
-		glm::vec3 Vector = glm::vec3(glm::vec4(0.f, 0.f, 0.f, 1.0f) * glm::scale(Target_Node_Data->Transformation, glm::vec3(1.f)));
-
-		Target_Animator->Skeleton_Uniforms->Bone_Offsets[Index] += glm::vec3(Vector.x, -Vector.z, Vector.y);
-	}
 
 	for (size_t W = 0; W < Source_Node->mNumChildren; W++)
 	{
@@ -298,7 +294,7 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 		auto Animation = Scene->mAnimations[0];
 		Target_Animator->Duration = Animation->mDuration / Animation->mTicksPerSecond;
 
-		// Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
+		Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
 
 		size_t Bone_Count = 0;
 
@@ -310,17 +306,9 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			{
 				aiMatrix4x4 Matrix = Scene->mMeshes[0]->mBones[W]->mOffsetMatrix.Inverse();
 
-				aiQuaternion Quat;
-				aiVector3D Offset_AI_Vector;
-
-				Scene->mMeshes[0]->mBones[W]->mOffsetMatrix.DecomposeNoScaling(Quat, Offset_AI_Vector);
-
-				Target_Animator->Skeleton_Uniforms->Bone_Offsets[Bone_Count] = glm::vec3(Offset_AI_Vector.x, -Offset_AI_Vector.z, Offset_AI_Vector.y);
-
 				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
 				Target_Animator->Bone_Info_Map[Name].Name = Name;
 				Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Matrix);
-				Target_Animator->Bone_Info_Map[Name].Offset[3] = glm::vec4(0.f, 0.f, 0.f, 1.0f);
 			}
 			Bone_Count++;
 		}
@@ -345,9 +333,9 @@ void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animato
 			{
 				Target_Animator->Bones.push_back(Bone(Name, Target_Animator->Bone_Info_Map[Name].Index, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
 			
-				aiVector3D Offset = Channel->mPositionKeys[0].mValue;
+				// aiVector3D Offset = Channel->mPositionKeys[0].mValue;
 
-				Target_Animator->Skeleton_Uniforms->Bone_Offsets[Target_Animator->Bone_Info_Map[Name].Index] += glm::vec3(Offset.x, -Offset.z, Offset.y);
+				// Target_Animator->Skeleton_Uniforms->Bone_Offsets[Target_Animator->Bone_Info_Map[Name].Index] += glm::vec3(Offset.x, -Offset.z, Offset.y);
 			}
 
 		}

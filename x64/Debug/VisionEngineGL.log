@@ -29,19 +29,19 @@ C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(151,59): warning C
 C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(162,56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(172,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(174,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(299,52): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(294,52): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(320,50): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(308,50): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(346,123): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(333,123): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(360,63): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(347,63): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
@@ -158,6 +158,7 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(163): warning C4715: 'Get_File_Contents': not all control paths return a value
+  LINK : C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe not found or not built by the last incremental link; performing full link
 glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
 glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info

@@ -36,9 +36,9 @@ void main()
 	mat4 Combined_Matrix = (Weighted_Matrix) * Model_Matrix;
 	vec3 Combined_Position = Combined_Matrix[3].xyz;
 
-	vec4 Transformed_Position = (Weighted_Matrix) * vec4(In_Position - Bone_Offsets[In_Bone_Index], 1);
+	vec4 Transformed_Position = (Weighted_Matrix) * vec4(In_Position, 1);
 
-	Transformed_Position.xyz += Bone_Offsets[In_Bone_Index];
+	// Transformed_Position.xyz += Bone_Offsets[In_Bone_Index];
 	
 	Transformed_Position = Model_Matrix * Transformed_Position;
 	
