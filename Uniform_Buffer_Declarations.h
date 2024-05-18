@@ -33,8 +33,8 @@ struct Model_Uniform_Location_Object
 
 	int Model_Position;
 
-	int Model_Bones;
-	int Model_Bone_Offsets;
+	//int Model_Bones;
+	//int Model_Bone_Offsets;
 } Model_Uniform_Location;
 
 Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader Shader)
@@ -44,8 +44,8 @@ Model_Uniform_Location_Object Initialise_Model_Uniform_Locations_Object(Shader S
 	// Model_Uniform_Location.Projection_Matrix = glGetUniformLocation(Shader.Program_ID, "Projection_Matrix");
 	Location.Model_Position = glGetUniformLocation(Shader.Program_ID, "Model_Position");
 
-	Location.Model_Bones = glGetUniformLocation(Shader.Program_ID, "Model_Bones");
-	Location.Model_Bone_Offsets = glGetUniformLocation(Shader.Program_ID, "Bone_Offsets");
+	//Location.Model_Bones = glGetUniformLocation(Shader.Program_ID, "Model_Bones");
+	//Location.Model_Bone_Offsets = glGetUniformLocation(Shader.Program_ID, "Bone_Offsets");
 	return Location;
 }
 
@@ -54,13 +54,13 @@ class Model_Uniform_Buffer
 public:
 	glm::mat4 Model_Matrix;
 	glm::vec3 Model_Position;
-	Bones_Uniform_Buffer Model_Bones;
+	//Bones_Uniform_Buffer Model_Bones;
 	Model_Uniform_Buffer()
 	{
-		for (size_t W = 0; W < NUMBER_OF_ANIMATOR_BONES; W++)
-		{
-			Model_Bones.Bone_Matrix[W] = glm::mat4(1.0f);// glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.1f * W, 0)), DTR * W * 5, glm::vec3(0, 1, 0));		// This just sets all of the matrices to a nice default value
-		}
+		//for (size_t W = 0; W < NUMBER_OF_ANIMATOR_BONES; W++)
+		//{
+		//	Model_Bones.Bone_Matrix[W] = glm::mat4(1.0f);// glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.1f * W, 0)), DTR * W * 5, glm::vec3(0, 1, 0));		// This just sets all of the matrices to a nice default value
+		//}
 		//Model_Bones.Bone_Matrix[2] = glm::rotate(glm::mat4(1.0f), DTR * 90.0f, glm::vec3(1, 0, 0));
 	}
 
@@ -70,8 +70,8 @@ public:
 
 		glUniformMatrix4fv(Model_Uniform_Location.Model_Matrix, 1, GL_FALSE, glm::value_ptr(Model_Matrix));
 
-		glUniformMatrix4fv(Model_Uniform_Location.Model_Bones, NUMBER_OF_ANIMATOR_BONES, GL_FALSE, glm::value_ptr(Model_Bones.Bone_Matrix[0]));
-		glUniform3fv(Model_Uniform_Location.Model_Bone_Offsets, NUMBER_OF_ANIMATOR_BONES, glm::value_ptr(Model_Bones.Bone_Offsets[0]));
+		//glUniformMatrix4fv(Model_Uniform_Location.Model_Bones, NUMBER_OF_ANIMATOR_BONES, GL_FALSE, glm::value_ptr(Model_Bones.Bone_Matrix[0]));
+		//glUniform3fv(Model_Uniform_Location.Model_Bone_Offsets, NUMBER_OF_ANIMATOR_BONES, glm::value_ptr(Model_Bones.Bone_Offsets[0]));
 		//glUniformMatrix4fv(Model_Uniform_Location.Projection_Matrix, 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
 	}
 };

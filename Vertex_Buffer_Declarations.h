@@ -11,6 +11,8 @@ public:
 	unsigned int Buffer_ID = Unassigned_Bit_Mask;
 	unsigned int Vertex_Array_ID = Unassigned_Bit_Mask;
 
+	uint16_t Buffer_Storage_Hint = GL_STATIC_DRAW;
+
 	// Don't necessarily need index buffers
 
 	Base_Vertex_Buffer() {}
@@ -18,6 +20,8 @@ public:
 	virtual void Create_Buffer() { ; }
 
 	virtual void Bind_Buffer() { ; }
+
+	virtual void Update_Vertices() { ; } // This will only update the vertices in the vertex buffer - ideal for vertex animation
 
 	virtual void Update_Buffer() { ; }
 
@@ -48,9 +52,6 @@ struct Model_Vertex
 	// glm::vec3 UV_Tangent; // This is the tangent of the surface normal, aligned to the UV plane
 
 	glm::vec2 UV;
-	
-	float Bone_Rigging_Weight = 0;
-	unsigned int Bone_Rigging_Index = 0;
 
 	// float Occlusion = 1;
 
@@ -203,9 +204,14 @@ public:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Index_Buffer_ID);
 	}
 
+	void Update_Vertices() override
+	{
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh->Vertices[0]) * Mesh->Vertices.size(), Mesh->Vertices.data(), Buffer_Storage_Hint);
+	}
+
 	void Update_Buffer() override
 	{
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Mesh->Vertices[0]) * Mesh->Vertices.size(), Mesh->Vertices.data(), GL_STATIC_DRAW);
+		Update_Vertices();
 
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Mesh->Indices[0]) * Mesh->Indices.size(), Mesh->Indices.data(), GL_STATIC_DRAW);
 
@@ -220,11 +226,11 @@ public:
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
 		glEnableVertexAttribArray(2);
 
-		glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 8)); // Bone rigging weight
-		glEnableVertexAttribArray(3);
+		//glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 8)); // Bone rigging weight
+		//glEnableVertexAttribArray(3);
 
-		glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Model_Vertex), (void*)(sizeof(float) * 9));
-		glEnableVertexAttribArray(4);
+		//glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, sizeof(Model_Vertex), (void*)(sizeof(float) * 9));
+		//glEnableVertexAttribArray(4);
 
 	}
 };

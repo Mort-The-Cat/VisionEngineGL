@@ -21,15 +21,13 @@ public:
 
 	virtual void Control_Function() override
 	{
-		Animator.Update_Skeleton();
+		Animator.Update_Mesh(&Object->Mesh);
 	}
 	virtual void Initialise_Control(Model* Objectp) override
 	{
 		Object = Objectp;
-		Animator.Skeleton_Uniforms = &Object->Uniforms.Model_Bones;
 
-		Load_Mesh_Animator_Fbx(Animation_Name.c_str(), &Animator);
-
+		Animator.Animation = Pull_Animation(Animation_Name.c_str()).Animation;
 		Animator.Time = 0;
 	}
 };

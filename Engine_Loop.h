@@ -123,15 +123,15 @@ void Setup_Test_Scene()
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(-12, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Test_Animation.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Animation.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(-12, 0, -6);
-	Create_Model(Pull_Mesh("Assets/Models/Third_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Third_Animation.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	//Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
+	//Scene_Models.back()->Position = glm::vec3(-12, 0, -6);
+	//Create_Model(Pull_Mesh("Assets/Models/Third_Animation.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Third_Animation.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(-2, -1, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Two_Bone_Test.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Two_Bone_Test.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	//Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
+	//Scene_Models.back()->Position = glm::vec3(-2, -1, -3);
+	//Create_Model(Pull_Mesh("Assets/Models/Two_Bone_Test.fbx", LOAD_MESH_FBX_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Models/Two_Bone_Test.fbx"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
 

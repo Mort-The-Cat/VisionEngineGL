@@ -50,6 +50,8 @@ public:
 	void Render(Shader Shader)
 	{
 		Mesh.Bind_Buffer();
+		if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
+			Mesh.Update_Vertices();
 
 		Uniforms.Model_Matrix = glm::translate(glm::mat4(1.0f), Position);
 		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.z, glm::vec3(0, 0, 1));

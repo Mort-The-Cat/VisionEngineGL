@@ -9,8 +9,6 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
-#define NUMBER_OF_ANIMATOR_BONES 16
-
 glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 {
 	return glm::mat4(
@@ -39,317 +37,104 @@ glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 	);
 }
 
-struct Bones_Uniform_Buffer
+//
+
+struct Mesh_Animation
 {
-	glm::mat4 Bone_Matrix[NUMBER_OF_ANIMATOR_BONES]; // 256 'words' for the GPU
-	glm::vec3 Bone_Offsets[NUMBER_OF_ANIMATOR_BONES]; // 48 'words' for the GPU
-};
-
-struct Keyframe_Translation
-{
-	glm::vec3 Translation;
-	float Time;
-};
-
-struct Keyframe_Rotation
-{
-	Quaternion::Quaternion Rotation;
-	float Time;
-};
-
-struct Keyframe_Scaling
-{
-	glm::vec3 Scale;
-	float Time;
-};
-
-struct Node_Data
-{
-	glm::mat4 Transformation;
-	std::string Name;
-	std::vector<Node_Data> Children;
-};
-
-class Mesh_Animator;
-
-struct Bone_Info
-{
-	int Index;
-	glm::mat4 Offset;
-
-	std::string Name;
-};
-
-class Bone
-{
-public:
-	std::vector<Keyframe_Translation> Translations;
-	std::vector<Keyframe_Rotation> Rotations;
-	std::vector<Keyframe_Scaling> Scalings;
-
-	unsigned char Index;
-
-	std::string Name;
-
-	glm::mat4 Local_Matrix;
-
-	void Update(float Time)
-	{
-		size_t Keyframe_Index = 0;
-		while (Translations[Keyframe_Index].Time <= Time && Translations.size() > Keyframe_Index + 1)
-			Keyframe_Index++;
-
-		float Time_Length = Translations[Keyframe_Index].Time - Translations[Keyframe_Index - 1].Time;
-		float Factor = Time - Translations[Keyframe_Index - 1].Time;
-		Factor /= Time_Length;
-
-		glm::vec3 Translation = Translations[Keyframe_Index].Translation * Factor + Translations[Keyframe_Index - 1].Translation * (1.0f - Factor);
-
-		//
-
-		Keyframe_Index = 0;
-		while (Rotations[Keyframe_Index].Time <= Time && Rotations.size() > Keyframe_Index + 1)
-			Keyframe_Index++;
-
-		Time_Length = Rotations[Keyframe_Index].Time - Rotations[Keyframe_Index - 1].Time;
-		Factor = Time - Rotations[Keyframe_Index - 1].Time;
-		Factor /= Time_Length;
-
-		Quaternion::Quaternion Rotation = Quaternion::Sphere_Interpolate(Rotations[Keyframe_Index - 1].Rotation, Rotations[Keyframe_Index].Rotation, Factor);
-		Rotation.Normalise();
-
-		//
-
-		Keyframe_Index = 0;
-		while (Scalings[Keyframe_Index].Time <= Time && Scalings.size() > Keyframe_Index + 1)
-			Keyframe_Index++;
-
-		Time_Length = Scalings[Keyframe_Index].Time - Scalings[Keyframe_Index - 1].Time;
-		Factor = Time - Scalings[Keyframe_Index - 1].Time;
-		Factor /= Time_Length;
-
-		glm::vec3 Scale = Scalings[Keyframe_Index].Scale * Factor + Scalings[Keyframe_Index - 1].Scale * (1.0f - Factor);
-
-		Local_Matrix = glm::translate(glm::mat4(1.0f), Translation) * Rotation.Get_Rotation_Matrix() * glm::scale(glm::mat4(1.0f), Scale);
-	}
-
-	Bone(const std::string& Namep, unsigned char Indexp)
-	{
-		Index = Indexp;
-		Name = Namep;
-		Local_Matrix = glm::mat4(1.0f);
-	}
-
-	Bone(const std::string& Namep, unsigned char Indexp, const aiNodeAnim* Channel, float Ticks_Per_Second)
-	{
-		Translations.resize(Channel->mNumPositionKeys);
-		for (size_t W = 0; W < Translations.size(); W++)
-		{
-			Translations[W].Translation.x = Channel->mPositionKeys[W].mValue.x;
-			Translations[W].Translation.y = Channel->mPositionKeys[W].mValue.y;
-			Translations[W].Translation.z = Channel->mPositionKeys[W].mValue.z;
-			Translations[W].Time = Channel->mPositionKeys[W].mTime / Ticks_Per_Second;
-		}
-
-		Rotations.resize(Channel->mNumRotationKeys);
-
-		for (size_t W = 0; W < Rotations.size(); W++)
-		{
-			Rotations[W].Rotation.W = -Channel->mRotationKeys[W].mValue.w;
-			Rotations[W].Rotation.X = Channel->mRotationKeys[W].mValue.x;
-			Rotations[W].Rotation.Y = -Channel->mRotationKeys[W].mValue.z;
-			Rotations[W].Rotation.Z = Channel->mRotationKeys[W].mValue.y;
-
-			Rotations[W].Time = Channel->mRotationKeys[W].mTime / Ticks_Per_Second;
-		}
-
-		float Inverse_Scale = 1.0f / Channel->mScalingKeys[0].mValue.x;
-
-		Scalings.resize(Channel->mNumScalingKeys);
-		for (size_t W = 0; W < Scalings.size(); W++)
-		{
-			Scalings[W].Scale.x = Channel->mScalingKeys[W].mValue.x * Inverse_Scale;
-			Scalings[W].Scale.y = Channel->mScalingKeys[W].mValue.y * Inverse_Scale;
-			Scalings[W].Scale.z = Channel->mScalingKeys[W].mValue.z * Inverse_Scale;
-
-			Scalings[W].Time = Channel->mScalingKeys[W].mTime / Ticks_Per_Second;
-		}
-
-		Index = Indexp;
-		Name = Namep;
-		Local_Matrix = glm::mat4(1.0f);
-	}
+	float Duration, Tickrate;
+	std::vector<std::vector<Model_Vertex>> Keyframes;
+	std::vector<size_t> Indices;
 };
 
 #define ANIMF_TO_BE_DELETED 0u
-#define ANIMF_LOOP 1u
-
-aiBone* Get_Bone(aiBone** Bones, size_t Length, std::string Name)
-{
-	for (size_t W = 0; W < Length; W++)
-		if (std::string(Bones[W]->mName.C_Str()) == Name)
-			return Bones[W];
-	return nullptr;
-}
+#define ANIMF_LOOP_BIT 1u
 
 class Mesh_Animator
 {
 public:
-	Bones_Uniform_Buffer* Skeleton_Uniforms;
+	float Time;
 
-	std::vector<Bone> Bones;
+	bool Flags[2] = { false, true };
 
-	Node_Data Root_Node;
+	const Mesh_Animation* Animation; // This will certainly be shared between multiple mesh_animators, so storing it in a cache for all to use is wise
 
-	std::map<std::string, Bone_Info> Bone_Info_Map;
-
-	glm::mat4 Global_Inverse_Matrix;
-
-	float Duration = 0;
-
-	float Time = 5;
-
-	Bone* Find_Bone(const std::string& Name)
+	void Handle_Update(Model_Vertex_Buffer* Mesh)
 	{
-		for (size_t W = 0; W < Bones.size(); W++)
-			if (strcmp(Name.c_str(), Bones[W].Name.c_str()) == 0)
-				return &Bones[W];
+		size_t Keyframe_Index = Time * Animation->Tickrate; // Automatically rounds down during integre conversion
 
-		return nullptr;
-	}
+		float Time_Scalar = Time * Animation->Tickrate - ((float)Keyframe_Index);
 
-	void Calculate_Bone_Matrix_Old(const Node_Data* Node, glm::mat4 Parent_Matrix)
-	{
-		Bone* Bone = Find_Bone(Node->Name);
+		// Time_Scalar /= Animation->Tickrate;
 
-		glm::mat4 Node_Matrix = glm::mat4(1.0f);
-
-		if (Bone)
+		for (size_t W = 0; W < Animation->Keyframes[Animation->Indices[Keyframe_Index]].size(); W++)
 		{
-			Bone->Update(Time);
-			Node_Matrix = Bone->Local_Matrix;
+			Model_Vertex A, B;
+			A = Animation->Keyframes[Animation->Indices[Keyframe_Index]][W];
+			B = Animation->Keyframes[Animation->Indices[Keyframe_Index + 1]][W];
+
+			Mesh->Mesh->Vertices[W].Position = A.Position * (1.0f - Time_Scalar) + B.Position * Time_Scalar;
+			Mesh->Mesh->Vertices[W].Normal = glm::normalize(A.Normal * (1.0f - Time_Scalar) + B.Normal * Time_Scalar);
 		}
-		else
-	 		Node_Matrix = Node->Transformation;
-
-		glm::mat4 Global_Matrix = Parent_Matrix * Node_Matrix;
-
-		if (Bone_Info_Map.find(Node->Name) != Bone_Info_Map.end())
-			Skeleton_Uniforms->Bone_Matrix[Bone_Info_Map[Node->Name].Index] = Global_Inverse_Matrix * Global_Matrix * Bone_Info_Map[Node->Name].Offset;
-
-		for (size_t W = 0; W < Node->Children.size(); W++)
-			Calculate_Bone_Matrix_Old(&Node->Children[W], Global_Matrix);
 	}
 
-	void Calculate_Bone_Matrix(Bone* Bone)
+	void Update_Mesh(Model_Vertex_Buffer* Mesh)
 	{
-		Bone->Update(Time);
+		// Since it gives a keyframe every tick, we can use a kind of array indexing to get the keyframe indices quickly
 
-		Skeleton_Uniforms->Bone_Matrix[Bone->Index] = Bone->Local_Matrix * Bone_Info_Map[Bone->Name].Offset;
-	}
+		Time += Tick;
 
-	void Update_Skeleton()
-	{
-		Time += Tick * 0.5f;
-
-		if (Time >= Duration)
+		if (Time * Animation->Tickrate >= (Animation->Duration - 2) && Flags[ANIMF_LOOP_BIT])
 			Time = 0;
 
-		//for (size_t W = 0; W < Bones.size(); W++)
-		//	Calculate_Bone_Matrix(&Bones[W]);
-
-		Calculate_Bone_Matrix_Old(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
-
-		// Calculate_Bone_Matrix(&Root_Node, glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
+		Handle_Update(Mesh);
 	}
 };
 
-// https://learnopengl.com/Guest-Articles/2020/Skeletal-Animation
+//
 
-// https://learnopengl.com/code_viewer_gh.php?code=src/8.guest/2020/skeletal_animation/skeletal_animation.cpp
-
-void Animator_Read_Hierarchy_Data(Mesh_Animator* Target_Animator, Node_Data* Target_Node_Data, const aiNode* Source_Node)
+void Load_Animation_File(const char* Directory, Mesh_Animation* Animation)
 {
-	Target_Node_Data->Name = Source_Node->mName.C_Str();
-	Target_Node_Data->Transformation = (Assimp_Matrix_To_Mat4(Source_Node->mTransformation));
-	Target_Node_Data->Children.resize(Source_Node->mNumChildren);
+	std::ifstream File(Directory);
 
-	for (size_t W = 0; W < Source_Node->mNumChildren; W++)
+	std::string Line;
+	std::stringstream Stream;
+
+	if (File.is_open())
 	{
-		Node_Data Data;
-		Animator_Read_Hierarchy_Data(Target_Animator, &Data, Source_Node->mChildren[W]);
-		Target_Node_Data->Children[W] = Data;
-	}
-}
+		std::getline(File, Line);
+		Animation->Tickrate = std::stoi(Line);
 
-void Load_Mesh_Animator_Fbx(const char* File_Name, Mesh_Animator* Target_Animator)
-{
-	Assimp::Importer Importer;
-	const aiScene* Scene = Importer.ReadFile(File_Name, (aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_PopulateArmatureData));
-	
-	if (Scene == nullptr)
-		Throw_Error(" >> Failed to load FBX file!\n");
+		std::getline(File, Line);
+		Animation->Duration = std::stoi(Line);
 
-	{
-		auto Animation = Scene->mAnimations[0];
-		Target_Animator->Duration = Animation->mDuration / Animation->mTicksPerSecond;
-
-		Target_Animator->Global_Inverse_Matrix = Assimp_Matrix_To_Mat4(Scene->mRootNode->mTransformation.Inverse());
-
-		size_t Bone_Count = 0;
-
-		for (size_t W = 0; W < Scene->mMeshes[0]->mNumBones; W++)
+		for (size_t W = 0; W < Animation->Duration; W++)
 		{
-			std::string Name = Scene->mMeshes[0]->mBones[W]->mName.C_Str();
-
-			if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end())
-			{
-				aiMatrix4x4 Matrix = Scene->mMeshes[0]->mBones[W]->mOffsetMatrix.Inverse();
-
-				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
-				Target_Animator->Bone_Info_Map[Name].Name = Name;
-				Target_Animator->Bone_Info_Map[Name].Offset = Assimp_Matrix_To_Mat4(Matrix);
-			}
-			Bone_Count++;
+			std::getline(File, Line);
+			Animation->Indices.push_back(std::stoi(Line));
 		}
 
-		for (size_t W = 0; W < Animation->mNumChannels; W++)
+		while (std::getline(File, Line))
 		{
-			auto Channel = Animation->mChannels[W];
-			std::string Name = Channel->mNodeName.C_Str();
-
-			/*if (Target_Animator->Bone_Info_Map.find(Name) == Target_Animator->Bone_Info_Map.end()) // This adds all of the bones that weren't defined in the scene mesh such as the root node
+			if (Line.length() == 0)
 			{
-				if (Target_Animator->Bone_Info_Map[Name].Name.empty())
-					Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
-
-				Target_Animator->Bone_Info_Map[Name].Index = Bone_Count;
-				Target_Animator->Bone_Info_Map[Name].Name = Name;
-				//Target_Animator->Bone_Info_Map[Name].Offset = glm::mat4(1.0f);
-				Bone_Count++;
-			}*/
-
-			if (Target_Animator->Bone_Info_Map.find(Name) != Target_Animator->Bone_Info_Map.end())
-			{
-				Target_Animator->Bones.push_back(Bone(Name, Target_Animator->Bone_Info_Map[Name].Index, Channel, Scene->mAnimations[0]->mTicksPerSecond)); // Only the bones in the animation channels have any animations
-			
-				// aiVector3D Offset = Channel->mPositionKeys[0].mValue;
-
-				// Target_Animator->Skeleton_Uniforms->Bone_Offsets[Target_Animator->Bone_Info_Map[Name].Index] += glm::vec3(Offset.x, -Offset.z, Offset.y);
+				Animation->Keyframes.push_back(std::vector<Model_Vertex>(0));
+				continue;
 			}
+
+			Stream.str(Line);
+
+			Model_Vertex Vertex;
+
+			Stream >> Vertex.Position.x >> Vertex.Position.y >> Vertex.Position.z >> Vertex.Normal.x >> Vertex.Normal.y >> Vertex.Normal.z;
+
+			Animation->Keyframes.back().push_back(Vertex);
 
 		}
 
-		Animator_Read_Hierarchy_Data(Target_Animator, &Target_Animator->Root_Node, Scene->mRootNode);
+		File.close();
 	}
-
-	//
-
-	Target_Animator->Duration = Scene->mAnimations[0]->mDuration / Scene->mAnimations[0]->mTicksPerSecond;
-
-	
-
-	Importer.FreeScene();
+	else
+		Throw_Error(" >> Unable to load animation file!\n");
 }
 
 #endif

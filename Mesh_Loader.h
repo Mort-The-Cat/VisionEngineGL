@@ -90,9 +90,9 @@ void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 				if (Unique_Vertices.count(Vertex) == 0) // If we don't have it already
 				{
 					Unique_Vertices[Vertex] = Target_Mesh->Vertices.size();
-					aiVertexWeight Weight = Get_Optimal_Bone(Mesh, Index);
-					Vertex.Bone_Rigging_Index = Weight.mVertexId;
-					Vertex.Bone_Rigging_Weight = Weight.mWeight;
+					//aiVertexWeight Weight = Get_Optimal_Bone(Mesh, Index);
+					//Vertex.Bone_Rigging_Index = Weight.mVertexId;
+					//V/ertex.Bone_Rigging_Weight = Weight.mWeight;
 					Target_Mesh->Vertices.push_back(Vertex);
 				}
 

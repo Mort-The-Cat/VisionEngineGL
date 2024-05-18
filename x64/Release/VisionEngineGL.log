@@ -17,31 +17,19 @@ C:\VisionEngineGL\VisionEngineGL\Audio_Declarations.h(32,31): warning C4305: 'ar
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(102,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(150,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(151,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(212,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(218,37): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(151,59): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(63,25): warning C4244: 'initializing': conversion from 'float' to 'size_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(163,56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(105,34): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(175,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(295,52): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(309,50): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(334,123): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'Main.cpp')
-  
-C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(348,63): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Animator_Declarations.h(108,34): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Texture_Declarations.h(57,36): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
@@ -159,7 +147,7 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  6 of 3673 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+  3 of 3422 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     13 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

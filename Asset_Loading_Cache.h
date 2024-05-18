@@ -4,6 +4,7 @@
 #include "OpenGL_Declarations.h"
 #include "Texture_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
+#include "Mesh_Animator_Declarations.h"
 #include "Mesh_Loader.h"
 
 #define LOAD_TEXTURE_SEARCH_CACHE_BIT 1u
@@ -34,8 +35,15 @@ namespace Cache
 		// However, we must deallocate the mesh data before we remove this item from the mesh cache!!
 	};
 
+	struct Animation_Cache_Info
+	{
+		alignas(0) std::string Directory;
+		Mesh_Animation* Animation;
+	};
+
 	std::vector<Mesh_Cache_Info> Mesh_Cache;
 	std::vector<Texture_Cache_Info> Texture_Cache;
+	std::vector<Animation_Cache_Info> Animation_Cache;
 
 	void Clear_Texture_Cache()
 	{
@@ -77,6 +85,19 @@ namespace Cache
 			if (strcmp(Directory, Mesh_Cache[W].Directory.c_str()) == 0)
 			{
 				*Target_Info = Mesh_Cache[W];
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Search_Animation_Cache(const char* Directory, Animation_Cache_Info* Target_Info)
+	{
+		for (size_t W = 0; W < Animation_Cache.size(); W++)
+		{
+			if (strcmp(Directory, Animation_Cache[W].Directory.c_str()) == 0)
+			{
+				*Target_Info = Animation_Cache[W];
 				return true;
 			}
 		}
@@ -198,8 +219,28 @@ Cache::Texture_Cache_Info Pull_Texture(const char* Texture_Directory)
 
 //
 
+Cache::Animation_Cache_Info Pull_Animation(const char* Directory)
+{
+	Cache::Animation_Cache_Info Cache_Info;
+
+	if (Cache::Search_Animation_Cache(Directory, &Cache_Info))
+		return Cache_Info;
+
+	Cache_Info.Animation = new Mesh_Animation();
+
+	Load_Animation_File(Directory, Cache_Info.Animation);
+
+	Cache_Info.Directory = Directory;
+
+	Cache::Animation_Cache.push_back(Cache_Info);
+	return Cache_Info;
+}
+
+//
+
 #define LOAD_MESH_OBJ_BIT 0u
 #define LOAD_MESH_FBX_BIT 1u
+#define LOAD_MESH_ANIM_BIT 2u
 
 Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, char Flags = LOAD_MESH_OBJ_BIT)
 {
@@ -209,6 +250,12 @@ Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, char Flags = LOAD_MESH_O
 		return Cache_Info;
 
 	Cache_Info.Mesh = new Model_Mesh(); // This allocates the memory that is used by the load_mesh_obj function
+
+	if (Flags & LOAD_MESH_ANIM_BIT)
+	{
+		Cache_Info.Vertex_Buffer.Buffer_Storage_Hint = GL_DYNAMIC_DRAW;
+		Flags -= LOAD_MESH_ANIM_BIT;
+	}
 
 	switch (Flags)
 	{
@@ -223,6 +270,13 @@ Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, char Flags = LOAD_MESH_O
 	Cache_Info.Directory = Directory;
 	Cache_Info.Vertex_Buffer.Create_Buffer();
 	Cache_Info.Vertex_Buffer.Mesh = Cache_Info.Mesh;
+
+	//uint16_t Buffer_Storage_Hints[2] = { GL_STATIC_DRAW, GL_DYNAMIC_DRAW };
+
+	//Cache_Info.Vertex_Buffer.Buffer_Storage_Hint = Buffer_Storage_Hints[(bool)(Flags & LOAD_MESH_ANIM_BIT)];
+
+	// This changes the buffer storage hint to allow for better optimisation
+
 	Cache_Info.Vertex_Buffer.Bind_Buffer();
 	Cache_Info.Vertex_Buffer.Update_Buffer();
 
