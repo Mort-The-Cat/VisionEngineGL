@@ -97,7 +97,6 @@ void Load_Animation_File(const char* Directory, Mesh_Animation* Animation)
 	std::ifstream File(Directory);
 
 	std::string Line;
-	std::stringstream Stream;
 
 	if (File.is_open())
 	{
@@ -121,7 +120,7 @@ void Load_Animation_File(const char* Directory, Mesh_Animation* Animation)
 				continue;
 			}
 
-			Stream.str(Line);
+			std::stringstream Stream(Line);
 
 			Model_Vertex Vertex;
 
