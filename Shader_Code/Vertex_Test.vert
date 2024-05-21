@@ -30,7 +30,7 @@ void main()
 	
 	gl_Position = Transformed_Position;	// The projection matrix is applied in the geometry shader, so we just want the transformed position for now.
 	
-	data_out.Normal = (Model_Matrix * vec4(In_Normal, 1.0f)).xyz - Model_Position;
+	data_out.Normal = normalize((Model_Matrix * vec4(In_Normal, 1.0f)).xyz - Model_Position);
 	data_out.UV = In_UV;
 	data_out.Projection_Matrix = Projection_Matrix;
 	

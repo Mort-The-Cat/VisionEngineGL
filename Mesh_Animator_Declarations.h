@@ -39,11 +39,15 @@ glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 
 //
 
+struct Keyframe_Vertex // This requires less memory than a typical model vertex
+{
+	glm::vec3 Position, Normal;
+};
+
 struct Mesh_Animation
 {
 	float Duration, Tickrate;
-	std::vector<std::vector<Model_Vertex>> Keyframes;
-	std::vector<size_t> Indices;
+	std::vector<std::vector<Keyframe_Vertex>> Keyframes;
 };
 
 #define ANIMF_TO_BE_DELETED 0u
@@ -66,14 +70,14 @@ public:
 
 		// Time_Scalar /= Animation->Tickrate;
 
-		for (size_t W = 0; W < Animation->Keyframes[Animation->Indices[Keyframe_Index]].size(); W++)
+		for (size_t W = 0; W < Animation->Keyframes[Keyframe_Index].size(); W++)
 		{
-			Model_Vertex A, B;
-			A = Animation->Keyframes[Animation->Indices[Keyframe_Index]][W];
-			B = Animation->Keyframes[Animation->Indices[Keyframe_Index + 1]][W];
+			Keyframe_Vertex A, B;
+			A = Animation->Keyframes[Keyframe_Index][W];
+			B = Animation->Keyframes[Keyframe_Index + 1][W];
 
 			Mesh->Mesh->Vertices[W].Position = A.Position * (1.0f - Time_Scalar) + B.Position * Time_Scalar;
-			Mesh->Mesh->Vertices[W].Normal = glm::normalize(A.Normal * (1.0f - Time_Scalar) + B.Normal * Time_Scalar);
+			Mesh->Mesh->Vertices[W].Normal = A.Normal * (1.0f - Time_Scalar) + B.Normal * Time_Scalar;
 		}
 	}
 
@@ -103,26 +107,27 @@ void Load_Animation_File(const char* Directory, Mesh_Animation* Animation)
 		std::getline(File, Line);
 		Animation->Tickrate = std::stoi(Line);
 
+		float Step;
+		std::getline(File, Line);
+		Step = 1.0f / std::stoi(Line);
+
 		std::getline(File, Line);
 		Animation->Duration = std::stoi(Line);
 
-		for (size_t W = 0; W < Animation->Duration; W++)
-		{
-			std::getline(File, Line);
-			Animation->Indices.push_back(std::stoi(Line));
-		}
+		Animation->Tickrate *= Step;
+		Animation->Duration *= Step;
 
 		while (std::getline(File, Line))
 		{
 			if (Line.length() == 0)
 			{
-				Animation->Keyframes.push_back(std::vector<Model_Vertex>(0));
+				Animation->Keyframes.push_back(std::vector<Keyframe_Vertex>(0));
 				continue;
 			}
 
 			std::stringstream Stream(Line);
 
-			Model_Vertex Vertex;
+			Keyframe_Vertex Vertex;
 
 			Stream >> Vertex.Position.x >> Vertex.Position.y >> Vertex.Position.z >> Vertex.Normal.x >> Vertex.Normal.y >> Vertex.Normal.z;
 

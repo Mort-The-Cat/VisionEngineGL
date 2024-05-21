@@ -65,6 +65,13 @@ namespace Cache
 		Mesh_Cache.clear();
 	}
 
+	void Clear_Animation_Cache()
+	{
+		for (size_t W = 0; W < Animation_Cache.size(); W++)
+			delete Animation_Cache[W].Animation;
+		Animation_Cache.clear();
+	}
+
 	bool Search_Texture_Cache(const char* Directory, Texture_Cache_Info* Target_Info)
 	{
 		for (size_t W = 0; W < Texture_Cache.size(); W++)

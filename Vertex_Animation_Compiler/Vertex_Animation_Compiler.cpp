@@ -40,28 +40,29 @@ int main()
     std::string Keyframe_Name;
     std::string Animation_Duration, Tickrate;
 
+    std::string Step;
+
     printf("Please enter the keyframe name:\n");
     std::cin >> Keyframe_Name;
     printf("Please enter the animation length (ticks):\n");
     std::cin >> Animation_Duration;
     printf("Please enter the framerate (fps):\n");
     std::cin >> Tickrate;
+    printf("Finally, enter the step of the animation:\n");
+    std::cin >> Step;
 
     // Once we've got all the user inputs...
 
     std::ofstream File_Out(Keyframe_Name + ".anim", std::ios::out);
     File_Out.write((Tickrate + "\n").c_str(), Tickrate.length() + 1);
+    File_Out.write((Step + "\n").c_str(), Step.length() + 1);
     File_Out.write((Animation_Duration + "\n").c_str(), Animation_Duration.length() + 1);
 
     size_t Duration = std::atoi(Animation_Duration.c_str());
 
-    for (size_t I = 1; I <= Duration; I++)
-    {
-        std::string Buffer = std::to_string(I) + "\n";
-        File_Out.write(Buffer.c_str(), Buffer.length());
-    }
+    size_t Step_Value = std::atoi(Step.c_str());
 
-    for (size_t I = 1; I <= Duration; I++)
+    for (size_t I = 1; I <= Duration; I += Step_Value)
     {
         File_Out.write("\n", 1); // I think this is right?
 

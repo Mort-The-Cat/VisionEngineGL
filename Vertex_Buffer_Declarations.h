@@ -11,7 +11,7 @@ public:
 	unsigned int Buffer_ID = Unassigned_Bit_Mask;
 	unsigned int Vertex_Array_ID = Unassigned_Bit_Mask;
 
-	uint16_t Buffer_Storage_Hint = GL_STATIC_DRAW;
+	size_t Buffer_Storage_Hint = GL_STATIC_DRAW;
 
 	// Don't necessarily need index buffers
 
