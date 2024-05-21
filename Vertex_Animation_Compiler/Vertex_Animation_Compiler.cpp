@@ -72,7 +72,7 @@ int main()
 
         std::string Warning, Error;
 
-        if (!Obj::LoadObj(&Attributes, &Shapes, &Materials, &Warning, &Error, (Keyframe_Name + std::to_string(I) + ".obj").c_str()))
+        if (!Obj::LoadObj(&Attributes, &Shapes, &Materials, &Warning, &Error, ("Assets/" + Keyframe_Name + std::to_string(I) + ".obj").c_str()))
         {
             throw std::invalid_argument("Unable to load keyframe file!\n");
         }
