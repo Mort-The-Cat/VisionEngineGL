@@ -56,13 +56,13 @@ C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(182,21): warning C4305: '=': tru
 C:\VisionEngineGL\VisionEngineGL\Audio_Handler_Declarations.h(64,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(88,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(133,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(102,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(147,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(103,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(148,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305: 'argument': truncation from 'double' to 'T'
@@ -150,9 +150,9 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 3443 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  10 of 3468 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    13 functions had inline decision re-evaluated but remain unchanged
+    33 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info

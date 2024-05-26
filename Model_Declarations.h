@@ -16,6 +16,19 @@
 #define MF_SOLID 2
 #define MF_PHYSICS_TEST 3
 
+glm::mat4 Direction_Matrix_Calculate(glm::vec3 Position, glm::vec3 Forward_Vector, glm::vec3 Up_Vector)
+{
+	glm::vec3 Forward = Forward_Vector;
+	glm::vec3 Right = glm::cross(Forward_Vector, Up_Vector);
+	glm::vec3 Up = glm::cross(Forward_Vector, Right);
+
+	return glm::mat4(
+		Right.x, Right.y, Right.z, 0.0f,
+		Up.x, Up.y, Up.z, 0.0f,
+		Forward.x, Forward.y, Forward.z, 0.0f,
+		Position.x, Position.y, Position.z, 1.0f);
+}
+
 class Model
 {
 public:
@@ -26,7 +39,10 @@ public:
 	Texture Material;
 
 	glm::vec3 Position;
-	glm::vec3 Orientation;
+	//glm::vec3 Orientation_Old;
+
+	glm::vec3 Orientation_Up = glm::vec3(0.0f, -1.0f, 0.0f);
+	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	Controller* Control;
 
@@ -53,10 +69,13 @@ public:
 		if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
 			Mesh.Update_Vertices();
 
-		Uniforms.Model_Matrix = glm::translate(glm::mat4(1.0f), Position);
-		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.z, glm::vec3(0, 0, 1));
-		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.y, glm::vec3(1, 0, 0));
-		Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, -Orientation.x, glm::vec3(0, 1, 0));
+		Uniforms.Model_Matrix = Direction_Matrix_Calculate(Position, Orientation, Orientation_Up);
+
+		//Uniforms.Model_Matrix = glm::translate(glm::mat4(1.0f), Position);
+		//Uniforms.Model_matrix = 
+		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.z, glm::vec3(0, 0, 1));
+		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.y, glm::vec3(1, 0, 0));
+		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, -Orientation.x, glm::vec3(0, 1, 0));
 
 		Uniforms.Model_Position = Position;
 
