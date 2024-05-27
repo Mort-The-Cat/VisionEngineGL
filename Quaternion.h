@@ -161,6 +161,11 @@ namespace Quaternion
 		return Angle_Axis;
 	}
 
+	float Get_Angle(Quaternion Rotation, glm::vec3 Point) // This returns radians
+	{
+		return acosf(glm::dot(Rotate(Rotation, Point), Point));
+	}
+
 	glm::vec4 Get_Axis_Angle(Quaternion Rotation, glm::vec3 Point)
 	{
 		glm::vec3 A = Rotate(Rotation, Point);
@@ -174,7 +179,7 @@ namespace Quaternion
 		if (std::isnan(A.x))
 			A = glm::vec3(1, 0, 0);
 
-		return glm::vec4(A.x, A.y, A.z, Dot_Product);
+		return glm::vec4(A.x, A.y, A.z, Dot_Product); // the angle is in radians
 
 		//return glm::vec4(glm::cross(A, glm::vec3(0, 0, 1)), acosf(Dot_Product));
 	}

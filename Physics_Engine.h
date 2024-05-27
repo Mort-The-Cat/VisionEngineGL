@@ -21,6 +21,7 @@ namespace Physics
 	public:
 		glm::vec3 A_Position, B_Position;
 		glm::vec3 A_Velocity, B_Velocity;
+		Quaternion::Quaternion A_Rotational_Velocity, B_Rotational_Velocity;
 		Physics_Object* A = nullptr;
 		Physics_Object* B = nullptr;
 		Collision_Info Collision;
@@ -46,7 +47,7 @@ namespace Physics
 
 		float Elasticity; // Bounciness
 
-		float Friction = 0.75; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
+		float Friction = 0.75f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
 
 		bool Flags[1] = { false };
 
@@ -55,15 +56,17 @@ namespace Physics
 			glm::vec3 A_Velocity = Collision->A_Velocity;
 			glm::vec3 B_Velocity = Collision->B != nullptr ? Collision->B_Velocity : glm::vec3(0, 0, 0);
 
+			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 0.15f;
+
 			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity;
 
 			float Normal_Speed = glm::dot(Relative_Velocity, -Collision->Collision.Collision_Normal);
 
-			glm::vec3 Perpendicular_Velocity = Relative_Velocity - Collision->Collision.Collision_Normal * Normal_Speed;
+			glm::vec3 Perpendicular_Velocity = Relative_Velocity + Normal_Speed * Collision->Collision.Collision_Normal;
 
 			glm::vec3 Impulse(0, 0, 0);
 
-			float J;
+			float J = 0;
 
 			if (Normal_Speed > 0)
 			{
@@ -74,7 +77,7 @@ namespace Physics
 
 				J = -(1.0f + E) * Normal_Speed / (A_Inv_Mass + B_Inv_Mass);
 
-				Impulse = J * Collision->Collision.Collision_Normal;
+				Impulse = J * Collision->Collision.Collision_Normal + Perpendicular_Velocity * B_Friction * Friction * (1 - expf(J));
 
 				Forces += Impulse;
 			}
@@ -83,22 +86,24 @@ namespace Physics
 
 			//
 
-			glm::vec3 To_Collision = Collision->Collision.Collision_Position - (Centre_Of_Mass + Object->Position);
+			glm::vec3 To_Collision = Collision->Collision.Collision_Position - (Centre_Of_Mass + Collision->A_Position);
 
-			glm::vec3 Rotation_Axis = glm::normalize(glm::cross(Relative_Velocity, To_Collision));
+			glm::vec3 Rotation_Axis = glm::normalize(glm::cross(Impulse, To_Collision));
 
 			glm::vec3 Perpendicular = glm::normalize(glm::cross(Rotation_Axis, To_Collision));
 
-			float Perpendicular_Force = glm::dot(Relative_Velocity, Perpendicular);
+			float Perpendicular_Force = glm::dot(Impulse, Perpendicular);
 
-			float Torque = Perpendicular_Force * glm::length(To_Collision);
+			float Rotational_Acceleration_Angle = Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
-			// Perpendicular force x perpendicular distance
+			// https://en.wikipedia.org/wiki/Angular_acceleration#Relation_to_torque
 
-			//if (Torque > 0.0f)
+			// p. force / (radius * mass) = rotational acceleration
+
+			//if (abs(Torque) > 0.0f)
 			//	printf("Yo???\n");
 
-			Quaternion::Quaternion Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, -Torque);
+			Quaternion::Quaternion Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, -Rotational_Acceleration_Angle);
 
 			Rotational_Velocity = Quaternion::Rotate_Quaternion(Rotational_Velocity, Rotational_Acceleration);
 			// Rotational_Velocity.Normalise();
@@ -117,13 +122,13 @@ namespace Physics
 
 				//
 
-				To_Collision = Collision->Collision.Collision_Position - (Collision->B->Centre_Of_Mass + Collision->B->Object->Position);
-				Rotation_Axis = glm::normalize(glm::cross(-Relative_Velocity, To_Collision));
+				To_Collision = Collision->Collision.Collision_Position - (Collision->B->Centre_Of_Mass + Collision->B_Position);
+				Rotation_Axis = glm::normalize(glm::cross(-Impulse, To_Collision));
 				Perpendicular = glm::normalize(glm::cross(Rotation_Axis, To_Collision));
 
-				Perpendicular_Force = glm::dot(Relative_Velocity, Perpendicular);
-				Torque = Perpendicular_Force * glm::length(To_Collision);
-				Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, -Torque);
+				Perpendicular_Force = glm::dot(Impulse, Perpendicular);
+				Rotational_Acceleration_Angle = Collision->B->Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
+				Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, Rotational_Acceleration_Angle);
 				
 				Collision->B->Rotational_Velocity = Quaternion::Rotate_Quaternion(Collision->B->Rotational_Velocity, Rotational_Acceleration);
 				// Collision->B->Rotational_Velocity.Normalise();
@@ -150,7 +155,7 @@ namespace Physics
 				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.25 + 1);
 			}
 			
-			Quaternion::Quaternion Interpolated_Rotation = Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f), Rotational_Velocity, 360 * Tick);
+			Quaternion::Quaternion Interpolated_Rotation = Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f), Rotational_Velocity, 180 * Tick);
 
 			Object->Orientation = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation));
 			Object->Orientation_Up = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation_Up));
@@ -200,6 +205,9 @@ namespace Physics
 				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
 				Impulse.B_Velocity = Scene_Physics_Objects[V]->Velocity;
 
+				Impulse.A_Rotational_Velocity = Scene_Physics_Objects[W]->Rotational_Velocity;
+				Impulse.B_Rotational_Velocity = Scene_Physics_Objects[V]->Rotational_Velocity;
+
 				if (Impulse.Collision.Overlap != 0)
 				{
 					Recorded_Impulses_Mutex.lock();
@@ -221,6 +229,8 @@ namespace Physics
 				Impulse.B_Position = *Scene_Hitboxes[V]->Position;
 
 				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
+				
+				Impulse.A_Rotational_Velocity = Scene_Physics_Objects[W]->Rotational_Velocity;
 				
 				if (Impulse.Collision.Overlap != 0)
 				{
