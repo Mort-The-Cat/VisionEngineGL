@@ -94,10 +94,15 @@ float Total_Timer = 0;
 
 uint32_t Frames = 0;
 
+//
+
+float Player_Object_Spawn_Timer = 0;
+
 void Spawn_Test_Object()
 {
-	for (size_t W = 0; W < (Frame_Counter & 1u); W++)
+	if(Player_Object_Spawn_Timer < 0.0f)
 	{
+		Player_Object_Spawn_Timer = 0.1f;
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
@@ -143,6 +148,8 @@ void Shoot_Fire(float Angle)
 
 void Player_Movement()
 {
+	Player_Object_Spawn_Timer -= Tick;
+
 	if (Inputs[Controls::Pause])
 	{
 		Close_Game();

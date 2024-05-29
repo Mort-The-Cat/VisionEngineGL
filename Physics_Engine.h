@@ -74,7 +74,7 @@ namespace Physics
 
 			glm::vec3 B_Rotational_Velocity_Tangent = Collision->B != nullptr ? Collision->B->Get_Rotational_Velocity_Tangent(Collision->B_Rotational_Velocity, Collision->B_Position, Collision) : glm::vec3(0, 0, 0);
 
-			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity + (B_Rotational_Velocity_Tangent + A_Rotational_Velocity_Tangent);
+			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity + (A_Rotational_Velocity_Tangent + B_Rotational_Velocity_Tangent);
 
 			float Normal_Speed = glm::dot(Relative_Velocity, -Collision->Collision.Collision_Normal);
 
