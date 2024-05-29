@@ -2,6 +2,9 @@
 #define HITDETECTION_VISIONGL
 
 #include "Hitdetection_Declarations.h"
+#include <stdexcept>
+
+#define DEBUGGING_HITDETECTION 1u
 
 struct Separating_Axis_Theorem_Info
 {
@@ -56,21 +59,33 @@ namespace Collision_Test
 				B_Points[V] += *B.Position;
 			}
 
-			glm::vec3 Normal = Calculate_Surface_Normal(A_Points[A.Indices[W]], A_Points[A.Indices[W + 1]], A_Points[A.Indices[W + 2]]);
+			glm::vec3 Normal = -Calculate_Surface_Normal(A.Transformed_Vertices[A.Indices[W]], A.Transformed_Vertices[A.Indices[W + 1]], A.Transformed_Vertices[A.Indices[W + 2]]);// Calculate_Surface_Normal(A_Points[A.Indices[W]], A_Points[A.Indices[W + 1]], A_Points[A.Indices[W + 2]]);
 
-			Normal *= copysignf(1, glm::dot(Normal, A.Vertices[A.Indices[W]]));
+			//glm::vec3 Average_Face_Position = A.Transformed_Vertices[A.Indices[W]] + A.Transformed_Vertices[A.Indices[W + 1]] + A.Transformed_Vertices[A.Indices[W + 2]];
+
+			//Normal *= copysignf(1, glm::dot(Normal, Average_Face_Position));
 
 			float Local_Delta = glm::dot(Normal, B_Points[0]);
 
+			size_t Local_Opposite_Index = 0;
+
 			for (size_t V = 1; V < B.Transformed_Vertices.size(); V++)
 			{
-				Local_Delta = std::fminf(Local_Delta, glm::dot(Normal, B_Points[V]));
+				float New_Local_Delta = glm::dot(Normal, B_Points[V]);
+
+				if (New_Local_Delta < Local_Delta)
+				{
+					Local_Opposite_Index = V;
+					Local_Delta = New_Local_Delta;
+				}
+
+				//Local_Delta = std::fminf(Local_Delta, glm::dot(Normal, B_Points[V]));
 			}
 
 			if (Local_Delta > *Delta)
 			{
 				*Delta = Local_Delta;
-				*Indices_Index = W;
+				*Indices_Index = Local_Opposite_Index;
 				*Ideal_Normal = Normal;
 			}
 		}
@@ -85,16 +100,15 @@ namespace Collision_Test
 		};
 
 		Collision_Test::Separating_Axis_Theorem(*A, *B, &Infos[0].Delta, &Infos[0].Indices_Index, &Infos[0].Normal);
-		Collision_Test::Separating_Axis_Theorem(*A, *B, &Infos[1].Delta, &Infos[1].Indices_Index, &Infos[1].Normal);
+		Collision_Test::Separating_Axis_Theorem(*B, *A, &Infos[1].Delta, &Infos[1].Indices_Index, &Infos[1].Normal);
 
 		//Infos[1].Normal *= -1;
 
 		size_t Infos_Index = Infos[0].Delta < Infos[1].Delta;
 
-		if (Infos[Infos_Index].Delta <= 0)
+		if (Infos[Infos_Index].Delta <= 0 && Infos[Infos_Index].Indices_Index != 9999)
 		{
-#define Hitbox_Vertices Infos[Infos_Index].Mesh_Hitbox->Transformed_Vertices
-#define Hitbox_Indices Infos[Infos_Index].Mesh_Hitbox->Indices
+#define Hitbox_Vertices Infos[1u - Infos_Index].Mesh_Hitbox->Transformed_Vertices
 #define Ideal_Index Infos[Infos_Index].Indices_Index
 
 
@@ -103,8 +117,8 @@ namespace Collision_Test
 			float Sign_Bits[] = { 1, -1 }; // If the measurement was taken from the other hitbox's perspective, we need to flip it back around to our perspective.
 
 			glm::vec3 Normal = Sign_Bits[Infos_Index] * Infos[Infos_Index].Normal; // *Calculate_Surface_Normal(Hitbox_Vertices[Hitbox_Indices[Ideal_Index]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 1]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 2]]);
-
-			return Collision_Info(*Infos[Infos_Index].Mesh_Hitbox->Position + Hitbox_Vertices[Hitbox_Indices[Ideal_Index]] + Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
+			
+			return Collision_Info(*Infos[1u - Infos_Index].Mesh_Hitbox->Position + Hitbox_Vertices[Ideal_Index] + Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
 
 #undef Hitbox_Vertices
 #undef Hitbox_Indices
@@ -138,12 +152,15 @@ namespace Collision_Test
 
 		Infos[Index].Delta -= Sphere->Radius;
 
-		// Infos[0].Normal *= -1;
+		// Infos[1].Normal *= -1;
 
 		//Infos[0].Delta *= -1;
 
+
 		if (Infos[Index].Delta <= 0)
-			return Collision_Info(Infos[Index].Mesh_Hitbox->Transformed_Vertices[Infos[Index].Mesh_Hitbox->Indices[Infos[Index].Indices_Index]] + *Infos[Index].Mesh_Hitbox->Position + Infos[Index].Normal * Infos[Index].Delta * 0.5f, -Infos[Index].Normal, Infos[Index].Delta);
+			return Collision_Info(
+				*Temp_Sphere.Position + Infos[1].Normal * (Sphere->Radius - Infos[1].Delta),
+				-Infos[Index].Normal, Infos[Index].Delta);
 		else
 			return Collision_Info();
 	}
@@ -180,6 +197,11 @@ namespace Collision_Test
 	{
 		Sphere_Hitbox Particle;
 		Particle.Radius = 0.1;
+
+		//AABB_Hitbox Particle;
+		//Particle.A = 0.05f * glm::vec3(1, 1, 1);
+		//Particle.B = 0.05f * glm::vec3(-1, -1, -1);
+
 		Particle.Position = &Origin;
 
 		size_t Step = 0;
@@ -193,7 +215,7 @@ namespace Collision_Test
 			Info = Find_Collision(&Particle, Should_Compare, Target_Pointer);
 		} while (Step < Max_Step && Info.Overlap == 0);
 
-		Info.Collision_Position = *Particle.Position;
+		Info.Collision_Position = *Particle.Position + Info.Collision_Normal * 0.1f;
 
 		return Info; // If we never found a collision, this will have already been initialised to zero anyways so its fine
 	}
@@ -290,14 +312,24 @@ namespace Collision_Test
 
 		Temp.Transformed_Vertices = std::vector<glm::vec3>
 		{
-			glm::vec3(MaxX, MaxY, MinZ),
-			glm::vec3(MaxX, MinY, MinZ),
-			glm::vec3(MaxX, MaxY, MaxZ),
 			glm::vec3(MaxX, MinY, MaxZ),
-			glm::vec3(MinX, MaxY, MinZ),
-			glm::vec3(MinX, MinY, MinZ),
 			glm::vec3(MinX, MaxY, MaxZ),
-			glm::vec3(MinX, MinY, MaxZ)
+			glm::vec3(MaxX, MaxY, MaxZ),
+			glm::vec3(MinX, MinY, MaxZ),
+			glm::vec3(MinX, MaxY, MinZ),
+			glm::vec3(MinX, MaxY, MaxZ),
+			glm::vec3(MinX, MinY, MinZ),
+			glm::vec3(MinX, MinY, MaxZ),
+			glm::vec3(MaxX, MinY, MaxZ),
+			glm::vec3(MaxX, MaxY, MinZ),
+			glm::vec3(MaxX, MaxY, MaxZ),
+			glm::vec3(MinX, MaxY, MaxZ),
+			glm::vec3(MaxX, MinY, MinZ),
+			glm::vec3(MaxX, MinY, MaxZ),
+			glm::vec3(MaxX, MaxY, MaxZ),
+			glm::vec3(MinX, MinY, MinZ),
+			glm::vec3(MaxX, MinY, MinZ),
+			glm::vec3(MaxX, MaxY, MinZ)
 		};
 
 		Temp.Vertices = Temp.Transformed_Vertices;
@@ -313,12 +345,12 @@ namespace Collision_Test
 
 		Temp.Indices = std::vector<uint32_t> // These are just hard-coded values for the indices
 		{
-			1, 7, 5,
-			4, 6, 2,
-			2, 6, 7,
-			6, 4, 5,
-			0, 2, 3,
-			4, 0, 1
+			0, 1, 2,
+			3, 4, 5,
+			6, 7, 8,
+			9, 10, 11,
+			12, 13, 14,
+			15, 16, 17
 		};
 
 		Temp.Position = AABB.Position;

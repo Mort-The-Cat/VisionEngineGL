@@ -166,7 +166,7 @@ namespace Quaternion
 		return acosf(glm::dot(Rotate(Rotation, Point), Point));
 	}
 
-	glm::vec4 Get_Axis_Angle(Quaternion Rotation, glm::vec3 Point)
+	glm::vec4 Get_Axis_Angle(Quaternion Rotation, glm::vec3 Point) // angle is in radians
 	{
 		glm::vec3 A = Rotate(Rotation, Point);
 

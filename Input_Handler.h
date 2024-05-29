@@ -63,9 +63,8 @@ namespace Controls // These are the indices for every user input. This may need 
 	uint8_t Use = 9;
 	uint8_t Auxilliary = 10;
 };
+
 //
-
-
 
 void Receive_Inputs() // This sets all of the bits in "inputs", ready to be processed
 {
@@ -97,11 +96,15 @@ uint32_t Frames = 0;
 
 void Spawn_Test_Object()
 {
-	for (size_t W = 0; W < 1; W++)
+	for (size_t W = 0; W < (Frame_Counter & 1u); W++)
 	{
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
-		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+
+		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.5;
+		//Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		
 		//Create_Model(Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Mesh));
 	}
 }
@@ -209,6 +212,18 @@ void Player_Movement()
 
 	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
 	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);
+
+	if (Inputs[Controls::Auxilliary])
+	{
+		// size_t W = 0;
+		for (size_t W = 0; W < Physics::Scene_Physics_Objects.size(); W++)
+		{
+			Physics::Scene_Physics_Objects[W]->Rotational_Velocity = Quaternion::Rotate_Quaternion(Physics::Scene_Physics_Objects[W]->Rotational_Velocity, Quaternion::Angle_Axis_To_Quaternion(glm::vec3(0, 0, 1), 15 * Tick));
+			
+			//Physics::Scene_Physics_Objects[W]->Object->Orientation_Up = Quaternion::Rotate(Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0, 0, 0), Quaternion::Angle_Axis_To_Quaternion(glm::vec3(0, 0, 1), 45), Tick), Physics::Scene_Physics_Objects[W]->Object->Orientation_Up);
+			//Physics::Scene_Physics_Objects[W]->Object->Hitbox->Update_Hitbox();
+		}
+	}
 
 	//if (Inputs[Controls::Auxilliary])
 	//{

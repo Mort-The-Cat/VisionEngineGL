@@ -47,10 +47,10 @@ C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(92,58): warning C4267: '=': conve
 C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(154,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(73,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(88,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(182,21): warning C4305: '=': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(212,21): warning C4305: '=': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Audio_Handler_Declarations.h(64,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
@@ -65,21 +65,21 @@ C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(170,24): warning C4244: '=': c
 C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(171,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305: 'argument': truncation from 'double' to 'T'
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         with
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         [
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:             T=float
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(114,101): warning C4305:         ]
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,101): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,101): warning C4305:         with
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,101): warning C4305:         [
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,101): warning C4305:             T=float
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(117,101): warning C4305:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305: 'argument': truncation from 'double' to 'T'
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         with
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         [
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:             T=float
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(120,102): warning C4305:         ]
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(123,102): warning C4305: 'argument': truncation from 'double' to 'T'
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(123,102): warning C4305:         with
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(123,102): warning C4305:         [
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(123,102): warning C4305:             T=float
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(123,102): warning C4305:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(153,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(156,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(32,98): warning C4305: 'argument': truncation from 'double' to 'float'

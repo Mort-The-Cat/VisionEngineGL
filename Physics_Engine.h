@@ -47,18 +47,34 @@ namespace Physics
 
 		float Elasticity; // Bounciness
 
-		float Friction = 0.75f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
+		float Friction = 1.0f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
 
 		bool Flags[1] = { false };
+
+		glm::vec3 Get_Rotational_Velocity_Tangent(Quaternion::Quaternion Object_Rotation, glm::vec3 Object_Position, Impulse_Object* Collision)
+		{
+			glm::vec3 To_Collision_Vector = Collision->Collision.Collision_Position - (Object_Position + Centre_Of_Mass);
+
+			float Length = std::sqrtf(glm::dot(To_Collision_Vector, To_Collision_Vector));
+			To_Collision_Vector *= 1.0f / Length;
+
+			glm::vec4 Axis_Angle = Quaternion::Get_Axis_Angle(Object_Rotation, To_Collision_Vector);
+
+			return Quaternion::Get_Tangent(Axis_Angle, To_Collision_Vector) * (Axis_Angle.w * Length * 3.14159f * 2.0f); // Beautiful
+		}
 
 		virtual void Resolve_Collision(Impulse_Object* Collision)
 		{
 			glm::vec3 A_Velocity = Collision->A_Velocity;
 			glm::vec3 B_Velocity = Collision->B != nullptr ? Collision->B_Velocity : glm::vec3(0, 0, 0);
 
-			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 0.15f;
+			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 1.0f;
 
-			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity;
+			glm::vec3 A_Rotational_Velocity_Tangent = Get_Rotational_Velocity_Tangent(Collision->A_Rotational_Velocity, Collision->A_Position, Collision);
+
+			glm::vec3 B_Rotational_Velocity_Tangent = Collision->B != nullptr ? Collision->B->Get_Rotational_Velocity_Tangent(Collision->B_Rotational_Velocity, Collision->B_Position, Collision) : glm::vec3(0, 0, 0);
+
+			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity + (B_Rotational_Velocity_Tangent + A_Rotational_Velocity_Tangent);
 
 			float Normal_Speed = glm::dot(Relative_Velocity, -Collision->Collision.Collision_Normal);
 
@@ -159,6 +175,8 @@ namespace Physics
 
 			Object->Orientation = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation));
 			Object->Orientation_Up = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation_Up));
+
+			Object->Hitbox->Update_Hitbox();
 
 			Forces *= Inv_Mass * 0.5;
 
@@ -339,12 +357,14 @@ public:
 void Wait_On_Physics()
 {
 	bool Still_Working = false;
-	do
-	{
-		Physics::Threads_Working_Count_Mutex.lock();
-		Still_Working = Physics::Threads_Working_On_Physics;
-		Physics::Threads_Working_Count_Mutex.unlock();
-	} while (Still_Working);
+
+	while (Job_System::Part_Time_Work()) { ; }
+	//do
+	//{
+	//	Physics::Threads_Working_Count_Mutex.lock();
+	//	Still_Working = Physics::Threads_Working_On_Physics;
+	//	Physics::Threads_Working_Count_Mutex.unlock();
+	//} while (Still_Working);
 }
 
 #endif

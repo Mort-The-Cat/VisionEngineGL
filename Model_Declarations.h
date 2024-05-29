@@ -90,6 +90,11 @@ public:
 	}
 };
 
+glm::mat4 Hitbox_Direction_Matrix_Calculate(Model* Model)
+{
+	return Direction_Matrix_Calculate(glm::vec3(0, 0, 0), Model->Orientation, Model->Orientation_Up);
+}
+
 void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp, Hitbox* Hitboxp);
 
 std::vector<Model*> Scene_Models;

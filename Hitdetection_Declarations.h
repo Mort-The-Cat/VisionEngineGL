@@ -49,6 +49,8 @@ public:
 	virtual Collision_Info AABB_Hitdetection(AABB_Hitbox* Other) { return Collision_Info(); }
 	virtual Collision_Info Sphere_Hitdetection(Sphere_Hitbox* Other) { return Collision_Info(); }
 	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) { return Collision_Info(); }
+
+	virtual void Update_Hitbox() {  }
 };
 
 class AABB_Hitbox : public Hitbox
@@ -80,6 +82,8 @@ public:
 	virtual Collision_Info Mesh_Hitdetection(Mesh_Hitbox* Other) override;
 };
 
+glm::mat4 Hitbox_Direction_Matrix_Calculate(Model* Object);
+
 class Mesh_Hitbox : public Hitbox
 {
 public:
@@ -88,16 +92,16 @@ public:
 
 	std::vector<glm::vec3> Transformed_Vertices; // These are the vertices that have been transformed with the rotation matrices and the object's hitbox's position
 
-	glm::mat3 Matrix_Rotation; // This is the matrix rotation applied to the vertices during hit detection- perhaps I can initialise this from the control function
+	glm::mat3 Matrix_Rotation = glm::mat3(1.0f); // This is the matrix rotation applied to the vertices during hit detection- perhaps I can initialise this from the control function
 
 	Mesh_Hitbox() {}
 
-	void Update_Vertices()
+	virtual void Update_Hitbox() override
 	{
+		Matrix_Rotation = Hitbox_Direction_Matrix_Calculate(Object);
+
 		for (size_t W = 0; W < Vertices.size(); W++)
 			Transformed_Vertices[W] = Matrix_Rotation * Vertices[W];
-
-		// This should be okay
 	}
 
 	virtual Collision_Info Hitdetection(Hitbox* Other) override
@@ -188,7 +192,15 @@ Mesh_Hitbox* Generate_Mesh_Hitbox(Model_Mesh& Mesh)
 
 	// I believe that makes it a success!!
 
-	Hitbox->Matrix_Rotation = glm::mat3(1);
+	/*printf("\n\n");
+
+	for (size_t W = 0; W < Hitbox->Vertices.size(); W++)
+		printf("glm::vec3(%sX, %sY, %sZ),\n",
+			Hitbox->Vertices[W].x > 0 ? "Max" : "Min",
+			Hitbox->Vertices[W].y > 0 ? "Max" : "Min",
+			Hitbox->Vertices[W].z > 0 ? "Max" : "Min");*/
+
+	Hitbox->Matrix_Rotation = glm::mat3(1.0f);
 
 	Hitbox->Transformed_Vertices = Hitbox->Vertices;
 
