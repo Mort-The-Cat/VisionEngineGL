@@ -107,7 +107,9 @@ void Spawn_Test_Object()
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
 		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
-		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.5;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
+
 		//Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
 		
 		//Create_Model(Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Mesh_Hitbox.obj").Mesh));
@@ -119,7 +121,7 @@ void Shoot_Fire(float Angle)
 	glm::vec3 Raycast_Velocity(-sin(Angle) * cos(DTR * Player_Camera.Orientation.y), -sin(DTR * Player_Camera.Orientation.y), -cos(Angle) * cos(DTR * Player_Camera.Orientation.y));
 
 	Hitbox* Target = nullptr;
-	Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.01), 500, Collision_Test::Always_Compare, &Target);
+	Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.05), 500, Collision_Test::Always_Compare, &Target);
 
 	if (Target != nullptr)
 	{

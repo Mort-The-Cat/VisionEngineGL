@@ -20,11 +20,11 @@ namespace Audio
 	class Audio_Source
 	{
 	public:
-		glm::vec3 Position;
-		float Volume;
+		glm::vec3 Position = glm::vec3(0, 0, 0);
+		float Volume = 0;
 		std::mutex Sounds_Mutex;
 		std::vector<irrklang::ISound*> Sounds;
-		bool Flags[1];
+		bool Flags[1] = { false };
 
 		~Audio_Source()
 		{

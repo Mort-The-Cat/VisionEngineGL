@@ -12,6 +12,8 @@ struct Separating_Axis_Theorem_Info
 	uint32_t Indices_Index;
 	Mesh_Hitbox* Mesh_Hitbox;
 	glm::vec3 Normal;
+
+	glm::vec3 Average_Collision_Position;
 };
 
 namespace Collision_Test
@@ -35,7 +37,7 @@ namespace Collision_Test
 		}
 	}
 
-	void Separating_Axis_Theorem(Mesh_Hitbox& A, Mesh_Hitbox& B, float* Delta, uint32_t* Indices_Index, glm::vec3* Ideal_Normal)
+	void Separating_Axis_Theorem(Mesh_Hitbox& A, Mesh_Hitbox& B, float* Delta, uint32_t* Indices_Index, glm::vec3* Ideal_Normal, Separating_Axis_Theorem_Info* Info)
 	{
 		std::vector<glm::vec3> A_Points(A.Vertices.size());
 		std::vector<glm::vec3> B_Points(B.Vertices.size());
@@ -69,9 +71,19 @@ namespace Collision_Test
 
 			size_t Local_Opposite_Index = 0;
 
+			glm::vec3 Average_Collision_Position = Local_Delta < 0.0f ? B.Transformed_Vertices[0] : glm::vec3(0.0f);
+			size_t Number_Of_Collision_Positions = Local_Delta < 0.0f;
+
 			for (size_t V = 1; V < B.Transformed_Vertices.size(); V++)
 			{
 				float New_Local_Delta = glm::dot(Normal, B_Points[V]);
+
+				if (New_Local_Delta < 0.0f)
+				{
+					// Contribute to average collision position
+					Average_Collision_Position += B.Transformed_Vertices[V];
+					Number_Of_Collision_Positions++;
+				}
 
 				if (New_Local_Delta < Local_Delta)
 				{
@@ -87,6 +99,7 @@ namespace Collision_Test
 				*Delta = Local_Delta;
 				*Indices_Index = Local_Opposite_Index;
 				*Ideal_Normal = Normal;
+				Info->Average_Collision_Position = Average_Collision_Position /= Number_Of_Collision_Positions;
 			}
 		}
 	}
@@ -99,14 +112,14 @@ namespace Collision_Test
 			{ -9999, 9999, B }
 		};
 
-		Collision_Test::Separating_Axis_Theorem(*A, *B, &Infos[0].Delta, &Infos[0].Indices_Index, &Infos[0].Normal);
-		Collision_Test::Separating_Axis_Theorem(*B, *A, &Infos[1].Delta, &Infos[1].Indices_Index, &Infos[1].Normal);
+		Collision_Test::Separating_Axis_Theorem(*A, *B, &Infos[0].Delta, &Infos[0].Indices_Index, &Infos[0].Normal, &Infos[0]);
+		Collision_Test::Separating_Axis_Theorem(*B, *A, &Infos[1].Delta, &Infos[1].Indices_Index, &Infos[1].Normal, &Infos[1]);
 
 		//Infos[1].Normal *= -1;
 
 		size_t Infos_Index = Infos[0].Delta < Infos[1].Delta;
 
-		if (Infos[Infos_Index].Delta <= 0 && Infos[Infos_Index].Indices_Index != 9999)
+		if (Infos[Infos_Index].Delta <= 0 && Infos[Infos_Index].Average_Collision_Position.length() != 0.0f)
 		{
 #define Hitbox_Vertices Infos[1u - Infos_Index].Mesh_Hitbox->Transformed_Vertices
 #define Ideal_Index Infos[Infos_Index].Indices_Index
@@ -118,7 +131,7 @@ namespace Collision_Test
 
 			glm::vec3 Normal = Sign_Bits[Infos_Index] * Infos[Infos_Index].Normal; // *Calculate_Surface_Normal(Hitbox_Vertices[Hitbox_Indices[Ideal_Index]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 1]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 2]]);
 			
-			return Collision_Info(*Infos[1u - Infos_Index].Mesh_Hitbox->Position + Hitbox_Vertices[Ideal_Index] + Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
+			return Collision_Info(*Infos[1u - Infos_Index].Mesh_Hitbox->Position + Infos[Infos_Index].Average_Collision_Position + Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
 
 #undef Hitbox_Vertices
 #undef Hitbox_Indices
@@ -143,7 +156,7 @@ namespace Collision_Test
 		Temp_Sphere.Vertices.push_back(glm::vec3(0, 0, 0));
 		Temp_Sphere.Indices.push_back(0);
 
-		Separating_Axis_Theorem(*Mesh, Temp_Sphere, &Infos[0].Delta, &Infos[0].Indices_Index, &Infos[0].Normal);
+		Separating_Axis_Theorem(*Mesh, Temp_Sphere, &Infos[0].Delta, &Infos[0].Indices_Index, &Infos[0].Normal, &Infos[0]);
 		Sphere_Separating_Axis_Theorem(*Sphere, *Mesh, &Infos[1].Delta, &Infos[1].Normal);
 
 		Infos[1].Indices_Index = 0;
