@@ -3,6 +3,7 @@
 
 #include "Hitdetection_Declarations.h"
 #include <stdexcept>
+#include <array>
 
 #define DEBUGGING_HITDETECTION 1u
 
@@ -14,6 +15,7 @@ struct Separating_Axis_Theorem_Info
 	glm::vec3 Normal;
 
 	glm::vec3 Average_Collision_Position;
+	size_t Number_Of_Collision_Points;
 };
 
 namespace Collision_Test
@@ -41,6 +43,8 @@ namespace Collision_Test
 	{
 		std::vector<glm::vec3> A_Points(A.Vertices.size());
 		std::vector<glm::vec3> B_Points(B.Vertices.size());
+
+		std::vector<unsigned char> Excluded_Points(B.Vertices.size());
 
 		for (size_t W = 0; W < A.Indices.size(); W += 3)
 		{
@@ -71,25 +75,18 @@ namespace Collision_Test
 
 			size_t Local_Opposite_Index = 0;
 
-			glm::vec3 Average_Collision_Position = Local_Delta < 0.0f ? B.Transformed_Vertices[0] : glm::vec3(0.0f);
-			size_t Number_Of_Collision_Positions = Local_Delta < 0.0f;
+			//glm::vec3 Average_Collision_Position = Local_Delta < 0.0f ? B.Transformed_Vertices[0] : glm::vec3(0.0f);
+			//size_t Number_Of_Collision_Positions = Local_Delta < 0.0f;
+
+			Excluded_Points[0] |= (Local_Delta > 0.0f);
 
 			for (size_t V = 1; V < B.Transformed_Vertices.size(); V++)
 			{
 				float New_Local_Delta = glm::dot(Normal, B_Points[V]);
 
-				if (New_Local_Delta < 0.0f)
-				{
-					// Contribute to average collision position
-					Average_Collision_Position += B.Transformed_Vertices[V];
-					Number_Of_Collision_Positions++;
-				}
+				Excluded_Points[V] |= (New_Local_Delta > 0.0f);
 
-				if (New_Local_Delta < Local_Delta)
-				{
-					Local_Opposite_Index = V;
-					Local_Delta = New_Local_Delta;
-				}
+				Local_Delta = std::fminf(New_Local_Delta, Local_Delta);
 
 				//Local_Delta = std::fminf(Local_Delta, glm::dot(Normal, B_Points[V]));
 			}
@@ -99,9 +96,24 @@ namespace Collision_Test
 				*Delta = Local_Delta;
 				*Indices_Index = Local_Opposite_Index;
 				*Ideal_Normal = Normal;
-				Info->Average_Collision_Position = Average_Collision_Position /= Number_Of_Collision_Positions;
 			}
 		}
+
+		Info->Number_Of_Collision_Points = 0;
+
+		Info->Average_Collision_Position = glm::vec3(0, 0, 0);
+
+		for (size_t W = 0; W < B.Transformed_Vertices.size(); W++)
+		{
+			if (!Excluded_Points[W])
+			{
+				Info->Average_Collision_Position += B.Transformed_Vertices[W] + *B.Position;
+				Info->Number_Of_Collision_Points++;
+			}
+		}
+
+		//if(Number_Of_Collision_Points)
+		//	Info->Average_Collision_Position /= Number_Of_Collision_Points;
 	}
 	
 	Collision_Info Mesh_Against_Mesh(Mesh_Hitbox* A, Mesh_Hitbox* B)
@@ -124,6 +136,8 @@ namespace Collision_Test
 #define Hitbox_Vertices Infos[1u - Infos_Index].Mesh_Hitbox->Transformed_Vertices
 #define Ideal_Index Infos[Infos_Index].Indices_Index
 
+			glm::vec3 Average_Collision_Position = Infos[0].Average_Collision_Position + Infos[1].Average_Collision_Position;
+			Average_Collision_Position /= (Infos[0].Number_Of_Collision_Points + Infos[1].Number_Of_Collision_Points);
 
 			// glm::vec3 Normal = glm::vec3(Infos[Infos_Index].Normal.x, 0, Infos[Infos_Index].Normal.y);
 
@@ -131,7 +145,7 @@ namespace Collision_Test
 
 			glm::vec3 Normal = Sign_Bits[Infos_Index] * Infos[Infos_Index].Normal; // *Calculate_Surface_Normal(Hitbox_Vertices[Hitbox_Indices[Ideal_Index]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 1]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 2]]);
 			
-			return Collision_Info(*Infos[1u - Infos_Index].Mesh_Hitbox->Position + Infos[Infos_Index].Average_Collision_Position + Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
+			return Collision_Info(Average_Collision_Position - Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
 
 #undef Hitbox_Vertices
 #undef Hitbox_Indices

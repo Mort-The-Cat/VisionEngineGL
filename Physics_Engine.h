@@ -8,6 +8,8 @@
 
 #include "Audio_Handler_Declarations.h"
 
+#include "Particle_System_Declarations.h"
+
 void Wait_On_Physics();
 
 float squaref(float X) { return X * X; }
@@ -47,7 +49,7 @@ namespace Physics
 
 		float Elasticity; // Bounciness
 
-		float Friction = 1.0f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
+		float Friction = 0.9f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
 
 		bool Flags[1] = { false };
 
@@ -68,7 +70,7 @@ namespace Physics
 			glm::vec3 A_Velocity = Collision->A_Velocity;
 			glm::vec3 B_Velocity = Collision->B != nullptr ? Collision->B_Velocity : glm::vec3(0, 0, 0);
 
-			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 1.0f;
+			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 0.9f;
 
 			glm::vec3 A_Rotational_Velocity_Tangent = Get_Rotational_Velocity_Tangent(Collision->A_Rotational_Velocity, Collision->A_Position, Collision);
 
@@ -96,6 +98,8 @@ namespace Physics
 				Impulse = J * Collision->Collision.Collision_Normal + Perpendicular_Velocity * B_Friction * Friction * (1 - expf(J));
 
 				Forces += Impulse;
+
+				// Billboard_Smoke_Particles.Particles.Spawn_Particle(Collision->Collision.Collision_Position, glm::vec3(0.0f, 0.0f, 0.0f));
 			}
 
 			float B_Active = Collision->B != nullptr;
@@ -170,11 +174,15 @@ namespace Physics
 				SFX->Volume = 0.25 * std::fminf(10, Fast::Sqrt(Force_Magnitude));
 				SFX->Sounds.back()->setPlaybackSpeed(RNG() * 0.25 + 1);
 			}
-			
+
 			Quaternion::Quaternion Interpolated_Rotation = Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f), Rotational_Velocity, 180 * Tick);
 
 			Object->Orientation = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation));
 			Object->Orientation_Up = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation_Up));
+
+			// Rotational_Velocity = Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f), Rotational_Velocity, std::powf(0.9f, Tick));
+
+			// This provides a bit of damping to the rotational velocity to prevent wobbling
 
 			Object->Hitbox->Update_Hitbox();
 
