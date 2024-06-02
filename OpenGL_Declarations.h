@@ -284,12 +284,12 @@ void Initialise_OpenGL_Window()
 
 	Window = glfwCreateWindow(Window_Width, Window_Height, "Vision engine test!", NULL, NULL);
 
-	glfwSwapInterval(0);
-
 	if (Window == NULL)
 		Throw_Error(" >> Failed to create OpenGL Window!\n");
 
 	glfwMakeContextCurrent(Window);
+
+	glfwSwapInterval(0);
 
 	gladLoadGL();
 
