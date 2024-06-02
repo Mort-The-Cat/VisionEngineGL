@@ -60,12 +60,15 @@ public:
 
 	~Model()
 	{
+		if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
+			Mesh.Delete_Buffer();
 		delete Control;
 	}
 
 	void Render(Shader Shader)
 	{
 		Mesh.Bind_Buffer();
+
 		if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
 			Mesh.Update_Vertices();
 

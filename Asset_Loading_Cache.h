@@ -245,16 +245,27 @@ Cache::Animation_Cache_Info Pull_Animation(const char* Directory)
 
 //
 
-#define LOAD_MESH_OBJ_BIT 0u
-#define LOAD_MESH_FBX_BIT 1u
-#define LOAD_MESH_ANIM_BIT 2u
+#define LOAD_MESH_OBJ_BIT 1u
+#define LOAD_MESH_FBX_BIT 2u
+#define LOAD_MESH_ANIM_BIT 4u
 
-Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, char Flags = LOAD_MESH_OBJ_BIT)
+Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, unsigned char Flags = LOAD_MESH_OBJ_BIT)
 {
 	Cache::Mesh_Cache_Info Cache_Info;
 
 	if (Cache::Search_Mesh_Cache(Directory, &Cache_Info))
+	{
+		if (Flags & LOAD_MESH_ANIM_BIT) // If this mesh is an anim mesh, we need it to have a unique vertex buffer
+		{
+			Cache_Info.Mesh = new Model_Mesh(Cache_Info.Mesh);	// This should create a copy thereof?
+			Cache_Info.Vertex_Buffer.Mesh = Cache_Info.Mesh;	// Assign mesh to vertex buffer appropriately
+			Cache_Info.Vertex_Buffer.Create_Buffer();
+			Cache_Info.Vertex_Buffer.Bind_Buffer();
+			Cache_Info.Vertex_Buffer.Update_Buffer();
+		}
+
 		return Cache_Info;
+	}
 
 	Cache_Info.Mesh = new Model_Mesh(); // This allocates the memory that is used by the load_mesh_obj function
 

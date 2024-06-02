@@ -131,7 +131,7 @@ namespace Collision_Test
 
 		size_t Infos_Index = Infos[0].Delta < Infos[1].Delta;
 
-		if (Infos[Infos_Index].Delta <= 0 && Infos[Infos_Index].Average_Collision_Position.length() != 0.0f)
+		if (Infos[Infos_Index].Delta <= 0) // && Infos[Infos_Index].Average_Collision_Position.length() != 0.0f)
 		{
 #define Hitbox_Vertices Infos[1u - Infos_Index].Mesh_Hitbox->Transformed_Vertices
 #define Ideal_Index Infos[Infos_Index].Indices_Index
@@ -145,7 +145,7 @@ namespace Collision_Test
 
 			glm::vec3 Normal = Sign_Bits[Infos_Index] * Infos[Infos_Index].Normal; // *Calculate_Surface_Normal(Hitbox_Vertices[Hitbox_Indices[Ideal_Index]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 1]], Hitbox_Vertices[Hitbox_Indices[Ideal_Index + 2]]);
 			
-			return Collision_Info(Average_Collision_Position - Normal * Infos[Infos_Index].Delta * 0.5f, -Normal, Infos[Infos_Index].Delta);
+			return Collision_Info(Average_Collision_Position - Normal * Infos[Infos_Index].Delta * 0.0f, -Normal, Infos[Infos_Index].Delta);
 
 #undef Hitbox_Vertices
 #undef Hitbox_Indices

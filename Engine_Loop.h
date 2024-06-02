@@ -122,8 +122,13 @@ void Setup_Test_Scene()
 	Initialise_Particles();
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
+	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
+	Create_Model(Pull_Mesh("Assets/Models/Test_Makarov.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Makarov.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+	
+	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(-12, 0, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Vertex_Anims.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
+
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
 

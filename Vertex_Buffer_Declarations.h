@@ -78,6 +78,16 @@ struct Model_Mesh
 {
 	std::vector<Model_Vertex> Vertices;
 	std::vector<unsigned int> Indices;
+
+	Model_Mesh() {}
+
+	Model_Mesh(Model_Mesh* Other)
+	{
+		Vertices = Other->Vertices;
+		Indices = Other->Indices;
+
+		// This copies all of the necessary data
+	}
 };
 
 struct Billboard_Mesh
@@ -166,6 +176,12 @@ public:
 	unsigned int Indices_Count = 0;
 
 	Model_Mesh* Mesh;
+
+	//~Model_Vertex_Buffer()
+	//{
+	//	if (Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
+	//		Delete_Buffer();
+	//}
 
 	Model_Vertex_Buffer() {}
 
