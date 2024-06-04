@@ -103,7 +103,117 @@ void Load_Mesh_Fbx(const char* File_Name, Model_Mesh* Target_Mesh)
 	Importer.FreeScene();
 }
 
-void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
+struct Vertex_Indices
+{
+	size_t Positions_Index, Normals_Index, UV_Index;
+
+	bool operator==(const Vertex_Indices Other)
+	{
+		return Positions_Index == Other.Positions_Index && Normals_Index == Other.Normals_Index && UV_Index == Other.UV_Index;
+	}
+};
+
+bool Identify_Existing_Vertex(std::vector<Vertex_Indices>& Unique_Vertices, Vertex_Indices Vertex, size_t* Index)
+{
+	for(size_t W = 0; W < Unique_Vertices.size(); W++)
+		if (Unique_Vertices[W] == Vertex)
+		{
+			*Index = W;
+			return true;
+		}
+	return false;
+}
+
+void Load_Mesh_Obj_Old(const char* File_Name, Model_Mesh* Target_Mesh)
+{
+	std::vector<glm::vec3> Positions;
+	std::vector<glm::vec3> Normals;
+	std::vector<glm::vec2> UVs;
+
+	std::vector<Vertex_Indices> Unique_Vertices;
+
+	std::ifstream File(File_Name);
+
+	if (File.is_open())
+	{
+		std::string Line;
+		while (std::getline(File, Line))
+		{
+			std::stringstream Buffer;
+			std::string Prefix;
+			Buffer << Line;
+			Buffer >> Prefix;
+			
+			if (Prefix[0] != '#')
+			{
+
+				if (Prefix == "v")
+				{
+					Positions.push_back(glm::vec3());
+					Buffer >> Positions.back().x >> Positions.back().y >> Positions.back().z;
+
+					Positions.back().y *= -1;
+				}
+				else if (Prefix == "vn")
+				{
+					Normals.push_back(glm::vec3());
+					Buffer >> Normals.back().x >> Normals.back().y >> Normals.back().z;
+
+					Normals.back().y *= -1;
+				}
+				else if (Prefix == "vt")
+				{
+					UVs.push_back(glm::vec2());
+					Buffer >> UVs.back().x >> UVs.back().y;
+
+					UVs.back().y = 1.0f - UVs.back().y;
+				}
+				else if (Prefix == "f")
+				{
+					for (size_t W = 0; W < Line.length(); W++)
+						if (Line[W] == '/')
+							Line[W] = ' ';
+
+					Buffer = std::stringstream();
+					Buffer << Line;
+					Buffer >> Prefix;
+
+					for (size_t W = 0; W < 3; W++)
+					{
+						size_t Position_Index, Normal_Index, UV_Index;
+						Buffer >> Position_Index >> UV_Index >> Normal_Index;
+
+						Vertex_Indices Indices;
+						Indices.Positions_Index = Position_Index;
+						Indices.Normals_Index = Normal_Index;
+						Indices.UV_Index = UV_Index;
+
+						size_t Index;
+
+						if (!Identify_Existing_Vertex(Unique_Vertices, Indices, &Index))
+						{
+							Index = Target_Mesh->Vertices.size();
+
+							Model_Vertex Vertex;
+							Vertex.Position = Positions[Position_Index - 1];
+							Vertex.Normal = Normals[Normal_Index - 1];
+							Vertex.UV = UVs[UV_Index - 1];
+
+							Target_Mesh->Vertices.push_back(Vertex);
+						}
+
+						Target_Mesh->Indices.push_back(Index);
+					}
+				}
+
+			}
+		}
+	}
+	else
+		Throw_Error("Unable to open file!\n");
+}
+
+void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh, bool Anim_Mesh = false)
 {
 #define Obj tinyobj // This means we can avoid using this god-awful namespace 
 
@@ -149,7 +259,7 @@ void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
 			//Vertices.push_back(Vertex);
 			//Indices.push_back(Indices.size()); // We'll adjust this later
 
-			if (Unique_Vertices.count(Vertex) == 0)
+			if (Unique_Vertices.count(Vertex) == 0 || Anim_Mesh)
 			{
 				Unique_Vertices[Vertex] = Target_Mesh->Vertices.size();
 				Target_Mesh->Vertices.push_back(Vertex);

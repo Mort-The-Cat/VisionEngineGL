@@ -278,7 +278,7 @@ Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, unsigned char Flags = LO
 	switch (Flags)
 	{
 	case LOAD_MESH_OBJ_BIT:
-		Load_Mesh_Obj(Directory, Cache_Info.Mesh);
+		Load_Mesh_Obj(Directory, Cache_Info.Mesh, Cache_Info.Vertex_Buffer.Buffer_Storage_Hint == GL_DYNAMIC_DRAW);
 		break;
 	case LOAD_MESH_FBX_BIT:
 		Load_Mesh_Fbx(Directory, Cache_Info.Mesh);

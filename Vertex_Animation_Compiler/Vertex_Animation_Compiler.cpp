@@ -56,6 +56,27 @@ void Pad_Left_String(std::string* String, unsigned char Desired_Length)
     *String = "_" + *String;
 }
 
+struct Vertex_Indices
+{
+    size_t Positions_Index, Normals_Index, UV_Index;
+
+    bool operator==(const Vertex_Indices Other)
+    {
+        return Positions_Index == Other.Positions_Index && Normals_Index == Other.Normals_Index && UV_Index == Other.UV_Index;
+    }
+};
+
+bool Identify_Existing_Vertex(std::vector<Vertex_Indices>& Unique_Vertices, Vertex_Indices Vertex, size_t* Index)
+{
+    for (size_t W = 0; W < Unique_Vertices.size(); W++)
+        if (Unique_Vertices[W] == Vertex)
+        {
+            *Index = W;
+            return true;
+        }
+    return false;
+}
+
 std::vector<Model_Vertex> Load_Model(std::string File_Name)
 {
     std::ifstream File(File_Name);
@@ -66,6 +87,8 @@ std::vector<Model_Vertex> Load_Model(std::string File_Name)
     std::vector<vec3> Positions;
     std::vector<vec3> Normals;
     std::vector<vec2> UVs;
+
+    std::vector<Vertex_Indices> Unique_Vertices;
 
     if (File.is_open())
     {
@@ -119,8 +142,16 @@ std::vector<Model_Vertex> Load_Model(std::string File_Name)
                         Vertex.Normal = Normals[Normals_Index - 1];
                         Vertex.UVs = UVs[UV_Index - 1];
 
-                        if (!Already_In_Vector(&Vertices, Vertex))
-                            Vertices.push_back(Vertex);
+                        //if (!Identify_Existing_Vertex(Unique_Vertices, Indices, &Index))
+                        //{
+                        Vertices.push_back(Vertex);
+                        //    Unique_Vertices.push_back(Indices);
+                        //}
+
+                        //if (!Already_In_Vector(&Vertices, Vertex))
+                        //{
+                        //    Vertices.push_back(Vertex);
+                        //}
                     }
                 }
             }
@@ -166,7 +197,7 @@ int main()
         File_Out.write("\n", 1); // I think this is right?
 
         std::string Number_Suffix = std::to_string(I);
-        Pad_Left_String(&Number_Suffix, 6);
+        //Pad_Left_String(&Number_Suffix, 6);
 
         std::vector<Model_Vertex> Vertices = Load_Model("Assets/" + Keyframe_Name + Number_Suffix + ".obj");
 
