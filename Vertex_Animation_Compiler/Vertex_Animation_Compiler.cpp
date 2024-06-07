@@ -7,6 +7,8 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
+#include "Float_Text_Encoder.h"
+
 class vec3
 {
 public:
@@ -252,13 +254,38 @@ int main()
 
         for (size_t W = 0; W < Vertices.size(); W++)
         {
-            std::string Buffer =
+            //std::string Float_Representation = Encoder::Float_To_Characters(Vertices[W].Position.x);
+
+            //float Number = Encoder::Characters_To_Float(Float_Representation.c_str());
+
+            /*std::string Buffer =
                 std::to_string(Vertices[W].Position.x) + " " + 
                 std::to_string(Vertices[W].Position.y) + " " + 
                 std::to_string(Vertices[W].Position.z) + " " + 
                 std::to_string(Vertices[W].Normal.x) + " " + 
                 std::to_string(Vertices[W].Normal.y) + " " +
-                std::to_string(Vertices[W].Normal.z) + "\n";
+                std::to_string(Vertices[W].Normal.z) + "\n";*/
+
+            std::string Buffer =
+                Encoder::Float_To_Characters(Vertices[W].Position.x) +
+                Encoder::Float_To_Characters(Vertices[W].Position.y) +
+                Encoder::Float_To_Characters(Vertices[W].Position.z) +
+                Encoder::Float_To_Characters(Vertices[W].Normal.x) +
+                Encoder::Float_To_Characters(Vertices[W].Normal.y) +
+                Encoder::Float_To_Characters(Vertices[W].Normal.z) + "\n";
+
+            Model_Vertex Read_Vertex;
+
+            Read_Vertex.Position.x = Encoder::Characters_To_Float(&Buffer.c_str()[0]);
+            Read_Vertex.Position.y = Encoder::Characters_To_Float(&Buffer.c_str()[6]);
+            Read_Vertex.Position.z = Encoder::Characters_To_Float(&Buffer.c_str()[12]);
+
+            Read_Vertex.Normal.x = Encoder::Characters_To_Float(&Buffer.c_str()[18]);
+            Read_Vertex.Normal.y = Encoder::Characters_To_Float(&Buffer.c_str()[24]);
+            Read_Vertex.Normal.z = Encoder::Characters_To_Float(&Buffer.c_str()[30]);
+
+            if (!(Read_Vertex.Position == Vertices[W].Position) || !(Read_Vertex.Normal == Vertices[W].Normal))
+                printf("Serious error!");
 
             File_Out.write(Buffer.c_str(), Buffer.length());
         }

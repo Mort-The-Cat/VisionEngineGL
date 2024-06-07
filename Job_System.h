@@ -21,7 +21,7 @@ public:
 
 	virtual void Control_Function() override
 	{
-		Animator.Update_Mesh(&Object->Mesh);
+		Animator.Update_Mesh(&Object->Mesh, true);
 	}
 	virtual void Initialise_Control(Model* Objectp) override
 	{

@@ -130,6 +130,7 @@
     <ClCompile Include="Vertex_Animation_Compiler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Float_Text_Encoder.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

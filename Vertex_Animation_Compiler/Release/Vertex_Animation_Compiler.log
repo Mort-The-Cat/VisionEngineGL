@@ -1,7 +1,7 @@
 ﻿  Vertex_Animation_Compiler.cpp
   Generating code
-  4 of 808 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+  6 of 804 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+    9 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Vertex_Animation_Compiler.vcxproj -> C:\VisionEngineGL\VisionEngineGL\Vertex_Animation_Compiler\Release\Vertex_Animation_Compiler.exe

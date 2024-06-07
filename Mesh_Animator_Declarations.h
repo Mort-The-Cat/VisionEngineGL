@@ -4,10 +4,13 @@
 #include "OpenGL_Declarations.h"
 #include "Vertex_Buffer_Declarations.h"
 #include "Quaternion.h"
+#include "Job_System_Declarations.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+
+#include "Float_Text_Encoder.h"
 
 glm::mat4 Assimp_Matrix_To_Mat4(aiMatrix4x4 Matrix)
 {
@@ -53,6 +56,27 @@ struct Mesh_Animation
 #define ANIMF_TO_BE_DELETED 0u
 #define ANIMF_LOOP_BIT 1u
 
+class Mesh_Animator;
+
+struct Worker_Mesh_Animator_Info
+{
+	Mesh_Animator* Animator;
+	Model_Vertex_Buffer* Mesh;
+	size_t Offset, Keyframe_Index;
+	float Time_Scalar;
+
+	Worker_Mesh_Animator_Info(Mesh_Animator* Animatorp, Model_Vertex_Buffer* Meshp, size_t Offsetp, size_t Keyframe_Indexp, float Time_Scalarp)
+	{
+		Animator = Animatorp;
+		Mesh = Meshp;
+		Offset = Offsetp;
+		Keyframe_Index = Keyframe_Indexp;
+		Time_Scalar = Time_Scalarp;
+	}
+};
+
+void Execute_Mesh_Animator_Animation(void* Parameter);
+
 class Mesh_Animator
 {
 public:
@@ -81,7 +105,7 @@ public:
 		}
 	}
 
-	void Update_Mesh(Model_Vertex_Buffer* Mesh)
+	void Update_Mesh(Model_Vertex_Buffer* Mesh, bool Threaded)
 	{
 		// Since it gives a keyframe every tick, we can use a kind of array indexing to get the keyframe indices quickly
 
@@ -93,6 +117,23 @@ public:
 		Handle_Update(Mesh);
 	}
 };
+
+void Execute_Mesh_Animator_Animation(void* Parameter)
+{
+	Worker_Mesh_Animator_Info* Info = (Worker_Mesh_Animator_Info*)Parameter;
+
+	for (size_t W = Info->Offset; W < Info->Animator->Animation->Keyframes[Info->Keyframe_Index].size(); W += NUMBER_OF_WORKERS)
+	{
+		Keyframe_Vertex A, B;
+		A = Info->Animator->Animation->Keyframes[Info->Keyframe_Index][W];
+		B = Info->Animator->Animation->Keyframes[Info->Keyframe_Index + 1][W];
+
+		Info->Mesh->Mesh->Vertices[W].Position = A.Position * (1.0f - Info->Time_Scalar) + B.Position * Info->Time_Scalar;
+		Info->Mesh->Mesh->Vertices[W].Normal = A.Normal * (1.0f - Info->Time_Scalar) + B.Normal * Info->Time_Scalar;
+	}
+
+	delete Info;
+}
 
 //
 
@@ -125,11 +166,22 @@ void Load_Animation_File(const char* Directory, Mesh_Animation* Animation)
 				continue;
 			}
 
-			std::stringstream Stream(Line);
+			//std::stringstream Stream(Line);
 
 			Keyframe_Vertex Vertex;
 
-			Stream >> Vertex.Position.x >> Vertex.Position.y >> Vertex.Position.z >> Vertex.Normal.x >> Vertex.Normal.y >> Vertex.Normal.z;
+			// Update to use new float-test-encoding for reading each value from the files
+
+			Vertex.Position.x = Encoder::Characters_To_Float(&Line.c_str()[0]);
+			Vertex.Position.y = Encoder::Characters_To_Float(&Line.c_str()[6]);
+			Vertex.Position.z = Encoder::Characters_To_Float(&Line.c_str()[12]);
+
+			Vertex.Normal.x = Encoder::Characters_To_Float(&Line.c_str()[18]);
+			Vertex.Normal.y = Encoder::Characters_To_Float(&Line.c_str()[24]);
+			Vertex.Normal.z = Encoder::Characters_To_Float(&Line.c_str()[30]);
+
+
+			// Stream >> Vertex.Position.x >> Vertex.Position.y >> Vertex.Position.z >> Vertex.Normal.x >> Vertex.Normal.y >> Vertex.Normal.z;
 
 			Animation->Keyframes.back().push_back(Vertex);
 

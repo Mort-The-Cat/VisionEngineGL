@@ -162,6 +162,7 @@
     <ClInclude Include="Deletion_Handler.h" />
     <ClInclude Include="Engine_Loop.h" />
     <ClInclude Include="Fast_Maths.h" />
+    <ClInclude Include="Float_Text_Encoder.h" />
     <ClInclude Include="Hitdetection.h" />
     <ClInclude Include="Hitdetection_Declarations.h" />
     <ClInclude Include="Input_Handler.h" />
