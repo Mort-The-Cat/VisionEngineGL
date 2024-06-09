@@ -58,6 +58,8 @@ namespace Job_System
 
 	uint8_t Last_Job_Submitted_Index;
 
+	std::mutex Last_Job_Submitted_Mutex;
+
 	void Submit_Job(Job Task);
 }
 

@@ -16,6 +16,8 @@
 #define MF_SOLID 2
 #define MF_PHYSICS_TEST 3
 
+#define MF_UPDATE_MESH 4
+
 glm::mat4 Direction_Matrix_Calculate(glm::vec3 Position, glm::vec3 Forward_Vector, glm::vec3 Up_Vector)
 {
 	glm::vec3 Forward = Forward_Vector;
@@ -48,7 +50,7 @@ public:
 
 	Hitbox* Hitbox;
 
-	bool Flags[4] = { false, false, false, false }; // Doesn't really matter how many bits we use for this
+	bool Flags[5] = { false, false, false, false, false }; // Doesn't really matter how many bits we use for this
 
 	Model() {}
 
@@ -69,8 +71,8 @@ public:
 	{
 		Mesh.Bind_Buffer();
 
-		if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
-			Mesh.Update_Vertices();
+		//if (Mesh.Buffer_Storage_Hint == GL_DYNAMIC_DRAW)
+		//	Mesh.Update_Vertices();
 
 		Uniforms.Model_Matrix = Direction_Matrix_Calculate(Position, Orientation, Orientation_Up);
 

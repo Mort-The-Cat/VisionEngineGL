@@ -105,7 +105,21 @@ public:
 		}
 	}
 
-	void Update_Mesh(Model_Vertex_Buffer* Mesh, bool Threaded)
+	void Handle_Update_Threaded(Model_Vertex_Buffer* Mesh)
+	{
+		size_t Keyframe_Index = Time * Animation->Tickrate;
+
+		float Time_Scalar = Time * Animation->Tickrate - ((float)Keyframe_Index);
+
+		// Mesh->Update_Vertices();
+
+		for (size_t W = 0; W < NUMBER_OF_WORKERS; W++)
+			Job_System::Submit_Job(Job_System::Job(Execute_Mesh_Animator_Animation, new Worker_Mesh_Animator_Info(this, Mesh, W, Keyframe_Index, Time_Scalar)));
+
+		// Execute_Mesh_Animator_Animation(new Worker_Mesh_Animator_Info(this, Mesh, NUMBER_OF_WORKERS - 1, Keyframe_Index, Time_Scalar));
+	}
+
+	void Animate_Mesh(Model_Vertex_Buffer* Mesh, bool Threaded = false, bool Update_Mesh = true) /*	You're able to tell the engine *not* to update the mesh once the animation is incremented. This can be done to save processing time when the object is offscreen for example */
 	{
 		// Since it gives a keyframe every tick, we can use a kind of array indexing to get the keyframe indices quickly
 
@@ -114,7 +128,13 @@ public:
 		if (Time * Animation->Tickrate >= (Animation->Duration - 2) && Flags[ANIMF_LOOP_BIT])
 			Time = 0;
 
-		Handle_Update(Mesh);
+		if (Update_Mesh)
+		{
+			if (Threaded)
+				Handle_Update_Threaded(Mesh);
+			else
+				Handle_Update(Mesh);
+		}
 	}
 };
 

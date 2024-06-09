@@ -54,16 +54,19 @@ public:
 	float FOV;
 	float Blur;
 
+	float Attenuation; // This is important for things like fire vs things like ordinary lights- it'd be strange if your viewmodel's colour was overexposed the whole game usw.
+
 	bool Flags[1] = { false };
 	Lightsource() {}
 
-	Lightsource(glm::vec3 Positionp, glm::vec3 Colourp, glm::vec3 Directionp, float FOVp, float Blurp)
+	Lightsource(glm::vec3 Positionp, glm::vec3 Colourp, glm::vec3 Directionp, float FOVp = 360, float Blurp = 1.0f, float Attenuationp = 0.6f)
 	{
 		Position = Positionp;
 		Colour = Colourp;
 		Direction = Directionp;
 		FOV = FOVp;
 		Blur = Blurp;
+		Attenuation = Attenuationp;
 	}
 };
 
@@ -82,7 +85,7 @@ void Update_Lighting_Buffer()
 		Light_Uniforms.Colour[W].r = Scene_Lights[W]->Colour.r;
 		Light_Uniforms.Colour[W].g = Scene_Lights[W]->Colour.g;
 		Light_Uniforms.Colour[W].b = Scene_Lights[W]->Colour.b;
-		Light_Uniforms.Colour[W].w = 1;								// Attenuation value
+		Light_Uniforms.Colour[W].w = Scene_Lights[W]->Attenuation;			// Attenuation value
 
 		Light_Uniforms.Direction[W].x = Scene_Lights[W]->Direction.x;
 		Light_Uniforms.Direction[W].y = Scene_Lights[W]->Direction.y;

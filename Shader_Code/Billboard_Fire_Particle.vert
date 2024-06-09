@@ -31,9 +31,9 @@ vec3 Particle_Velocity = vec3(Particle_Data[Particle_Index + 4], Particle_Data[P
 float Particle_Age = Particle_Data[Particle_Index + 3];
 float Particle_Gravity = -0.2; // Particle_Data[Particle_Index + 7];
 
-float Natural_Delta_Time = log(1 + Particle_Age);
+float Natural_Delta_Time = log(1 + Particle_Age * 5) * 0.2;
 
-float Particle_Angle = Natural_Delta_Time * Particle_Data[Particle_Index + 7];
+float Particle_Angle = 2 * Natural_Delta_Time * Particle_Data[Particle_Index + 7];
 
 vec2 Rotated_Position()
 {

@@ -21,7 +21,10 @@ public:
 
 	virtual void Control_Function() override
 	{
-		Animator.Update_Mesh(&Object->Mesh, true);
+		Animator.Animate_Mesh(&Object->Mesh, true);
+
+		Object->Flags[MF_UPDATE_MESH] = true;		// Keep in mind that this flag doesn't *always* have to be set after the mesh is updated
+													// 
 	}
 	virtual void Initialise_Control(Model* Objectp) override
 	{
@@ -113,16 +116,22 @@ namespace Job_System
 
 	void Submit_Job(Job Task)
 	{
-		Workers[Last_Job_Submitted_Index].Job_Pool_Lock.lock();
+		Last_Job_Submitted_Mutex.lock();
 
-		Workers[Last_Job_Submitted_Index].Job_Pool.push_back(Task);
-
-		Workers[Last_Job_Submitted_Index].Job_Pool_Lock.unlock();
-
-		//
+		size_t Index = Last_Job_Submitted_Index;
 
 		Last_Job_Submitted_Index++;
 		Last_Job_Submitted_Index %= NUMBER_OF_WORKERS;
+
+		Last_Job_Submitted_Mutex.unlock();
+
+		Workers[Index].Job_Pool_Lock.lock();
+
+		Workers[Index].Job_Pool.push_back(Task);
+
+		Workers[Index].Job_Pool_Lock.unlock();
+
+		//
 	}
 }
 
@@ -156,8 +165,16 @@ void Handle_Scene()
 	while (Job_System::Part_Time_Work()) { ; }
 
 	for (size_t W = 0; W < Scene_Models.size(); W++)
-		if(Scene_Models[W]->Flags[MF_ACTIVE])
+	{
+		if (Scene_Models[W]->Flags[MF_UPDATE_MESH])
+		{
+			Scene_Models[W]->Mesh.Bind_Buffer();
+			Scene_Models[W]->Mesh.Update_Vertices();
+		}
+
+		if (Scene_Models[W]->Flags[MF_ACTIVE])
 			Job_System::Submit_Job(Job_System::Job(Execute_Control_Function, Scene_Models[W]->Control));
+	}
 }
 
 #endif

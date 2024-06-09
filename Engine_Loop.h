@@ -29,14 +29,14 @@ void Initialise_Particles()
 	Shader Billboard_Particle_Shader;
 	Billboard_Particle_Shader.Create_Shader("Shader_Code/Billboard_Smoke_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Billboard_Particle_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, &Billboard_Smoke_Particles);
+	Create_Particle_Renderer(Billboard_Particle_Shader, Billboard_Vertex_Buffer(-0.05, -0.05, 0.05, 0.05), Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, &Billboard_Smoke_Particles);
 
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
 	Shader Billboard_Fire_Shader;
 	Billboard_Fire_Shader.Create_Shader("Shader_Code/Billboard_Fire_Particle.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
-	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.15, -0.15, 0.15, 0.15), Pull_Texture("Assets/Textures/Fire_2.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
+	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.2, -0.2, 0.2, 0.2), Pull_Texture("Assets/Textures/Fire_2.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
 }
 
 void Render_All()
@@ -87,7 +87,8 @@ void Render_All()
 
 void Setup_Test_Scene()
 {
-	Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1.5, 1, 1.3), glm::vec3(0, 0, 1), 60, 3));
+	// Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1.5, 1, 1.3), glm::vec3(0, 0, 1), 60, 3));
+	Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1, 1, 1.1), glm::vec3(0, 0, 1), 60, 3, 0.6f));
 
 	Cursor_Reset = true;
 

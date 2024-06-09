@@ -81,7 +81,10 @@ vec3 Lighting()
 	for(int W = 0; W < 8; W++)
 	{
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
-		float Inverse_Length = inversesqrt(dot(Light_To_Pixel, Light_To_Pixel));
+
+		float Squared_Distance = dot(Light_To_Pixel, Light_To_Pixel);
+
+		float Inverse_Length = inversesqrt(Squared_Distance);
 		Light_To_Pixel *= Inverse_Length;
 
 		float Dot_Normal_Light = max(Lighting_Transparency, dot(Light_To_Pixel, Final_Normal));
@@ -94,7 +97,11 @@ vec3 Lighting()
 
 		Handle_Specular(In_FOV, Light_To_Pixel, W);
 
-		Sum_Of_Light += Dot_Normal_Light * Inverse_Length * Light_Colour[W].xyz;
+		float Attenuation_Value = inversesqrt(Light_Colour[W].w + Squared_Distance);
+
+		// Light_Colour[W].w refers to the attenuation value
+
+		Sum_Of_Light += Dot_Normal_Light * Attenuation_Value * Light_Colour[W].xyz;
 	}
 
 	return Sum_Of_Light;
