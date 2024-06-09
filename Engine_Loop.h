@@ -19,6 +19,8 @@
 
 #include "Physics_Engine.h"
 
+#include "Post_Processor_Declarations.h"
+
 void Initialise_Particles()
 {
 	Shader Smoke_Particle_Shader;
@@ -56,6 +58,10 @@ void Render_All()
 	{
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
+
+	Post_Processor::Finish_Rendering();
+
+	// After the post-processing effects are done, these transparent particles can be drawn
 
 	Smoke_Particles.Shader.Activate();
 
@@ -205,6 +211,8 @@ void Engine_Loop()
 		Player_Movement();
 
 		//
+
+		Post_Processor::Start_Rendering();
 
 		glDepthMask(GL_TRUE);
 

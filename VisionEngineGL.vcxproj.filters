@@ -95,6 +95,9 @@
     <ClInclude Include="Float_Text_Encoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Post_Processor_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />

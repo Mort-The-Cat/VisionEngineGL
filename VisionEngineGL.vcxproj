@@ -176,6 +176,7 @@
     <ClInclude Include="OpenGL_Declarations.h" />
     <ClInclude Include="Particle_System_Declarations.h" />
     <ClInclude Include="Physics_Engine.h" />
+    <ClInclude Include="Post_Processor_Declarations.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="Uniform_Buffer_Declarations.h" />
     <ClInclude Include="Vertex_Buffer_Declarations.h" />
