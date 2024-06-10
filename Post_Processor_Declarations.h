@@ -99,6 +99,16 @@ namespace Post_Processor
 		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture); // This is important for getting the screen texture
 
 		glDrawElements(GL_TRIANGLES, Vertex_Buffer.Indices_Count, GL_UNSIGNED_INT, 0); // This does the draw call
+
+		//
+
+		glEnable(GL_DEPTH_TEST);
+
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, Frame_Buffer_ID);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0u);
+		glBlitFramebuffer(0, 0, Window_Width, Window_Height, 0, 0, Window_Width, Window_Height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+		// This is necessary so that the depth-buffer can be used while rendering particles to the default framebuffer
 	}
 }
 
