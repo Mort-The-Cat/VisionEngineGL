@@ -266,12 +266,21 @@ public:
 
 Shader Scene_Object_Shader;
 
+namespace Post_Processor
+{
+	void Delete_Buffers();
+	void Create_Buffers();
+}
+
 void Framebuffer_Resize_Callback(GLFWwindow* Window, int Width, int Height)
 {
 	glViewport(0, 0, Width, Height);
 
 	Window_Width = Width;
 	Window_Height = Height;
+
+	Post_Processor::Delete_Buffers();
+	Post_Processor::Create_Buffers();
 }
 
 void Initialise_OpenGL_Window()

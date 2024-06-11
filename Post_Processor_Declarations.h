@@ -12,37 +12,70 @@ namespace Post_Processor
 
 	unsigned int Frame_Buffer_Texture;
 
+	//
+
+	unsigned int Position_Buffer_ID, Position_Buffer_Texture;
+
+	unsigned int Normal_Buffer_ID, Normal_Buffer_Texture;
+
+	unsigned int Material_Buffer_ID, Material_Buffer_Texture;
+
+	//
+
 	unsigned int Render_Buffer_ID;
 
 	Shader Shader_Program;
 
-	void Initialise_Post_Processor()	// Only call this once. In order to merely update the post-processor, call the update function
+	void Delete_Buffers()
 	{
-		Shader_Program.Create_Shader("Shader_Code/Post_Processing.vert", "Shader_Code/Post_Processing.frag", nullptr);
+		glDeleteFramebuffers(1, &Frame_Buffer_ID);
 
-		Shader_Program.Activate();
+		glDeleteFramebuffers(1, &Position_Buffer_ID);
 
-		glGenFramebuffers(1, &Frame_Buffer_ID);
-		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
+		glDeleteFramebuffers(1, &Normal_Buffer_ID);
 
-		glGenTextures(1, &Frame_Buffer_Texture);
-		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture);
+		glDeleteFramebuffers(1, &Material_Buffer_ID);
+
+		//
+
+		glDeleteTextures(1, &Frame_Buffer_Texture);
+
+		glDeleteTextures(1, &Position_Buffer_Texture);
+
+		glDeleteTextures(1, &Normal_Buffer_Texture);
+
+		glDeleteTextures(1, &Material_Buffer_ID);
+	}
+
+	void Create_Buffer(unsigned int& ID, unsigned int& Texture, unsigned int Colour_Attachment)
+	{
+		glGenFramebuffers(1, & ID);
+		glBindFramebuffer(GL_FRAMEBUFFER, ID);
+
+		glGenTextures(1, &Texture);
+		glBindTexture(GL_TEXTURE_2D, Texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Window_Width, Window_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		
-		// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Frame_Buffer_Texture, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		// GLenum Draw_Buffers[] = { GL_COLOR_ATTACHMENT0 };
+		glFramebufferTexture2D(GL_FRAMEBUFFER, Colour_Attachment, GL_TEXTURE_2D, Texture, 0);
+	}
 
-		// glDrawBuffers(1, Draw_Buffers);
+	void Create_Buffers()
+	{
+		Create_Buffer(Position_Buffer_ID, Position_Buffer_Texture, GL_COLOR_ATTACHMENT1);
+		Create_Buffer(Normal_Buffer_ID, Normal_Buffer_Texture, GL_COLOR_ATTACHMENT2);
+		Create_Buffer(Material_Buffer_ID, Material_Buffer_Texture, GL_COLOR_ATTACHMENT3);
 
-		const unsigned int Buffers[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, Buffers);
+		Create_Buffer(Frame_Buffer_ID, Frame_Buffer_Texture, GL_COLOR_ATTACHMENT0);
+
+
+		const unsigned int Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(4, Buffers);
 
 		//
 
@@ -56,6 +89,15 @@ namespace Post_Processor
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << " >> Framebuffer is not complete!" << std::endl;
+	}
+
+	void Initialise_Post_Processor()	// Only call this once. In order to merely update the post-processor, call the update function
+	{
+		Shader_Program.Create_Shader("Shader_Code/Post_Processing.vert", "Shader_Code/Post_Processing.frag", nullptr);
+
+		Shader_Program.Activate();
+
+		Create_Buffers();
 
 		//
 
@@ -90,9 +132,6 @@ namespace Post_Processor
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
-
-		// glDisable(GL_CULL_FACE);
-
 		
 		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Texture"), 0);
 		glActiveTexture(GL_TEXTURE0);
