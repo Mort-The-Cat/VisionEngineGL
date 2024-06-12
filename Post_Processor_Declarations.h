@@ -4,9 +4,17 @@
 #include "Vertex_Buffer_Declarations.h"
 #include "OpenGL_Declarations.h"
 
+#include "Lighting_Handler.h"
+
+constexpr const bool Post_Processing = false;
+
 namespace Post_Processor
 {
 	Billboard_Vertex_Buffer Vertex_Buffer;
+
+	Light_Uniform_Location_Object Deferred_Lighting_Uniform_Locations;
+
+	Camera_Uniform_Location_Object Camera_Uniform_Locations;
 
 	unsigned int Frame_Buffer_ID;
 
@@ -14,11 +22,11 @@ namespace Post_Processor
 
 	//
 
-	unsigned int Position_Buffer_ID, Position_Buffer_Texture;
+	unsigned int Position_Buffer_Texture;
 
-	unsigned int Normal_Buffer_ID, Normal_Buffer_Texture;
+	unsigned int Normal_Buffer_Texture;
 
-	unsigned int Material_Buffer_ID, Material_Buffer_Texture;
+	unsigned int Material_Buffer_Texture;
 
 	//
 
@@ -30,12 +38,6 @@ namespace Post_Processor
 	{
 		glDeleteFramebuffers(1, &Frame_Buffer_ID);
 
-		glDeleteFramebuffers(1, &Position_Buffer_ID);
-
-		glDeleteFramebuffers(1, &Normal_Buffer_ID);
-
-		glDeleteFramebuffers(1, &Material_Buffer_ID);
-
 		//
 
 		glDeleteTextures(1, &Frame_Buffer_Texture);
@@ -44,17 +46,19 @@ namespace Post_Processor
 
 		glDeleteTextures(1, &Normal_Buffer_Texture);
 
-		glDeleteTextures(1, &Material_Buffer_ID);
+		glDeleteTextures(1, &Material_Buffer_Texture);
+
+		//
+
+		glDeleteRenderbuffers(1, &Render_Buffer_ID);
 	}
 
-	void Create_Buffer(unsigned int& ID, unsigned int& Texture, unsigned int Colour_Attachment)
+	void Create_Buffer(unsigned int& Texture, unsigned int Colour_Attachment, unsigned int Internal_Format, unsigned int Type)
 	{
-		glGenFramebuffers(1, & ID);
-		glBindFramebuffer(GL_FRAMEBUFFER, ID);
-
 		glGenTextures(1, &Texture);
 		glBindTexture(GL_TEXTURE_2D, Texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Window_Width, Window_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, Internal_Format, Window_Width, Window_Height, 0, GL_RGBA, Type, NULL);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -67,15 +71,12 @@ namespace Post_Processor
 
 	void Create_Buffers()
 	{
-		Create_Buffer(Position_Buffer_ID, Position_Buffer_Texture, GL_COLOR_ATTACHMENT1);
-		Create_Buffer(Normal_Buffer_ID, Normal_Buffer_Texture, GL_COLOR_ATTACHMENT2);
-		Create_Buffer(Material_Buffer_ID, Material_Buffer_Texture, GL_COLOR_ATTACHMENT3);
+		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
 
-		Create_Buffer(Frame_Buffer_ID, Frame_Buffer_Texture, GL_COLOR_ATTACHMENT0);
-
-
-		const unsigned int Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-		glDrawBuffers(4, Buffers);
+		Create_Buffer(Frame_Buffer_Texture, GL_COLOR_ATTACHMENT0, GL_RGBA8, GL_UNSIGNED_BYTE);
+		Create_Buffer(Position_Buffer_Texture, GL_COLOR_ATTACHMENT1, GL_RGBA32F, GL_FLOAT);
+		Create_Buffer(Normal_Buffer_Texture, GL_COLOR_ATTACHMENT2, GL_RGBA32F, GL_FLOAT);
+		Create_Buffer(Material_Buffer_Texture, GL_COLOR_ATTACHMENT3, GL_RGBA8, GL_UNSIGNED_BYTE);
 
 		//
 
@@ -85,6 +86,9 @@ namespace Post_Processor
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, Render_Buffer_ID);
 
+		const unsigned int Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(4, Buffers);
+
 		//
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -93,14 +97,22 @@ namespace Post_Processor
 
 	void Initialise_Post_Processor()	// Only call this once. In order to merely update the post-processor, call the update function
 	{
+		glGenFramebuffers(1, &Frame_Buffer_ID);
+		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
+
 		Shader_Program.Create_Shader("Shader_Code/Post_Processing.vert", "Shader_Code/Post_Processing.frag", nullptr);
 
 		Shader_Program.Activate();
+
+		Deferred_Lighting_Uniform_Locations = Initialise_Light_Uniform_Locations_Object(Shader_Program);
+
+		Camera_Uniform_Locations = Initialise_Camera_Uniform_Locations_Object(Shader_Program);
 
 		Create_Buffers();
 
 		//
 
+		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture);
 		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Texture"), 0);
 		glActiveTexture(0);
 
@@ -130,12 +142,33 @@ namespace Post_Processor
 
 		Vertex_Buffer.Bind_Buffer();
 
+		Player_Camera.Bind_Buffers(Camera_Uniform_Locations);
+
+		Test_Cubemap.Parse_Texture(Shader_Program, "Cubemap", 0);
+		Test_Cubemap.Bind_Texture();
+
+		Light_Uniforms.Update_Buffer(Deferred_Lighting_Uniform_Locations);
+
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		
 		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Texture"), 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture); // This is important for getting the screen texture
+
+		//
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Position_Texture"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Position_Buffer_Texture);
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Normal_Texture"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, Normal_Buffer_Texture); // This is important for getting the screen texture
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Material_Texture"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, Material_Buffer_Texture); // This is important for getting the screen texture
 
 		glDrawElements(GL_TRIANGLES, Vertex_Buffer.Indices_Count, GL_UNSIGNED_INT, 0); // This does the draw call
 

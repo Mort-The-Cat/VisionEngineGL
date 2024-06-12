@@ -59,7 +59,8 @@ void Render_All()
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
 
-	Post_Processor::Finish_Rendering();
+	if(Post_Processing)
+		Post_Processor::Finish_Rendering();
 
 	// After the post-processing effects are done, these transparent particles can be drawn
 
@@ -146,6 +147,13 @@ void Setup_Test_Scene()
 	Scene_Models.back()->Position = glm::vec3(-8, 0, -3);
 	Create_Model(Pull_Mesh("Assets/Models/Two_Bones_Test.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Two_Bones_Test.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
+	//
+
+	// Scene_Models.push_back(new Model({ MF_ACTIVE }));
+	// Scene_Models.back()->Position = glm::vec3(0, 6, 0);
+	// Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
+
+	//
 
 	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10));
 
@@ -212,7 +220,10 @@ void Engine_Loop()
 
 		//
 
-		Post_Processor::Start_Rendering();
+		if(Post_Processing)
+			Post_Processor::Start_Rendering();
+		else
+			glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 
 		glDepthMask(GL_TRUE);
 

@@ -1,6 +1,9 @@
 #version 440
 
-out vec4 Out_Colour;
+layout(location = 0) out vec4 Out_Colour;
+layout(location = 1) out vec4 Position_Out;
+layout(location = 2) out vec4 Normal_Out;
+layout(location = 3) out vec4 Material_Out;
 
 uniform vec4 Light_Position[20];
 uniform vec4 Light_Colour[20];
@@ -107,13 +110,30 @@ vec3 Lighting()
 	return Sum_Of_Light;
 }
 
+// https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+
+vec4 TBN_To_Quaternion(mat3 Matrix)
+{
+	vec4 Quaternion;
+
+	Quaternion.w = 0.5f * sqrt(1 + Matrix[0][0] + Matrix[1][1] + Matrix[2][2]);
+
+	float Inverse = 0.25f / Quaternion.w;
+
+	Quaternion.x = (Matrix[2][1] - Matrix[1][2]) * Inverse;
+	Quaternion.y = (Matrix[0][2] - Matrix[2][0]) * Inverse;
+	Quaternion.z = (Matrix[1][0] - Matrix[0][1]) * Inverse;
+
+	return Quaternion;
+}
+
 void main()
 {
 	Final_Normal = normalize(Normal);
-	
-	// Final_Normal.y *= -1;
 
-	Final_Normal = normalize(TBN(Final_Normal) * Normal_Map_Read());
+	mat3 TBN = TBN(Final_Normal);
+	
+	Final_Normal = normalize(TBN * Normal_Map_Read());
 
 	Reflection_Vector = normalize(reflect(Camera_To_Pixel, Final_Normal));
 	
@@ -123,7 +143,18 @@ void main()
 
 	float Opacity = texture(Albedo, UV).a * Vertex_Transparency;
 
-	//Out_Colour = vec4(Final_Normal, 0.5); //texture(Material, UV);
+	Out_Colour = texture(Albedo, UV);
+	
+	Position_Out = vec4(Position.xyz, 0);
+	Material_Out = vec4(texture(Material, UV).xy, 0, 0);
+
+	Normal_Out = vec4(Final_Normal, 0); // TBN_To_Quaternion(TBN(Final_Normal));
 	
 	Out_Colour = vec4(Specular_Lighting, 0) + vec4(Reflectivity, Reflectivity, Reflectivity, Opacity) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Reflectivity), Opacity) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
+
+	// NOTE: TBN MATRICES ARE PURELY ROTATIONAL
+
+	// ORTHOGONAL ROTATION MATRICES ALWAYS HAVE A POSITION DETERMINANT 
+
+	// WE CAN USE THE SIMPLEST METHOD FOR CALCULATING A QUATERNION
 }

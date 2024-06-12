@@ -76,12 +76,6 @@ public:
 
 		Uniforms.Model_Matrix = Direction_Matrix_Calculate(Position, Orientation, Orientation_Up);
 
-		//Uniforms.Model_Matrix = glm::translate(glm::mat4(1.0f), Position);
-		//Uniforms.Model_matrix = 
-		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.z, glm::vec3(0, 0, 1));
-		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, Orientation.y, glm::vec3(1, 0, 0));
-		//Uniforms.Model_Matrix = glm::rotate(Uniforms.Model_Matrix, -Orientation.x, glm::vec3(0, 1, 0));
-
 		Uniforms.Model_Position = Position;
 
 		Uniforms.Update_Buffer(Model_Uniform_Location);
