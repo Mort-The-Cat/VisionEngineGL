@@ -3,7 +3,7 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-out vec3 Position;
+out vec4 Position;
 out vec3 Normal;
 out vec3 UV_Tangent;
 out vec3 UV_Bitangent;
@@ -74,7 +74,7 @@ void main()
 	{
 		vec4 Calculated_Position = (data_in[0].Projection_Matrix * gl_in[W].gl_Position);
 		gl_Position = Calculated_Position;
-		Position = gl_in[W].gl_Position.xyz;
+		Position = vec4(gl_in[W].gl_Position.xyz, Calculated_Position.w);
 		Normal = data_in[W].Normal;
 		UV = data_in[W].UV;
 		UV_Tangent = Tangent;

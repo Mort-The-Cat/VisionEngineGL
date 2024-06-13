@@ -14,7 +14,7 @@ uniform samplerCube Cubemap;
 uniform vec3 Camera_Position;
 uniform vec3 Camera_Direction;
 
-in vec3 Position;
+in vec4 Position;
 in vec3 Normal;
 in vec3 UV_Tangent;
 in vec3 UV_Bitangent;
@@ -30,7 +30,7 @@ vec3 Specular_Lighting = vec3(0, 0, 0);
 
 float Inverse_Material_W = 1.0f; //texture(Material, UV).a;
 
-vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
+vec3 Camera_To_Pixel = normalize(Camera_Position - Position.xyz);
 
 vec3 Reflection_Vector;
 
@@ -80,7 +80,7 @@ vec3 Lighting()
 
 	for(int W = 0; W < 8; W++)
 	{
-		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
+		vec3 Light_To_Pixel = Light_Position[W].xyz - Position.xyz;
 
 		float Squared_Distance = dot(Light_To_Pixel, Light_To_Pixel);
 

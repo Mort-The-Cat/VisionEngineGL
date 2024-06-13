@@ -6,7 +6,7 @@
 
 #include "Lighting_Handler.h"
 
-constexpr const bool Post_Processing = false;
+constexpr const bool Post_Processing = true;
 
 namespace Post_Processor
 {
