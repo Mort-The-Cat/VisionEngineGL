@@ -74,7 +74,7 @@ void main()
 	{
 		vec4 Calculated_Position = (data_in[0].Projection_Matrix * gl_in[W].gl_Position);
 		gl_Position = Calculated_Position;
-		Position = vec4(gl_in[W].gl_Position.xyz, Calculated_Position.w);
+		Position = vec4(gl_in[W].gl_Position.xyz, Calculated_Position.z);
 		Normal = data_in[W].Normal;
 		UV = data_in[W].UV;
 		UV_Tangent = Tangent;
