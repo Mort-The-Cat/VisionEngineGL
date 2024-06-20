@@ -62,8 +62,8 @@ public:
 
 	void Prepare_For_Rendering(Shader& Shader)	// call this function before the "render shadow map" function is called
 	{
-		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, Shadow_Cubemap, GL_TEXTURE_CUBE_MAP, 0u);
-		// 
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, Shadow_Cubemap, GL_TEXTURE_CUBE_MAP, 0u); 
+		 
 		//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, Shadow_Cubemap, 0u);
 
 		glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Cubemap);
