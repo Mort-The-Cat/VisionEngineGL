@@ -3,6 +3,8 @@
 
 #include "OpenGL_Declarations.h"
 
+#include "Shadow_Map_Renderer_Declarations.h"
+
 struct Light_Uniform_Location_Object
 {
 	int Position;
@@ -98,6 +100,13 @@ void Update_Lighting_Buffer()
 		Light_Uniforms.Position[W] = glm::vec4(0, 0, 0, 0);
 		Light_Uniforms.Colour[W] = glm::vec4(0, 0, 0, 0);
 		Light_Uniforms.Direction[W] = glm::vec4(0, 0, 0, 0);
+	}
+
+	if (Shadow_Mapper::Shadow_Mapping)
+	{
+		Max_Index = std::min((unsigned int)Scene_Lights.size(), NUMBER_OF_SHADOW_MAPS);
+		for (size_t W = 0; W < Max_Index; W++)
+			Shadow_Mapper::Shadow_Maps[W].Update_View_Matrices(Scene_Lights[W]->Position);
 	}
 
 	Light_Uniforms.Update_Buffer(Light_Uniform_Location);

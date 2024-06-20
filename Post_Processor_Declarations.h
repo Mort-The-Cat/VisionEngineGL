@@ -6,6 +6,8 @@
 
 #include "Lighting_Handler.h"
 
+#include "Shadow_Map_Renderer_Declarations.h"
+
 constexpr const bool Post_Processing = true;
 
 namespace Post_Processor
@@ -146,6 +148,9 @@ namespace Post_Processor
 
 		Test_Cubemap.Parse_Texture(Shader_Program, "Cubemap", 0);
 		Test_Cubemap.Bind_Texture();
+
+		if (Shadow_Mapper::Shadow_Mapping)
+			Shadow_Mapper::Bind_Shadow_Maps(Shader_Program);
 
 		Light_Uniforms.Update_Buffer(Deferred_Lighting_Uniform_Locations);
 

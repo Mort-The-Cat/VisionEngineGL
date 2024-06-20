@@ -18,6 +18,8 @@
 
 #define MF_UPDATE_MESH 4
 
+#define MF_CAST_SHADOWS 5
+
 glm::mat4 Direction_Matrix_Calculate(glm::vec3 Position, glm::vec3 Forward_Vector, glm::vec3 Up_Vector)
 {
 	glm::vec3 Forward = Forward_Vector;
@@ -50,7 +52,7 @@ public:
 
 	Hitbox* Hitbox;
 
-	bool Flags[5] = { false, false, false, false, false }; // Doesn't really matter how many bits we use for this
+	bool Flags[6] = { false, false, false, false, false, false }; // Doesn't really matter how many bits we use for this
 
 	Model() {}
 

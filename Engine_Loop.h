@@ -20,6 +20,7 @@
 #include "Physics_Engine.h"
 
 #include "Post_Processor_Declarations.h"
+#include "Shadow_Map_Renderer_Declarations.h"
 
 void Initialise_Particles()
 {
@@ -58,6 +59,9 @@ void Render_All()
 	{
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
+
+	if(Shadow_Mapper::Shadow_Mapping)
+		Shadow_Mapper::Render_All_Shadows();
 
 	if(Post_Processing)
 		Post_Processor::Finish_Rendering();
@@ -149,7 +153,7 @@ void Setup_Test_Scene()
 
 	//
 
-	Scene_Models.push_back(new Model({ MF_SOLID }));
+	Scene_Models.push_back(new Model({ MF_SOLID, MF_CAST_SHADOWS }));
 	Scene_Models.back()->Position = glm::vec3(0, 6, 0);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
 
@@ -250,7 +254,7 @@ void Engine_Loop()
 		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
 
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_CCW);
+		glCullFace(GL_BACK);
 		glEnable(GL_DEPTH_TEST);
 
 		//

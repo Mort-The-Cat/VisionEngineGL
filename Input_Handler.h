@@ -103,7 +103,7 @@ void Spawn_Test_Object()
 	if(Player_Object_Spawn_Timer < 0.0f)
 	{
 		Player_Object_Spawn_Timer = 0.1f;
-		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID }));
+		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
 		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
@@ -129,6 +129,8 @@ void Shoot_Fire(float Angle)
 
 		Scene_Lights.push_back(new Lightsource(Info.Collision_Position - Info.Collision_Normal * glm::vec3(0.3), glm::vec3(RNG() * 1 + 2, RNG() + 1, RNG()), Info.Collision_Normal, 360, 1, 0.0f));
 		Scene_Lights.back()->Flags[LF_TO_BE_DELETED] = true;
+
+		std::swap(Scene_Lights.back(), Scene_Lights[0]);
 		
 		if(RNG() < 0.5)
 			Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));

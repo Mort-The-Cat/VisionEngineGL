@@ -11,6 +11,10 @@ uniform sampler2D Material_Texture;
 
 uniform samplerCube Cubemap;
 
+const int Number_Of_Shadow_Maps = 1;
+
+uniform samplerCube Shadow_Maps;
+
 uniform vec4 Light_Position[20];
 uniform vec4 Light_Colour[20];
 uniform vec4 Light_Direction[20];
@@ -115,11 +119,18 @@ void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, int Light_Index)
 	Specular_Lighting += Light_Colour[Light_Index].xyz * Specular_Value;
 }
 
+float Shadow_Check(vec3 Light_To_Pixel, float Distance, int Light_Index)
+{
+	float Closest_Depth = 1.0f * texture(Shadow_Maps, Light_To_Pixel).r;
+
+	return Distance - 0.05f > Closest_Depth ? 0.0f : 1.0f;
+}
+
 vec3 Lighting()
 {
 	vec3 Sum_Of_Light = vec3(Occlusion); //vec3(0.1, 0.1, 0.1);
 
-	for(int W = 0; W < 8; W++)
+	for(int W = 0; W < 1; W++)
 	{
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
 
@@ -128,7 +139,7 @@ vec3 Lighting()
 		float Inverse_Length = inversesqrt(Squared_Distance);
 		Light_To_Pixel *= Inverse_Length;
 
-		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal));
+		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal)) * Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W);
 
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 

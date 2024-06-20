@@ -6,6 +6,7 @@
 #include "Audio_Declarations.h"
 
 #include "Post_Processor_Declarations.h"
+#include "Shadow_Map_Renderer_Declarations.h"
 
 int main()
 {
@@ -13,7 +14,11 @@ int main()
 
 	Initialise_OpenGL_Window();
 
-	Post_Processor::Initialise_Post_Processor();
+	if(Post_Processing)
+		Post_Processor::Initialise_Post_Processor();
+
+	if (Shadow_Mapper::Shadow_Mapping)
+		Shadow_Mapper::Initialise_Shadow_Mapper();
 
 	Initialise_Sound_Engine();
 	Engine_Loop();

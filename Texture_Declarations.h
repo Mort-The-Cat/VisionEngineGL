@@ -20,7 +20,7 @@ public:
 		GLint Uniform_Location = glGetUniformLocation(Shader.Program_ID, Location);
 
 		glUniform1i(Uniform_Location, Unit);
-		glActiveTexture(GL_TEXTURE_CUBE_MAP);
+		glActiveTexture(GL_TEXTURE0 + Unit);
 	}
 	
 	void Bind_Texture()
