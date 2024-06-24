@@ -1,6 +1,6 @@
 #version 440
 
-layout(location = 0) out float Out_Depth;
+// out float Out_Depth;
 
 in vec4 Fragment_Position;
 
@@ -13,5 +13,5 @@ void main()
 
 	float Distance = sqrt(dot(To_Vector, To_Vector));
 
-	Out_Depth = Distance;
+	gl_FragDepth = 0.5f; //Distance / 200;
 }

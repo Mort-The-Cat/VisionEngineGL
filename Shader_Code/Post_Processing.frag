@@ -121,7 +121,7 @@ void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, int Light_Index)
 
 float Shadow_Check(vec3 Light_To_Pixel, float Distance, int Light_Index)
 {
-	float Closest_Depth = 1.0f * texture(Shadow_Maps, Light_To_Pixel).r;
+	float Closest_Depth = 25.0f * texture(Shadow_Maps, Light_To_Pixel).r;
 
 	return Distance - 0.05f > Closest_Depth ? 0.0f : 1.0f;
 }
