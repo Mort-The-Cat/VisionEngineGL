@@ -168,6 +168,18 @@ public:
 	}
 };
 
+void Model_Vertex_Buffer_Vertex_Attributes_Set()
+{
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)0); // Position
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 3)); // Normal
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
+	glEnableVertexAttribArray(2);
+}
+
 class Model_Vertex_Buffer : public Base_Vertex_Buffer
 {
 	unsigned int Index_Buffer_ID = Unassigned_Bit_Mask; // Model vertex buffers need an index buffer
@@ -233,14 +245,7 @@ public:
 
 		Indices_Count = Mesh->Indices.size();
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)0); // Position
-		glEnableVertexAttribArray(0);
-
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 3)); // Normal
-		glEnableVertexAttribArray(1);
-
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 6)); // UV
-		glEnableVertexAttribArray(2);
+		Model_Vertex_Buffer_Vertex_Attributes_Set();
 
 		//glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Model_Vertex), (void*)(sizeof(float) * 8)); // Bone rigging weight
 		//glEnableVertexAttribArray(3);

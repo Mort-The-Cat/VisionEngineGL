@@ -130,7 +130,7 @@ vec3 Lighting()
 {
 	vec3 Sum_Of_Light = vec3(Occlusion); //vec3(0.1, 0.1, 0.1);
 
-	for(int W = 0; W < 1; W++)
+	for(int W = 0; W < 8; W++)
 	{
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
 

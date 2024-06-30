@@ -7,7 +7,6 @@
 
 #include "Post_Processor_Declarations.h"
 #include "Shadow_Map_Renderer_Declarations.h"
-
 int main()
 {
 	printf(" >> Hello!\n");

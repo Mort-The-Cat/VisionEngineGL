@@ -8,7 +8,7 @@ uniform mat4 Model_Matrix;
 
 void main()
 {
-	// Fragment_Position = Model_Matrix * vec4(In_Position, 0.0f);
+	// gl_Position = Model_Matrix * vec4(In_Position, 0.0f); //Fragment_Position;
 
-	gl_Position = Model_Matrix * vec4(In_Position, 0.0f); //Fragment_Position;
+	gl_Position = vec4(In_Position, 0.0f);
 }
