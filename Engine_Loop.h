@@ -20,6 +20,7 @@
 #include "Physics_Engine.h"
 
 #include "Post_Processor_Declarations.h"
+
 #include "Shadow_Map_Renderer_Declarations.h"
 
 void Initialise_Particles()
@@ -60,7 +61,7 @@ void Render_All()
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
 
-	if(Shadow_Mapper::Shadow_Mapping)
+	if (Shadow_Mapper::Shadow_Mapping)
 		Shadow_Mapper::Render_All_Shadows();
 
 	if(Post_Processing)
@@ -268,6 +269,84 @@ void Engine_Loop()
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//
+
+		Frame_Counter++;
+
+		Time_Elapsed_Since_FPS_Update += Tick;
+
+		if (Time_Elapsed_Since_FPS_Update > 1.0f)
+		{
+			glfwSetWindowTitle(Window, (std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))).c_str());
+			Time_Elapsed_Since_FPS_Update = 0;
+			Frame_Counter = 0;
+		}
+
+		glfwSwapBuffers(Window);
+		glfwPollEvents();
+	}
+}
+
+//
+
+void Test_Shadow_Loop()
+{
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+
+	glEnable(GL_DEPTH_TEST);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0u);
+
+	Setup_Test_Scene();
+
+	Last_Time = glfwGetTime();
+
+	while (!glfwWindowShouldClose(Window))
+	{
+		double Current_Time = glfwGetTime();
+		Tick = (Current_Time - Last_Time);
+		Last_Time = Current_Time;
+
+		Receive_Inputs();
+
+		Player_Movement();
+
+		glViewport(0, 0, 256, 256);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, Shadow_Mapper::Shadow_Frame_Buffer);
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Mapper::Shadow_Maps[0].Shadow_Cubemap);
+
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X, Shadow_Mapper::Shadow_Maps[0].Shadow_Cubemap, 0u);
+
+		glClearColor(0.3, 0.2, 0.2, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		Update_Lighting_Buffer();
+
+		Audio::Handle_Audio(Player_Camera);
+
+		Shadow_Mapper::Shadow_Object_Shader.Activate();
+
+		Scene_Object_Shader.Activate();
+
+		Player_Camera.Set_Projection_Matrix();
+		Player_Camera.Set_Audio_Observer();
+		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
+
+		glUniformMatrix4fv(glGetUniformLocation(Scene_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Mapper::Shadow_Maps[0].View_Matrices[0][0][0]);
+
+		// glUniformMatrix4fv(glGetUniformLocation(Shadow_Mapper::Shadow_Object_Shader.Program_ID, "Shadow_Matrix"), 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
+
+		for (size_t W = 0; W < Scene_Models.size(); W++)
+			//Scene_Models[W]->Render(Shadow_Mapper::Shadow_Object_Shader);
+			//Scene_Models[W]->Render(Scene_Object_Shader);// Shadow_Mapper::Shadow_Object_Shader);
+			Shadow_Mapper::Render_Object_To_Shadow_Map(Scene_Models[W]);
+
+		Handle_Deletions();
 
 		Frame_Counter++;
 

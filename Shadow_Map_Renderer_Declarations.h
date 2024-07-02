@@ -42,12 +42,14 @@ public:
 		glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Cubemap);
 
 		for (size_t W = 0; W < 6; W++)
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + W, 0u, GL_DEPTH24_STENCIL8, 
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + W, 0u, GL_DEPTH_STENCIL, 
 				Shadow_Mapper::Shadow_Map_Width, Shadow_Mapper::Shadow_Map_Height, 0u, 
 				GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, Shadow_Cubemap, 0u);
 	}
@@ -71,15 +73,7 @@ namespace Shadow_Mapper
 {
 	std::vector<Shadow_Map> Shadow_Maps;
 
-	void Set_Shadow_Face(Shader& Shader, Shadow_Map& Map, size_t Face) // This will allow us to render to a specific framebuffer texture layer
-	{
-
-	}
-
-	void Set_Shadow_Map(Shader& Shader, Shadow_Map& Map)
-	{
-
-	}
+	unsigned int Test_Attachment;
 
 	void Bind_Shadow_Maps(Shader& Shader)
 	{
@@ -94,8 +88,13 @@ namespace Shadow_Mapper
 	void Render_Object_To_Shadow_Map(Model* Object)
 	{
 		Object->Mesh.Bind_Buffer();
+		// Object->Mesh.Update_Buffer();
 
-		Object->Uniforms.Update_Buffer(Shadow_Model_Uniform_Locations);
+		Object->Uniforms.Update_Buffer(Model_Uniform_Location);
+
+		// Object->Uniforms.Model_Matrix = Direction_Matrix_Calculate(Object->Position, Object->Orientation, Object->Orientation_Up);
+
+		// Object->Uniforms.Update_Buffer(Shadow_Model_Uniform_Locations);
 
 		glDrawElements(GL_TRIANGLES, Object->Mesh.Indices_Count, GL_UNSIGNED_INT, 0u);
 	}
@@ -105,7 +104,14 @@ namespace Shadow_Mapper
 		glGenFramebuffers(1, &Shadow_Frame_Buffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, Shadow_Frame_Buffer);
 
-		// Shadow_Object_Shader.Create_Shader("Shader_Code/Shadow_Test_2.vert", "Shader_Code/Shadow_Test_2.frag", nullptr);
+		Shadow_Object_Shader.Create_Shader("Shader_Code/Shadow_Test_2.vert", "Shader_Code/Shadow_Test_2.frag", "Shader_Code/Shadow_Test_2.geom");
+		Shadow_Object_Shader.Activate();
+
+		// Model_Vertex_Buffer_Vertex_Attributes_Set();
+
+		Shadow_Model_Uniform_Locations = Initialise_Model_Uniform_Locations_Object(Shadow_Object_Shader);
+		
+		Shadow_Projection_Matrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, Shadow_Map_Far_Plane);
 
 		Shadow_Maps.push_back(Shadow_Map());
 
@@ -117,26 +123,48 @@ namespace Shadow_Mapper
 		glViewport(0, 0, Shadow_Map_Width, Shadow_Map_Height);
 		glBindFramebuffer(GL_FRAMEBUFFER, Shadow_Frame_Buffer);
 
-		glClear(GL_DEPTH_BUFFER_BIT);	// For shadow mapping, we only care about the depth buffer
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
 	}
 
 	void Unbind_Shadow_Frame_Buffer()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 		glViewport(0, 0, Window_Width, Window_Height);
+
+		// glCullFace(GL_FRONT);
 	}
 
 	void Render_All_Shadows()
 	{
 		Bind_Shadow_Frame_Buffer();
 
-		Shadow_Object_Shader.Activate();
+		Scene_Object_Shader.Activate();
+
+		// Shadow_Object_Shader.Activate();
 
 		for (size_t Face = 0; Face < 6; Face++)
 		{
+			// glUniformMatrix4fv(glGetUniformLocation(Shadow_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Maps[0].View_Matrices[Face][0][0]);
+
+			glUniformMatrix4fv(glGetUniformLocation(Scene_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Maps[0].View_Matrices[Face][0][0]);
+
 			glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Maps[0].Shadow_Cubemap);
 
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face, Shadow_Maps[0].Shadow_Cubemap, 0u);
+
+			glClear(GL_DEPTH_BUFFER_BIT);	// For shadow mapping, we only care about the depth buffer
+
+			// Shadow_Object_Shader.Activate();
+
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << " >> Framebuffer is not complete!" << std::endl;
 
 			for (size_t W = 0; W < Scene_Models.size(); W++)
 				Render_Object_To_Shadow_Map(Scene_Models[W]);

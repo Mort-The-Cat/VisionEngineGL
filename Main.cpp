@@ -20,7 +20,11 @@ int main()
 		Shadow_Mapper::Initialise_Shadow_Mapper();
 
 	Initialise_Sound_Engine();
+	
 	Engine_Loop();
+
+	// Test_Shadow_Loop();
+
 	Close_Program();
 
 	Destroy_Sound_Engine();

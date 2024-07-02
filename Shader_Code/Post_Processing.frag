@@ -13,7 +13,7 @@ uniform samplerCube Cubemap;
 
 const int Number_Of_Shadow_Maps = 1;
 
-uniform samplerCube Shadow_Maps;
+uniform samplerCubeShadow Shadow_Maps;
 
 uniform vec4 Light_Position[20];
 uniform vec4 Light_Colour[20];
@@ -119,11 +119,27 @@ void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, int Light_Index)
 	Specular_Lighting += Light_Colour[Light_Index].xyz * Specular_Value;
 }
 
+float Vector_To_Depth (vec3 Vec, float Length)
+{
+    vec3 Abs_Vec = abs(Vec);
+    float Local_Z = Length * max(Abs_Vec.x, max(Abs_Vec.y, Abs_Vec.z));
+
+    // Replace f and n with the far and near plane values you used when
+    //   you drew your cube map.
+    const float Far = 25.0f;
+    const float Near = 0.01f;
+
+    float Norm_Z = (Far + Near) / (Far - Near) - (2 * Far * Near)/(Far - Near)/Local_Z;
+    return (Norm_Z + 1.0) * 0.5;
+}
+
 float Shadow_Check(vec3 Light_To_Pixel, float Distance, int Light_Index)
 {
-	float Closest_Depth = 25.0f * texture(Shadow_Maps, Light_To_Pixel).r;
+	// float Closest_Depth = 25.0f * texture(Shadow_Maps, vec4(Light_To_Pixel, 0.0f));
 
-	return Distance - 0.05f > Closest_Depth ? 0.0f : 1.0f;
+	// return Distance - 0.00f > Closest_Depth ? 0.0f : 1.0f;
+
+	return texture(Shadow_Maps, vec4(-Light_To_Pixel, Vector_To_Depth(Light_To_Pixel, Distance - 0.01f)));
 }
 
 vec3 Lighting()

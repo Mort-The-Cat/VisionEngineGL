@@ -1,12 +1,15 @@
 #version 440
 
-// layout(location = 0) out vec4 Out_Test;
+// layout(location = 0) out vec4 Out_Colour;
 
-uniform vec3 Light_Position;
+out float gl_FragDepth;
+
+in vec3 Position;
 
 void main()
 {
-	// gl_FragColor = vec4(0, 0, 0, 0);
-	gl_FragDepth = gl_FragCoord.z;
-	// Out_Test = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	// Out_Colour = vec4(0, 0, 0, 1.0);
+	// gl_FragDepth = 0.0f; // gl_FragCoord.z;
+
+	gl_FragDepth = sqrt(dot(Position.xyz, Position.xyz)) / 25.0f;
 }
