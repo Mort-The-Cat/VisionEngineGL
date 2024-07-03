@@ -16,9 +16,6 @@ int main()
 	if(Post_Processing)
 		Post_Processor::Initialise_Post_Processor();
 
-	if (Shadow_Mapper::Shadow_Mapping)
-		Shadow_Mapper::Initialise_Shadow_Mapper();
-
 	Initialise_Sound_Engine();
 	
 	Engine_Loop();

@@ -205,6 +205,9 @@ void Setup_Test_Scene()
 	//
 
 	Initialise_Job_System();
+
+	if (Shadow_Mapper::Shadow_Mapping)
+		Shadow_Mapper::Initialise_Shadow_Mapper();
 }
 
 void Engine_Loop()

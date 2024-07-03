@@ -11,5 +11,5 @@ void main()
 {
 	// gl_Position = vec4(In_Position, 0.0f); // 
 	
-	gl_Position = (Model_Matrix * vec4(In_Position, 0.0f));
+	gl_Position = (Model_Matrix * vec4(In_Position, 1.0f));
 }

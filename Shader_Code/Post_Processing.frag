@@ -139,7 +139,7 @@ float Shadow_Check(vec3 Light_To_Pixel, float Distance, int Light_Index)
 
 	// return Distance - 0.00f > Closest_Depth ? 0.0f : 1.0f;
 
-	return texture(Shadow_Maps, vec4(-Light_To_Pixel, Vector_To_Depth(Light_To_Pixel, Distance - 0.01f)));
+	return texture(Shadow_Maps, vec4(-Light_To_Pixel, Vector_To_Depth(Light_To_Pixel, Distance - 0.00f)));
 }
 
 vec3 Lighting()
@@ -155,7 +155,7 @@ vec3 Lighting()
 		float Inverse_Length = inversesqrt(Squared_Distance);
 		Light_To_Pixel *= Inverse_Length;
 
-		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal)) * Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W);
+		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal)) * max(Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W), float(W > 0));
 
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 

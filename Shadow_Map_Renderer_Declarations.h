@@ -87,14 +87,16 @@ namespace Shadow_Mapper
 
 	void Render_Object_To_Shadow_Map(Model* Object)
 	{
-		Object->Mesh.Bind_Buffer();
-		// Object->Mesh.Update_Buffer();
+		Shadow_Object_Shader.Activate();
 
-		Object->Uniforms.Update_Buffer(Model_Uniform_Location);
+		Object->Mesh.Bind_Buffer();
+		Object->Mesh.Update_Buffer();
+
+		// Object->Uniforms.Update_Buffer(Model_Uniform_Location);
 
 		// Object->Uniforms.Model_Matrix = Direction_Matrix_Calculate(Object->Position, Object->Orientation, Object->Orientation_Up);
 
-		// Object->Uniforms.Update_Buffer(Shadow_Model_Uniform_Locations);
+		Object->Uniforms.Update_Buffer(Shadow_Model_Uniform_Locations);
 
 		glDrawElements(GL_TRIANGLES, Object->Mesh.Indices_Count, GL_UNSIGNED_INT, 0u);
 	}
@@ -103,6 +105,8 @@ namespace Shadow_Mapper
 	{
 		glGenFramebuffers(1, &Shadow_Frame_Buffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, Shadow_Frame_Buffer);
+
+		//Shadow_Object_Shader.Create_Shader("Shader_Code/Vertex_Test.vert", "Shader_Code/Vertex_Test.frag", "Shader_Code/Vertex_Test.geom");
 
 		Shadow_Object_Shader.Create_Shader("Shader_Code/Shadow_Test_2.vert", "Shader_Code/Shadow_Test_2.frag", "Shader_Code/Shadow_Test_2.geom");
 		Shadow_Object_Shader.Activate();
@@ -142,32 +146,33 @@ namespace Shadow_Mapper
 	{
 		Bind_Shadow_Frame_Buffer();
 
-		Scene_Object_Shader.Activate();
+		Shadow_Object_Shader.Activate();
 
-		// Shadow_Object_Shader.Activate();
+		// Scene_Object_Shader.Activate();
 
-		for (size_t Face = 0; Face < 6; Face++)
+		// for (size_t Face = 0; Face < 6; Face++)
 		{
-			// glUniformMatrix4fv(glGetUniformLocation(Shadow_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Maps[0].View_Matrices[Face][0][0]);
+			glUniformMatrix4fv(glGetUniformLocation(Shadow_Object_Shader.Program_ID, "Projection_Matrix"), 6, GL_FALSE, &Shadow_Maps[0].View_Matrices[0][0][0]);
 
-			glUniformMatrix4fv(glGetUniformLocation(Scene_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Maps[0].View_Matrices[Face][0][0]);
+			// glUniformMatrix4fv(glGetUniformLocation(Scene_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Maps[0].View_Matrices[Face][0][0]);
 
 			glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Maps[0].Shadow_Cubemap);
 
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face, Shadow_Maps[0].Shadow_Cubemap, 0u);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, Shadow_Maps[0].Shadow_Cubemap, 0u);
+
+			// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face, Shadow_Maps[0].Shadow_Cubemap, 0u);
 
 			glClear(GL_DEPTH_BUFFER_BIT);	// For shadow mapping, we only care about the depth buffer
-
-			// Shadow_Object_Shader.Activate();
 
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 				std::cout << " >> Framebuffer is not complete!" << std::endl;
 
 			for (size_t W = 0; W < Scene_Models.size(); W++)
-				Render_Object_To_Shadow_Map(Scene_Models[W]);
+				if(Scene_Models[W]->Flags[MF_CAST_SHADOWS])
+					Render_Object_To_Shadow_Map(Scene_Models[W]);
 
 		}
 
