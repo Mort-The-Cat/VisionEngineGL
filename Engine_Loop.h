@@ -240,6 +240,8 @@ void Engine_Loop()
 
 		Scene_Lights[0]->Blur = 45 + 45 * sinf(glfwGetTime());
 
+		// double Other_Start_Timer = glfwGetTime();
+
 		Audio::Handle_Audio(Player_Camera);
 
 		Physics::Record_Collisions();
@@ -263,6 +265,8 @@ void Engine_Loop()
 
 		//
 
+		// double Start_Timer = glfwGetTime();
+
 		Render_All();
 
 		Physics::Resolve_Collisions();
@@ -279,7 +283,12 @@ void Engine_Loop()
 
 		if (Time_Elapsed_Since_FPS_Update > 1.0f)
 		{
-			glfwSetWindowTitle(Window, (std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))).c_str());
+			glfwSetWindowTitle(Window, (
+				std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))/* +
+				std::string(" | Rendering + Physics resolve: (ms) ") + std::to_string(1000.0f * (glfwGetTime() - Start_Timer)) +
+				std::string(" | Begin physics + update audio/particles: (ms) ") + std::to_string(1000.0f * (Start_Timer - Other_Start_Timer)*/
+				).c_str());
+
 			Time_Elapsed_Since_FPS_Update = 0;
 			Frame_Counter = 0;
 		}

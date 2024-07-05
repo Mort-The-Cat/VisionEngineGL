@@ -87,14 +87,7 @@ namespace Shadow_Mapper
 
 	void Render_Object_To_Shadow_Map(Model* Object)
 	{
-		Shadow_Object_Shader.Activate();
-
 		Object->Mesh.Bind_Buffer();
-		Object->Mesh.Update_Buffer();
-
-		// Object->Uniforms.Update_Buffer(Model_Uniform_Location);
-
-		// Object->Uniforms.Model_Matrix = Direction_Matrix_Calculate(Object->Position, Object->Orientation, Object->Orientation_Up);
 
 		Object->Uniforms.Update_Buffer(Shadow_Model_Uniform_Locations);
 

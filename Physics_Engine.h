@@ -23,7 +23,8 @@ namespace Physics
 	public:
 		glm::vec3 A_Position, B_Position;
 		glm::vec3 A_Velocity, B_Velocity;
-		Quaternion::Quaternion A_Rotational_Velocity, B_Rotational_Velocity;
+		
+		//Quaternion::Quaternion A_Rotational_Velocity, B_Rotational_Velocity;
 
 		glm::vec3 A_Rotation_Vector, B_Rotation_Vector;
 
@@ -44,7 +45,7 @@ namespace Physics
 		glm::vec3 Forces = glm::vec3(0, 0, 0);
 		glm::vec3 Velocity = glm::vec3(0, 0, 0);
 
-		Quaternion::Quaternion Rotational_Velocity = Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
+		// Quaternion::Quaternion Rotational_Velocity = Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f);
 
 		glm::vec3 Rotation_Vector = glm::vec3(0.0f); // This is a vector where its direction is the axis of rotation and its magnitude is the angular velocity. I think that adding velocities with this etc should be way easier and work better than a quaternion
 		
@@ -92,7 +93,7 @@ namespace Physics
 
 			glm::vec3 B_Rotational_Velocity_Tangent = Collision->B != nullptr ? Collision->B->Get_Rotation_Vector_Tangent(Collision->B_Rotation_Vector, Collision->B_Position, Collision) : glm::vec3(0.0f);
 
-			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity + (A_Rotational_Velocity_Tangent + B_Rotational_Velocity_Tangent);
+			glm::vec3 Relative_Velocity = B_Velocity - A_Velocity + (A_Rotational_Velocity_Tangent - B_Rotational_Velocity_Tangent);
 
 			float Normal_Speed = glm::dot(Relative_Velocity, -Collision->Collision.Collision_Normal);
 
@@ -170,7 +171,7 @@ namespace Physics
 				Rotational_Acceleration_Angle = Collision->B->Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
 				if (!std::isnan(Rotational_Acceleration_Angle))
-					Collision->B->Rotation_Vector -= Rotation_Axis * Rotational_Acceleration_Angle;
+					Collision->B->Rotation_Vector += Rotation_Axis * Rotational_Acceleration_Angle;
 				
 				// Rotational_Acceleration_Angle = 0.0f;
 				
@@ -258,9 +259,6 @@ namespace Physics
 				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
 				Impulse.B_Velocity = Scene_Physics_Objects[V]->Velocity;
 
-				Impulse.A_Rotational_Velocity = Scene_Physics_Objects[W]->Rotational_Velocity;
-				Impulse.B_Rotational_Velocity = Scene_Physics_Objects[V]->Rotational_Velocity;
-
 				Impulse.A_Rotation_Vector = Scene_Physics_Objects[W]->Rotation_Vector;
 				Impulse.B_Rotation_Vector = Scene_Physics_Objects[V]->Rotation_Vector;
 
@@ -286,8 +284,6 @@ namespace Physics
 
 				Impulse.A_Velocity = Scene_Physics_Objects[W]->Velocity;
 				
-				Impulse.A_Rotational_Velocity = Scene_Physics_Objects[W]->Rotational_Velocity;
-
 				Impulse.A_Rotation_Vector = Scene_Physics_Objects[W]->Rotation_Vector;
 				
 				if (Impulse.Collision.Overlap != 0)
@@ -399,6 +395,7 @@ void Wait_On_Physics()
 	bool Still_Working = false;
 
 	while (Job_System::Part_Time_Work()) { ; }
+
 	//do
 	//{
 	//	Physics::Threads_Working_Count_Mutex.lock();

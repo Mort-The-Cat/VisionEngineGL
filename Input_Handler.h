@@ -133,7 +133,7 @@ void Shoot_Fire(float Angle)
 
 		std::swap(Scene_Lights.back(), Scene_Lights[0]);
 		
-		if(RNG() < 0.5)
+		if(RNG() < 0.75)
 			Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 		
 		//if(RNG() < 0.25)
@@ -225,18 +225,6 @@ void Player_Movement()
 
 	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
 	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);
-
-	if (Inputs[Controls::Auxilliary])
-	{
-		// size_t W = 0;
-		for (size_t W = 0; W < Physics::Scene_Physics_Objects.size(); W++)
-		{
-			Physics::Scene_Physics_Objects[W]->Rotational_Velocity = Quaternion::Rotate_Quaternion(Physics::Scene_Physics_Objects[W]->Rotational_Velocity, Quaternion::Angle_Axis_To_Quaternion(glm::vec3(0, 0, 1), 15 * Tick));
-			
-			//Physics::Scene_Physics_Objects[W]->Object->Orientation_Up = Quaternion::Rotate(Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0, 0, 0), Quaternion::Angle_Axis_To_Quaternion(glm::vec3(0, 0, 1), 45), Tick), Physics::Scene_Physics_Objects[W]->Object->Orientation_Up);
-			//Physics::Scene_Physics_Objects[W]->Object->Hitbox->Update_Hitbox();
-		}
-	}
 
 	//if (Inputs[Controls::Auxilliary])
 	//{
