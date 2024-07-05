@@ -184,6 +184,31 @@ namespace Quaternion
 		//return glm::vec4(glm::cross(A, glm::vec3(0, 0, 1)), acosf(Dot_Product));
 	}
 
+	Quaternion Rotation_Vector_To_Quaternion(glm::vec3 Rotation)
+	{
+		Quaternion Return;
+		float Length = glm::length(Rotation);
+
+		float Angle = Length * -0.5f;
+
+		Return.W = cos(Angle);
+
+		Return.X = Rotation.x;
+		Return.Y = Rotation.y;
+		Return.Z = Rotation.z;
+
+		Angle = sin(Angle) / Length;
+
+		Return.X *= Angle;
+		Return.Y *= Angle;
+		Return.Z *= Angle;
+
+		if (std::isnan(Return.X))
+			Return = Quaternion(1, 0, 0, 0);
+
+		return Return;
+	}
+
 	Quaternion Angle_Axis_To_Quaternion(glm::vec3 Axis, float Angle)
 	{
 		Quaternion Return;

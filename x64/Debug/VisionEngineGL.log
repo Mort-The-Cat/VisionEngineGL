@@ -72,19 +72,16 @@ C:\VisionEngineGL\VisionEngineGL\Shadow_Map_Renderer_Declarations.h(82,75): warn
 C:\VisionEngineGL\VisionEngineGL\Shadow_Map_Renderer_Declarations.h(83,32): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Shadow_Map_Renderer_Declarations.h(164,103): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
-  (compiling source file 'Main.cpp')
-  
 C:\VisionEngineGL\VisionEngineGL\Audio_Handler_Declarations.h(64,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(160,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(185,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(174,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(199,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(175,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Physics_Engine.h(200,55): warning C4244: 'argument': conversion from 'double' to 'irrklang::ik_f32', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Input_Handler.h(125,101): warning C4305: 'argument': truncation from 'double' to 'T'
@@ -189,4 +186,19 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(47,40): warning 
   		see the first reference to 'Particle_Renderer<Smoke_Particle_Info,Billboard_Vertex_Buffer>::Render' in 'Render_All'
   
 C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(163): warning C4715: 'Get_File_Contents': not all control paths return a value
+glfw3.lib(init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(init.obj)' or at ''; linking object as if no debug info
+glfw3.lib(window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(window.obj)' or at ''; linking object as if no debug info
+glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info
+glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_init.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_init.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_monitor.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_time.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_time.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_thread.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_thread.obj)' or at ''; linking object as if no debug info
+glfw3.lib(monitor.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(monitor.obj)' or at ''; linking object as if no debug info
+glfw3.lib(vulkan.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(vulkan.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_window.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_window.obj)' or at ''; linking object as if no debug info
+glfw3.lib(win32_joystick.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(win32_joystick.obj)' or at ''; linking object as if no debug info
+glfw3.lib(wgl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(wgl_context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(egl_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(egl_context.obj)' or at ''; linking object as if no debug info
+glfw3.lib(osmesa_context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(osmesa_context.obj)' or at ''; linking object as if no debug info
   VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

@@ -186,6 +186,7 @@
     <None Include="Shader_Code\Smoke_Particle.vert" />
     <None Include="Shader_Code\Vertex_Test.frag" />
     <None Include="Shader_Code\Vertex_Test.vert" />
+    <None Include="Shader_Code\Shadow_Test_2.geom" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
