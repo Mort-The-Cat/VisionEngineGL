@@ -155,11 +155,11 @@ vec3 Lighting()
 		float Inverse_Length = inversesqrt(Squared_Distance);
 		Light_To_Pixel *= Inverse_Length;
 
-		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal)) * max(Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W), float(W > 0));
+		float Dot_Normal_Light = max(0.0f, dot(Light_To_Pixel, Normal));
 
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 
-		float In_FOV = min(1, Light_Position[W].w * max(0, 1.0f - (Angle - Light_Direction[W].w)));
+		float In_FOV = min(1, Light_Position[W].w * max(0, 1.0f - (Angle - Light_Direction[W].w)))  * max(Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W), float(W > 0));
 
 		Dot_Normal_Light *= In_FOV;
 

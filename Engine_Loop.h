@@ -41,6 +41,22 @@ void Initialise_Particles()
 	Billboard_Fire_Shader.Create_Shader("Shader_Code/Billboard_Fire_Particle.vert", "Shader_Code/Particle.frag", "Shader_Code/Vertex_Test.geom");
 
 	Create_Particle_Renderer(Billboard_Fire_Shader, Billboard_Vertex_Buffer(-0.2, -0.2, 0.2, 0.2), Pull_Texture("Assets/Textures/Fire_2.png").Texture, Pull_Texture("Black").Texture, &Billboard_Fire_Particles);
+
+	//
+
+	Shader Billboard_Galaxy_Shader;
+	Billboard_Galaxy_Shader.Create_Shader("Shader_Code/Billboard_Galaxy_Particle.vert", "Shader_Code/Lightless_Particle.frag", nullptr); // We really don't need a geometry shader for this one
+
+	Create_Particle_Renderer(Billboard_Galaxy_Shader, Billboard_Vertex_Buffer(-0.2, -0.2, 0.2, 0.2), Pull_Texture("Assets/Textures/Galaxy_Test_2.png").Texture, Pull_Texture("Black").Texture, &Galaxy_Particles);
+
+	/*for (float Radius = 0.3f; Radius < 10.0f; Radius += 0.15f)
+	{
+		for (size_t W = 0; W < 64 * Radius; W++)
+			Galaxy_Particles.Particles.Spawn_Particle(Radius + RNG() * 0.3f, (W + RNG()) * 3.14159f * 2.0f / (64 * Radius));
+
+		for (size_t W = 0; W < 256 * Radius; W++)
+			Galaxy_Particles.Particles.Spawn_Particle(Radius + RNG() * 0.1f, 6.28318f + (W + RNG() * 4.0f) * 3.14159f * 2.0f / (64 * Radius));
+	}*/
 }
 
 void Render_All()
@@ -95,6 +111,9 @@ void Render_All()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
 	Billboard_Fire_Particles.Shader.Activate();
 	Billboard_Fire_Particles.Render();
+
+	// Galaxy_Particles.Shader.Activate();
+	// Galaxy_Particles.Render();
 }
 
 void Setup_Test_Scene()
@@ -154,7 +173,7 @@ void Setup_Test_Scene()
 
 	//
 
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_CAST_SHADOWS }));
+	Scene_Models.push_back(new Model({ MF_CAST_SHADOWS }));
 	Scene_Models.back()->Position = glm::vec3(0, 6, 0);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
 
@@ -252,6 +271,7 @@ void Engine_Loop()
 
 		Billboard_Smoke_Particles.Update();
 		Billboard_Fire_Particles.Update();
+		Galaxy_Particles.Update();
 
 		Scene_Object_Shader.Activate();
 

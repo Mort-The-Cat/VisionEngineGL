@@ -136,18 +136,9 @@ namespace Physics
 			if (!std::isnan(Rotational_Acceleration_Angle))
 				Rotation_Vector -= Rotation_Axis * Rotational_Acceleration_Angle;
 
-			// Rotational_Acceleration_Angle = 0.0f;
-
 			// https://en.wikipedia.org/wiki/Angular_acceleration#Relation_to_torque
 
 			// p. force / (radius * mass) = rotational acceleration
-
-			//if (abs(Torque) > 0.0f)
-			//	printf("Yo???\n");
-
-			/*Quaternion::Quaternion Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, -Rotational_Acceleration_Angle);
-
-			Rotational_Velocity = Quaternion::Rotate_Quaternion(Rotational_Velocity, Rotational_Acceleration);*/
 			
 			//
 
@@ -172,12 +163,6 @@ namespace Physics
 
 				if (!std::isnan(Rotational_Acceleration_Angle))
 					Collision->B->Rotation_Vector += Rotation_Axis * Rotational_Acceleration_Angle;
-				
-				// Rotational_Acceleration_Angle = 0.0f;
-				
-				// Rotational_Acceleration = Quaternion::Angle_Axis_To_Quaternion(Rotation_Axis, Rotational_Acceleration_Angle);
-				
-				// Collision->B->Rotational_Velocity = Quaternion::Rotate_Quaternion(Collision->B->Rotational_Velocity, Rotational_Acceleration);
 			}
 		}
 
@@ -186,11 +171,6 @@ namespace Physics
 			float Gravity = Tick * 4.9;
 
 			float Force_Magnitude = glm::dot(Forces, Forces);
-
-			//if (Force_Magnitude > Mass * 5) // Some threshold
-			//{
-			//	Sound_Engine->play3D(Bump_Sound_Effect_Source, Get_Klang_Vector(Object->Position * Audio_Position_Multiplier));
-			//}
 
 			SFX->Position = Object->Position;
 
@@ -207,6 +187,8 @@ namespace Physics
 
 			Object->Orientation = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation));
 			Object->Orientation_Up = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation_Up));
+
+			// Rotation_Vector *= powf(0.9, Tick);
 
 			// Rotational_Velocity = Quaternion::Sphere_Interpolate(Quaternion::Quaternion(1.0f, 0.0f, 0.0f, 0.0f), Rotational_Velocity, std::powf(0.9f, Tick));
 

@@ -11,6 +11,27 @@ struct Smoke_Particle
 	glm::vec4 Velocity; // .w is transparency
 };
 
+//
+
+
+
+struct Galaxy_Test_Particle
+{
+	float Radius; // Angular offset of orbit is determined by the radius so this isn't a problem
+
+	// We could also maybe determine the number of particles per orbit based on the radius and it'd make sense to do so but I'll implement that later
+
+	float Age; // This is the age of the particle - determines how far around the orbit the particle has travelled
+
+	float Index;
+
+	// float Max_In_Orbit;
+
+	// The index of the galaxy test particle is determined by the instance id of the particle. 
+
+	// A modulo operation *might* need to be performed in order to loop it between some values (e.g. 0-100) but if it's only used to calculate an angular offset that literally doesn't matter
+};
+
 bool Smoke_Particle_Remove_If(const Smoke_Particle& A)
 {
 	return A.Position.w > 3; // Smoke disappears after 2 seconds
@@ -38,7 +59,7 @@ public:
 		Camera_Location = Initialise_Camera_Uniform_Locations_Object(Shader);
 		Light_Location = Initialise_Light_Uniform_Locations_Object(Shader);
 
-		Float_Size = sizeof(Particle) >> 2;
+		Float_Size = sizeof(Particle) >> 2; // This is just the number of 32-bit chunks of memory that the particle uses i.e. how many "words"
 	}
 
 	size_t Parse_Values(size_t Index) 
@@ -49,6 +70,30 @@ public:
 		return Count;
 	}
 
+};
+
+class Galaxy_Particle_Info : public Particle_Info<Galaxy_Test_Particle>
+{
+public:
+	// This has only 2 floating point values
+
+	Galaxy_Particle_Info() { Particles_Per_Call = 800; }
+
+	void Spawn_Particle(float Radius, float Index) // Radius is all that matters
+	{
+		Galaxy_Test_Particle New_Particle;
+		New_Particle.Radius = Radius;
+		New_Particle.Age = 0.0f;
+		New_Particle.Index = Index;
+		// New_Particle.Max_In_Orbit = 6.28318f / static_cast<float>(Max_In_Orbit);
+		Particles_Data.push_back(New_Particle);
+	}
+
+	void Update()
+	{
+		for (size_t W = 0; W < Particles_Data.size(); W++)
+			Particles_Data[W].Age += Tick;
+	}
 };
 
 class Smoke_Particle_Info : public Particle_Info<Smoke_Particle>
@@ -89,6 +134,11 @@ template<typename Particle, typename Vertex_Buffer>
 		Vertex_Buffer Mesh;
 		Texture Albedo;
 		Texture Material;
+
+		void Delete_All_Particles()
+		{
+			Particles.Particles_Data.clear();
+		}
 
 		void Update()
 		{
@@ -133,5 +183,9 @@ Particle_Renderer<Smoke_Particle_Info, Model_Vertex_Buffer> Smoke_Particles;
 Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Smoke_Particles;
 
 Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Fire_Particles;
+
+//
+
+Particle_Renderer<Galaxy_Particle_Info, Billboard_Vertex_Buffer> Galaxy_Particles;
 
 #endif

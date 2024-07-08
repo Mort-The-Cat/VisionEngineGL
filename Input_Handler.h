@@ -133,8 +133,9 @@ void Shoot_Fire(float Angle)
 
 		std::swap(Scene_Lights.back(), Scene_Lights[0]);
 		
-		if(RNG() < 0.75)
-			Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		//if(RNG() < 0.75)
+		
+		Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 		
 		//if(RNG() < 0.25)
 		//	Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-4) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
