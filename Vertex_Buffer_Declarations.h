@@ -104,6 +104,26 @@ public:
 
 	Billboard_Mesh Mesh; // Caching and sharing this data would be more effort than it's worth I think
 
+	Billboard_Vertex_Buffer(float X1, float Y1, float X2, float Y2, glm::vec2 TL_UV, glm::vec2 TR_UV, glm::vec2 BL_UV, glm::vec2 BR_UV)
+	{
+		Mesh.Vertices.resize(4);
+
+		Mesh.Vertices[0] = { glm::vec2(X1, Y1), TL_UV };
+		Mesh.Vertices[1] = { glm::vec2(X2, Y1), TR_UV };
+		Mesh.Vertices[2] = { glm::vec2(X2, Y2), BR_UV };
+		Mesh.Vertices[3] = { glm::vec2(X1, Y2), BL_UV };
+
+		Mesh.Indices =
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		Create_Buffer();
+		Bind_Buffer();
+		Update_Buffer();
+	}
+
 	Billboard_Vertex_Buffer(float X1, float Y1, float X2, float Y2)
 	{
 		Mesh.Vertices.resize(4);

@@ -101,6 +101,9 @@
     <ClInclude Include="Shadow_Map_Renderer_Declarations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Renderer_Declarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />

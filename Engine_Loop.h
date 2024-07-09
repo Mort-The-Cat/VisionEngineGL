@@ -23,6 +23,8 @@
 
 #include "Shadow_Map_Renderer_Declarations.h"
 
+#include "UI_Renderer_Declarations.h"
+
 void Initialise_Particles()
 {
 	Shader Smoke_Particle_Shader;
@@ -152,6 +154,10 @@ void Setup_Test_Scene()
 	Push_Merged_Specular_Reflectivity("Assets/Textures/Black.png", "Assets/Textures/Black.png", "Black");
 
 	Initialise_Particles();
+
+	Initialise_UI_Shaders();
+
+	UI_Elements.push_back(new UI_Element(-0.25, -0.1, 0.55, 0.5));
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
@@ -288,6 +294,10 @@ void Engine_Loop()
 		// double Start_Timer = glfwGetTime();
 
 		Render_All();
+
+		glDisable(GL_DEPTH_TEST);
+
+		Handle_UI(); // We're able to handle all of the UI whilst the collisions are resolving!
 
 		Physics::Resolve_Collisions();
 

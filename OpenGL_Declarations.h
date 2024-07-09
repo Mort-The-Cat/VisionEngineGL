@@ -68,6 +68,8 @@ void Throw_Error(const char* Error_Message)
 GLFWwindow* Window = nullptr;
 int Window_Width = 1600, Window_Height = 800;
 
+float Window_Aspect_Ratio = 0.5f; // Height / width
+
 glm::mat4 Projection_Matrix; // This is the projection matrix of the current camera!
 glm::vec3 Camera_Up_Direction;
 glm::vec3 Camera_Direction;
@@ -278,6 +280,8 @@ void Framebuffer_Resize_Callback(GLFWwindow* Window, int Width, int Height)
 
 	Window_Width = Width;
 	Window_Height = Height;
+
+	Window_Aspect_Ratio = static_cast<float>(Height) / static_cast<float>(Width);
 
 	Post_Processor::Delete_Buffers();
 	Post_Processor::Create_Buffers();
