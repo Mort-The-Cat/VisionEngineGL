@@ -73,6 +73,7 @@ namespace Post_Processor
 
 	void Create_Buffers()
 	{
+		glGenFramebuffers(1, &Frame_Buffer_ID);
 		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
 
 		Create_Buffer(Frame_Buffer_Texture, GL_COLOR_ATTACHMENT0, GL_RGBA8, GL_UNSIGNED_BYTE);
@@ -99,9 +100,6 @@ namespace Post_Processor
 
 	void Initialise_Post_Processor()	// Only call this once. In order to merely update the post-processor, call the update function
 	{
-		glGenFramebuffers(1, &Frame_Buffer_ID);
-		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
-
 		Shader_Program.Create_Shader("Shader_Code/Post_Processing.vert", "Shader_Code/Post_Processing.frag", nullptr);
 
 		Shader_Program.Activate();

@@ -3,6 +3,7 @@
 in vec2 UV;
 
 uniform sampler2D Albedo;
+
 uniform vec4 Colour;
 
 void main()

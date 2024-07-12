@@ -1,0 +1,43 @@
+// Just to be safe, here's the code for generating the font table
+
+// This accounts for when the ß isn't correctly read
+// and hard-coded exceptions in table-generation account for when ß is correctly read
+
+// Online C++ compiler to run C++ program online
+#include <iostream>
+#include <string>
+
+int codes[256];
+
+int main() 
+{
+    std::string Test = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ßäöüÄÖÜ():;.,\"!?";
+    
+    int Counter = 0;
+    
+    for(int W = 0; W < Test.length(); W++)
+    {
+        if(Test[W] + 124 == 63)
+        {
+            W++;
+            Counter++;
+        }
+
+        codes[Test[W] + 124] = W - Counter;
+    }
+    
+    codes[91] = 63;
+    codes[96] = 64;
+    codes[114] = 65;
+    codes[120] = 66;
+    codes[64] = 67;
+    codes[82] = 68;
+    codes[88] = 69;
+    
+    for(int W = 0; W < 256; W++)
+    {
+        printf("%d, ", codes[W]);
+    }
+
+    return 0;
+}

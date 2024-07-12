@@ -15,6 +15,8 @@
 
 #include "Particle_System_Declarations.h"
 
+void UI_Loop();
+
 bool Inputs[11];
 
 std::array<uint16_t, 11> Inputs_Keycode = // The values of these keycodes can be changed during runtime if the user wishes to adjust the controls for whatever reason
@@ -82,7 +84,7 @@ void Receive_Inputs() // This sets all of the bits in "inputs", ready to be proc
 
 	Cursor = { X - (Window_Width >> 1), Y - (Window_Height >> 1) }; // This gets the cursor position! Very simple ^^
 
-	Cursor *= glm::vec2(Mouse_Sensitivity / Window_Width, -Mouse_Sensitivity / Window_Height);
+	Cursor *= glm::vec2(2.0f / Window_Width, -2.0f / Window_Height);
 }
 
 void Close_Game()
@@ -157,9 +159,10 @@ void Player_Movement()
 {
 	Player_Object_Spawn_Timer -= Tick;
 
-	if (Inputs[Controls::Pause])
+	if (Inputs[Controls::Pause] && Cursor_Reset)
 	{
-		Close_Game();
+		Cursor_Reset = false;
+		UI_Loop();
 	}
 
 	if (Inputs[Controls::Use])
@@ -221,8 +224,8 @@ void Player_Movement()
 	if (Inputs[Controls::Up])
 		Player_Camera.Position.y += Speed;
 
-	Player_Camera.Orientation.x += Cursor.x * 90;
-	Player_Camera.Orientation.y += Cursor.y * 90;
+	Player_Camera.Orientation.x += Cursor.x * 90 * Mouse_Sensitivity;
+	Player_Camera.Orientation.y += Cursor.y * 90 * Mouse_Sensitivity;
 
 	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
 	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);

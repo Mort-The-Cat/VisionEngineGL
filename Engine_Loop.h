@@ -157,7 +157,13 @@ void Setup_Test_Scene()
 
 	Initialise_UI_Shaders();
 
-	UI_Elements.push_back(new UI_Element(-0.25, -0.1, 0.55, 0.5));
+	// UI_Elements.push_back(new Button_UI_Element(-0.25, -0.1, 0.55, 0.5, Return_To_Game_Loop));
+
+	UI_Elements.push_back(new Button_UI_Element(-0.75, -0.9, -0.3, -0.3, Return_To_Game_Loop));
+
+	// UI_Elements.push_back(new Text_UI_Element(-0.75, -0.9, -0.25, -0.3, "Hallo! Ich bin Michael"));
+
+	//UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop));
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
@@ -235,6 +241,28 @@ void Setup_Test_Scene()
 		Shadow_Mapper::Initialise_Shadow_Mapper();
 }
 
+void End_Of_Frame()
+{
+	Frame_Counter++;
+
+	Time_Elapsed_Since_FPS_Update += Tick;
+
+	if (Time_Elapsed_Since_FPS_Update > 1.0f)
+	{
+		glfwSetWindowTitle(Window, (
+			std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))/* +
+			std::string(" | Rendering + Physics resolve: (ms) ") + std::to_string(1000.0f * (glfwGetTime() - Start_Timer)) +
+			std::string(" | Begin physics + update audio/particles: (ms) ") + std::to_string(1000.0f * (Start_Timer - Other_Start_Timer)*/
+			).c_str());
+
+		Time_Elapsed_Since_FPS_Update = 0;
+		Frame_Counter = 0;
+	}
+
+	glfwSwapBuffers(Window);
+	glfwPollEvents();
+}
+
 void Engine_Loop()
 {
 	Setup_Test_Scene();
@@ -297,9 +325,9 @@ void Engine_Loop()
 
 		glDisable(GL_DEPTH_TEST);
 
-		Handle_UI(); // We're able to handle all of the UI whilst the collisions are resolving!
-
 		Physics::Resolve_Collisions();
+
+		Handle_UI(); // We're able to handle all of the UI whilst the collisions are resolving!
 
 		Handle_Deletions();
 
@@ -307,102 +335,43 @@ void Engine_Loop()
 
 		//
 
-		Frame_Counter++;
-
-		Time_Elapsed_Since_FPS_Update += Tick;
-
-		if (Time_Elapsed_Since_FPS_Update > 1.0f)
-		{
-			glfwSetWindowTitle(Window, (
-				std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))/* +
-				std::string(" | Rendering + Physics resolve: (ms) ") + std::to_string(1000.0f * (glfwGetTime() - Start_Timer)) +
-				std::string(" | Begin physics + update audio/particles: (ms) ") + std::to_string(1000.0f * (Start_Timer - Other_Start_Timer)*/
-				).c_str());
-
-			Time_Elapsed_Since_FPS_Update = 0;
-			Frame_Counter = 0;
-		}
-
-		glfwSwapBuffers(Window);
-		glfwPollEvents();
+		End_Of_Frame();
 	}
 }
 
 //
 
-void Test_Shadow_Loop()
+void UI_Loop()
 {
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	glDisable(GL_CULL_FACE);
 
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 
-	Setup_Test_Scene();
+	UI_Continue_Looping = true;
 
 	Last_Time = glfwGetTime();
 
-	while (!glfwWindowShouldClose(Window))
+	while (UI_Continue_Looping && !glfwWindowShouldClose(Window))
 	{
 		double Current_Time = glfwGetTime();
-		Tick = (Current_Time - Last_Time);
+		Tick = Current_Time - Last_Time;
 		Last_Time = Current_Time;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0u);
+
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		Receive_Inputs();
 
-		Player_Movement();
-
-		glViewport(0, 0, 256, 256);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, Shadow_Mapper::Shadow_Frame_Buffer);
-
-		glBindTexture(GL_TEXTURE_CUBE_MAP, Shadow_Mapper::Shadow_Maps[0].Shadow_Cubemap);
-
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X, Shadow_Mapper::Shadow_Maps[0].Shadow_Cubemap, 0u);
-
-		glClearColor(0.3, 0.2, 0.2, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Update_Lighting_Buffer();
-
 		Audio::Handle_Audio(Player_Camera);
 
-		Shadow_Mapper::Shadow_Object_Shader.Activate();
-
-		Scene_Object_Shader.Activate();
-
-		Player_Camera.Set_Projection_Matrix();
-		Player_Camera.Set_Audio_Observer();
-		Player_Camera.Bind_Buffers(Camera_Uniform_Location);
-
-		glUniformMatrix4fv(glGetUniformLocation(Scene_Object_Shader.Program_ID, "Projection_Matrix"), 1, GL_FALSE, &Shadow_Mapper::Shadow_Maps[0].View_Matrices[0][0][0]);
-
-		// glUniformMatrix4fv(glGetUniformLocation(Shadow_Mapper::Shadow_Object_Shader.Program_ID, "Shadow_Matrix"), 1, GL_FALSE, glm::value_ptr(Projection_Matrix));
-
-		for (size_t W = 0; W < Scene_Models.size(); W++)
-			//Scene_Models[W]->Render(Shadow_Mapper::Shadow_Object_Shader);
-			//Scene_Models[W]->Render(Scene_Object_Shader);// Shadow_Mapper::Shadow_Object_Shader);
-			Shadow_Mapper::Render_Object_To_Shadow_Map(Scene_Models[W]);
+		Handle_UI();
 
 		Handle_Deletions();
 
-		Frame_Counter++;
-
-		Time_Elapsed_Since_FPS_Update += Tick;
-
-		if (Time_Elapsed_Since_FPS_Update > 1.0f)
-		{
-			glfwSetWindowTitle(Window, (std::string("VisionEngineGL | FPS: ") + std::to_string((int)(Frame_Counter / Time_Elapsed_Since_FPS_Update))).c_str());
-			Time_Elapsed_Since_FPS_Update = 0;
-			Frame_Counter = 0;
-		}
-
-		glfwSwapBuffers(Window);
-		glfwPollEvents();
+		End_Of_Frame();
 	}
 }
 
