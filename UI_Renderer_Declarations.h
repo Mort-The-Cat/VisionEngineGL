@@ -295,7 +295,7 @@ class Text_UI_Element : public UI_Element
 	bool Centered_X = false, Centered_Y = false;
 
 public:
-	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, float Sizep = 1.0f / 20.0f)
+	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, float Sizep = 1.0f / 15.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -317,13 +317,16 @@ public:
 			Coords.X1o + Size * 2 * Window_Aspect_Ratio,
 			Coords.Y2o - Size * (1 + Font_Table::Character_Aspect_Ratio),
 
-			glm::vec2(6/16.0f, 4.0f/5.0f), glm::vec2(7/16.0f, 4.0f/5.0f),
-			glm::vec2(6/16.0f, 3.0f/5.0f), glm::vec2(7/16.0f, 3.0f/5.0f)
+			// glm::vec2(0, 0.2f), glm::vec2(1.0f/16.0f, 0.2f),
+			// glm::vec2(0, 0.0f), glm::vec2(1.0f/16.0f, 0.0f)
+
+			glm::vec2(0.03f / 16.0f, 0.2f), glm::vec2(0.97f / 16.0f, 0.2f),
+			glm::vec2(0.03f / 16.0f, 0.0f), glm::vec2(0.97f / 16.0f, 0.0f)
 		);
 
 		//Billboard_Vertex_Buffer Letter(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o);
 
-		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Size_Of_Letter"), Size * Window_Aspect_Ratio + 0.005f);
+		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Size_Of_Letter"), (Size + 0.01f) * Window_Aspect_Ratio);
 
 		glUniform1uiv(glGetUniformLocation(Text_Shader.Program_ID, "Character_Indices"), Character_Indices.size(), Character_Indices.data());
 		

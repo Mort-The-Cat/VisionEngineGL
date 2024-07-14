@@ -161,7 +161,7 @@ void Setup_Test_Scene()
 
 	// UI_Elements.push_back(new Button_UI_Element(-0.75, -0.9, -0.3, -0.3, Return_To_Game_Loop));
 
-	UI_Elements.push_back(new Text_UI_Element(-0.75, -0.9, -0.25, -0.3, "Hallo! Ich bin Michael"));
+	UI_Elements.push_back(new Text_UI_Element(-0.75, -0.9, -0.25, -0.3, "Hallo! Ich bin Michael ä ö Ü ß ich heiße Johann"));
 
 	//UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop));
 
