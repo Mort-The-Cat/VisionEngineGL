@@ -34,22 +34,21 @@ namespace Font_Table
 
 	// Here is the specific order of the font characters used in this table
 
-	Array_Texture Font; // This is the texture for the font we're using. Every character has the same height and width so getting each character is analogous to array-indexing.
+	Texture Font; // This is the texture for the font we're using. Every character has the same height and width so getting each character is analogous to array-indexing.
 
 	const size_t Character_Width = 155u;
 	const size_t Character_Height = 492u;
+
+	const size_t Font_Grid_Width = 16u;
+	const size_t Font_Grid_Height = 5u;
 
 	constexpr float Character_Aspect_Ratio = static_cast<float>(Character_Height) / static_cast<float>(Character_Width);
 
 	void Create_Font_Texture(std::vector<std::string> Directories)
 	{
-		size_t Graphic_Size = Character_Width * Character_Height * 4u;
-
-		// Then, we initialise all of the values with each of the other images
-
 		Font.Create_Texture();
 
-		glTexImage3D(GL_TEXTURE_2D_ARRAY, 0u, GL_RGBA, Character_Width, Character_Height, Directories.size(), 0u, GL_RGBA8, GL_UNSIGNED_BYTE, nullptr);
+		stbi_uc* Pixels = new stbi_uc[Font_Grid_Width * Font_Grid_Height * (Character_Width * Character_Height * 4u)];
 
 		for (size_t W = 0; W < Directories.size(); W++)
 		{
@@ -57,41 +56,28 @@ namespace Font_Table
 
 			int Width, Height, Components;
 
-			stbi_set_flip_vertically_on_load(false);
+			stbi_uc* Graphic = stbi_load(Directory.c_str(), &Width, &Height, &Components, 0u);
 
-			stbi_uc* Graphic = stbi_load(Directory.c_str(), &Width, &Height, &Components, STBI_rgb_alpha);
+			size_t X_Offset = W % Font_Grid_Width;
+			size_t Y_Offset = W / Font_Grid_Width;
 
-			if (Graphic == nullptr)
-				Throw_Error("Couldn't load font texture properly!\n");
+			//memcpy(&Pixels[Character_Width * Character_Height * 4u * W], Graphic, Character_Width * Character_Height * 4u);
 
-			glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0u, 0u, 0u, W, Width, Height, 1, GL_RGBA8, GL_UNSIGNED_BYTE, Graphic);
-
-			// memcpy(&Pixels[Graphic_Size * W], Graphic, Graphic_Size);
+			for (size_t Y = 0; Y < Character_Height; Y++)
+				memcpy(&Pixels[X_Offset * Character_Width * 4u + (Character_Width * 4u * Font_Grid_Width) * (Y + Y_Offset * Character_Height)], &Graphic[Y * Character_Width * 4u], Character_Width * 4u);
 
 			stbi_image_free(Graphic);
 		}
 
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexImage2D(GL_TEXTURE_2D, 0u, GL_RGBA, Character_Width * Font_Grid_Width, Character_Height * Font_Grid_Height, 0u, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
 
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
-		// glTexImage2D(GL_TEXTURE_2D, 0u, GL_RGBA, Character_Width, Character_Height * NUMBER_OF_LETTERS, 0u, GL_RGBA, GL_UNSIGNED_BYTE, Pixels);
-
-		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-
-		glBindTexture(GL_TEXTURE_2D_ARRAY, 0u);
+		stbi_image_free(Pixels);
 	}
 
 	void Initialise_Font_Texture()
 	{
-		int Max_Texture_Layers;
-
-		glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &Max_Texture_Layers);	// OpenGL 3.0 requires this to be at least 256 anyways so I might remove this later
-
-		if (Max_Texture_Layers < 79)
-			Throw_Error("Unable to generate font texture! GL_MAX_ARRAY_TEXTURE_LAYERS is 78 or less\n");
 
 		Create_Font_Texture(
 			{
@@ -125,18 +111,7 @@ void Initialise_UI_Shaders()
 	Text_Shader.Create_Shader("Shader_Code/Text_Renderer.vert", "Shader_Code/Text_Renderer.frag", nullptr);
 }
 
-void Bind_UI_Font(Array_Texture Image, glm::vec4 Colour)
-{
-	glUniform4f(glGetUniformLocation(UI_Shader.Program_ID, "Colour"), Colour.x, Colour.y, Colour.z, Colour.w);
-
-	//Font_Table::Font.Parse_Texture(UI_Shader, "Albedo", 0u);
-	//Font_Table::Font.Bind_Texture();
-
-	Image.Parse_Texture(UI_Shader, "Albedo", 0u);
-	Image.Bind_Texture();
-}
-
-void Bind_UI_Uniforms(Texture Image, glm::vec4 Colour)
+void Bind_UI_Uniforms(Shader UI_Shader, Texture Image, glm::vec4 Colour)
 {
 	glUniform4f(glGetUniformLocation(UI_Shader.Program_ID, "Colour"), Colour.x, Colour.y, Colour.z, Colour.w);
 
@@ -249,7 +224,7 @@ public:
 
 	virtual void Render_Border(UI_Transformed_Coordinates Coords)
 	{
-		Bind_UI_Uniforms(Pull_Texture("Assets/UI/UI_Corner.png").Texture, Colour);
+		Bind_UI_Uniforms(UI_Shader, Pull_Texture("Assets/UI/UI_Corner.png").Texture, Colour);
 
 		Render_Screen_Sprite(Coords.X1, Coords.Y1, Coords.X1o, Coords.Y1o,
 			{ 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 });
@@ -268,7 +243,7 @@ public:
 
 		//
 
-		Bind_UI_Uniforms(Pull_Texture("Assets/UI/UI_Line.png").Texture, Colour);
+		Bind_UI_Uniforms(UI_Shader, Pull_Texture("Assets/UI/UI_Line.png").Texture, Colour);
 
 		float Delta_X_UV = (Coords.X2 - Coords.X1) * Inv_UI_Border_Size - 2;
 		float Delta_Y_UV = (Coords.Y2 - Coords.Y1) * Inv_UI_Border_Size - 2;
@@ -334,16 +309,21 @@ public:
 
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
 	{
+
+
 		Billboard_Vertex_Buffer Letter(
 			Coords.X1o + Size * Window_Aspect_Ratio,
 			Coords.Y2o - Size,
 			Coords.X1o + Size * 2 * Window_Aspect_Ratio,
-			Coords.Y2o - Size * (1 + Font_Table::Character_Aspect_Ratio)
+			Coords.Y2o - Size * (1 + Font_Table::Character_Aspect_Ratio),
+
+			glm::vec2(6/16.0f, 4.0f/5.0f), glm::vec2(7/16.0f, 4.0f/5.0f),
+			glm::vec2(6/16.0f, 3.0f/5.0f), glm::vec2(7/16.0f, 3.0f/5.0f)
 		);
 
 		//Billboard_Vertex_Buffer Letter(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o);
 
-		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Size_Of_Letter"), Size * Window_Aspect_Ratio);
+		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Size_Of_Letter"), Size * Window_Aspect_Ratio + 0.005f);
 
 		glUniform1uiv(glGetUniformLocation(Text_Shader.Program_ID, "Character_Indices"), Character_Indices.size(), Character_Indices.data());
 		
@@ -366,7 +346,7 @@ public:
 
 		Text_Shader.Activate();
 
-		Bind_UI_Font(Font_Table::Font, Colour);
+		Bind_UI_Uniforms(Text_Shader, Font_Table::Font, Colour);
 
 		Render_Text(Coords);
 	}
@@ -419,6 +399,10 @@ std::vector<UI_Element*> UI_Elements;
 
 void Handle_UI() // If there are transparent UI elements (pretty likely), then we're gonna want to render this in a final transparent rendering pass
 {
+	glDisable(GL_CULL_FACE);
+
+	glDisable(GL_DEPTH_TEST);
+	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for (size_t W = 0; W < UI_Elements.size(); W++)

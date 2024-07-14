@@ -48,41 +48,6 @@ public:
 	}
 };
 
-class Array_Texture
-{
-	unsigned int Texture_ID = Unassigned_Bit_Mask;
-public:
-	Array_Texture() {}
-
-	void Delete_Texture()
-	{
-		if (Texture_ID != Unassigned_Bit_Mask) // We only want to delete this texture if we've created the gl texture id
-			glDeleteTextures(1, &Texture_ID);
-	}
-
-	void Parse_Texture(Shader Shader, const char* Location, GLuint Unit)
-	{
-		GLint Uniform_Location = glGetUniformLocation(Shader.Program_ID, Location);
-
-		glUniform1i(Uniform_Location, Unit);
-		glActiveTexture(GL_TEXTURE0 + Unit);
-	}
-
-	void Bind_Texture()
-	{
-
-		// Texture_Units++;
-		glBindTexture(GL_TEXTURE_2D_ARRAY, Texture_ID);
-	}
-
-	void Create_Texture()
-	{
-		glGenTextures(1, &Texture_ID);
-
-		Bind_Texture();
-	}
-};
-
 class Cubemap_Texture
 {
 	unsigned int Texture_ID = Unassigned_Bit_Mask;
