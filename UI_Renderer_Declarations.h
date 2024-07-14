@@ -36,11 +36,13 @@ namespace Font_Table
 
 	Texture Font; // This is the texture for the font we're using. Every character has the same height and width so getting each character is analogous to array-indexing.
 
-	const size_t Character_Width = 155u;
-	const size_t Character_Height = 492u;
+	const size_t Character_Width = 170u; // We will have a *slightly* larger letter image to prevent letters bleeding over across elements in the texture atlas
+	const size_t Character_Height = 495u;
 
 	const size_t Font_Grid_Width = 16u;
 	const size_t Font_Grid_Height = 5u;
+
+	const size_t Image_Size = Font_Grid_Width * Font_Grid_Height * (Character_Width * Character_Height * 4u);
 
 	constexpr float Character_Aspect_Ratio = static_cast<float>(Character_Height) / static_cast<float>(Character_Width);
 
@@ -48,7 +50,9 @@ namespace Font_Table
 	{
 		Font.Create_Texture();
 
-		stbi_uc* Pixels = new stbi_uc[Font_Grid_Width * Font_Grid_Height * (Character_Width * Character_Height * 4u)];
+		stbi_uc* Pixels = new stbi_uc[Image_Size];
+
+		memset(Pixels, 0u, Image_Size);
 
 		for (size_t W = 0; W < Directories.size(); W++)
 		{
@@ -63,8 +67,8 @@ namespace Font_Table
 
 			//memcpy(&Pixels[Character_Width * Character_Height * 4u * W], Graphic, Character_Width * Character_Height * 4u);
 
-			for (size_t Y = 0; Y < Character_Height; Y++)
-				memcpy(&Pixels[X_Offset * Character_Width * 4u + (Character_Width * 4u * Font_Grid_Width) * (Y + Y_Offset * Character_Height)], &Graphic[Y * Character_Width * 4u], Character_Width * 4u);
+			for (size_t Y = 0; Y < Height; Y++)
+				memcpy(&Pixels[(Font_Grid_Width * (Y + Y_Offset * Character_Height) + X_Offset) * Character_Width * 4u], &Graphic[Y * Width * 4u], Width * 4u);
 
 			stbi_image_free(Graphic);
 		}
@@ -309,7 +313,7 @@ public:
 
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
 	{
-
+		// glDisable(GL_BLEND);
 
 		Billboard_Vertex_Buffer Letter(
 			Coords.X1o + Size * Window_Aspect_Ratio,
@@ -317,11 +321,11 @@ public:
 			Coords.X1o + Size * 2 * Window_Aspect_Ratio,
 			Coords.Y2o - Size * (1 + Font_Table::Character_Aspect_Ratio),
 
-			// glm::vec2(0, 0.2f), glm::vec2(1.0f/16.0f, 0.2f),
-			// glm::vec2(0, 0.0f), glm::vec2(1.0f/16.0f, 0.0f)
+			glm::vec2(0, 0.2f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/16.0f, 0.2f),
+			glm::vec2(0, 0.0f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/16.0f, 0.0f)
 
-			glm::vec2(0.03f / 16.0f, 0.2f), glm::vec2(0.97f / 16.0f, 0.2f),
-			glm::vec2(0.03f / 16.0f, 0.0f), glm::vec2(0.97f / 16.0f, 0.0f)
+			// glm::vec2(0.03f / 16.0f, 0.2f), glm::vec2(0.97f / 16.0f, 0.2f),
+			// glm::vec2(0.03f / 16.0f, 0.0f), glm::vec2(0.97f / 16.0f, 0.0f)
 		);
 
 		//Billboard_Vertex_Buffer Letter(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o);
@@ -333,6 +337,8 @@ public:
 		glDrawElementsInstanced(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u, Character_Indices.size());
 
 		Letter.Delete_Buffer();
+
+		// glEnable(GL_BLEND);
 	}
 
 	virtual void Render(UI_Transformed_Coordinates Coords) override
@@ -405,7 +411,7 @@ void Handle_UI() // If there are transparent UI elements (pretty likely), then w
 	glDisable(GL_CULL_FACE);
 
 	glDisable(GL_DEPTH_TEST);
-	
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for (size_t W = 0; W < UI_Elements.size(); W++)

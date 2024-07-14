@@ -110,10 +110,10 @@ C:\VisionEngineGL\VisionEngineGL\Post_Processor_Declarations.h(129,21): warning 
 C:\VisionEngineGL\VisionEngineGL\Post_Processor_Declarations.h(129,16): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\UI_Renderer_Declarations.h(331,106): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\UI_Renderer_Declarations.h(335,106): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\UI_Renderer_Declarations.h(333,106): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\UI_Renderer_Declarations.h(337,106): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(38,98): warning C4305: 'argument': truncation from 'double' to 'float'
@@ -152,7 +152,7 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(52,83): warning C4305: 'argument'
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(52,77): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,65): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,64): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(164,52): warning C4305: 'argument': truncation from 'double' to 'float'
@@ -202,7 +202,7 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(68,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 3681 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 3682 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     14 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
