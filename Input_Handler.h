@@ -47,6 +47,18 @@ glm::vec2 Cursor;
 
 bool Mouse_Inputs[2]; // Left and right respectively
 
+bool Mouse_Last_Clicked_Flags[2]; // This states whether or not the mouse was clicked on the previous frame or not
+
+bool Mouse_Fresh_Click(bool Left_Or_Right_Mouse_Button)
+{
+	return Mouse_Inputs[Left_Or_Right_Mouse_Button] && !Mouse_Last_Clicked_Flags[Left_Or_Right_Mouse_Button];
+}
+
+bool Mouse_Unclick(bool Left_Or_Right_Mouse_Button)
+{
+	return !Mouse_Inputs[Left_Or_Right_Mouse_Button] && Mouse_Last_Clicked_Flags[Left_Or_Right_Mouse_Button];
+}
+
 namespace Controls // These are the indices for every user input. This may need some extra work if the user wishes to *type* something into an in-engine text box.
 {
 	uint8_t Forwards = 0;
@@ -72,6 +84,8 @@ void Receive_Inputs() // This sets all of the bits in "inputs", ready to be proc
 {
 	for (uint8_t W = 0; W < Inputs_Keycode.size(); W++)
 		Inputs[W] = glfwGetKey(Window, Inputs_Keycode[W]) == GLFW_PRESS; // The inputs can be handled later
+
+	memcpy(Mouse_Last_Clicked_Flags, Mouse_Inputs, sizeof(Mouse_Inputs)); // This copies the previously updated mouse inputs to the previous frame's input buffer
 
 	Mouse_Inputs[0] = glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;		// The mouse buttons can't be remapped in-engine, but they can be used for whatever you want
 	Mouse_Inputs[1] = glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
@@ -136,22 +150,22 @@ void Shoot_Fire(float Angle)
 		std::swap(Scene_Lights.back(), Scene_Lights[0]);
 		
 		//if(RNG() < 0.75)
-		
-		Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
-		
-		//if(RNG() < 0.25)
-		//	Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-4) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
-		
-		//	Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 
-		if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
-		{
-			Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
+Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6)* Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 
-			Control->Time = -1;
+//if(RNG() < 0.25)
+//	Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-4) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
 
-			Sound_Engine->play2D(Sound_Effect_Source);
-		}
+//	Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+
+if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
+{
+	Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
+
+	Control->Time = -1;
+
+	Sound_Engine->play2D(Sound_Effect_Source);
+}
 	}
 }
 
@@ -187,7 +201,7 @@ void Player_Movement()
 	if (Mouse_Inputs[0]) // If left-click,
 	{
 		// we wanna apply a force onto some objects!
-		
+
 		Shoot_Fire(Angle);
 	}
 	else
@@ -234,6 +248,11 @@ void Player_Movement()
 	//{
 	//	printf(" >> FPS: %f\n", 1.0f / Tick);
 	//}
+
+	if (Inputs[Controls::Auxilliary])
+	{
+		printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
+	}
 }
 
 #endif

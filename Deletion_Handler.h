@@ -8,6 +8,8 @@
 
 #include "Audio_Handler_Declarations.h"
 
+#include "UI_Renderer_Declarations.h"
+
 void Handle_Deletions()
 {
 	Wait_On_Physics();
@@ -61,6 +63,20 @@ void Handle_Deletions()
 
 	auto Deleted_Hitboxes = std::remove_if(Scene_Hitboxes.begin(), Scene_Hitboxes.end(), Is_Deleted);
 	Scene_Hitboxes.erase(Deleted_Hitboxes, Scene_Hitboxes.end());
+
+	//
+
+	for (size_t W = 0; W < UI_Elements.size(); W++)
+	{
+		if (UI_Elements[W]->Flags[UF_TO_BE_DELETED])
+		{
+			delete UI_Elements[W];
+			UI_Elements[W] = nullptr;
+		}
+	}
+
+	auto Deleted_UI = std::remove_if(UI_Elements.begin(), UI_Elements.end(), Is_Deleted);
+	UI_Elements.erase(Deleted_UI, UI_Elements.end());
 
 	Audio::Handle_Audio_Deletions();
 }

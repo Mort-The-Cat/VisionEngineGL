@@ -102,6 +102,10 @@ namespace Font_Table
 
 #define UF_TO_BE_DELETED 0u
 #define UF_RENDER_BORDER 1u
+#define UF_IMAGE 2u				// This flag is set if the UI element has an image that is to be displayed- otherwise, it just uses the UI texture it was using before
+#define UF_CLAMP_TO_SIDE 3u		// This flag is set if you want the UI element to stay at either side of the screen (useful to account for widescreen aspect ratios)
+#define UF_FILL_SCREEN 4u		// This flag is set for things like backgrounds- useful for title screen
+#define UF_RENDER_CONTENTS 5u	// This flag is set if you only want the UI border to be rendered
 
 bool UI_Continue_Looping = false;
 
@@ -167,12 +171,55 @@ X2,Y2 is equal to the bottom-right coords
 
 class UI_Transformed_Coordinates
 {
+	void Shift_Right(float* Left_X, float* Right_X)
+	{
+		float Delta = std::min(*Left_X + 1.0f, 0.0f);
+
+		*Left_X -= Delta;
+		*Right_X -= Delta;
+	}
+
+	void Shift_Left(float* Left_X, float* Right_X)
+	{
+		float Delta = std::max(0.0f, *Right_X - 1.0f);
+
+		*Left_X -= Delta;
+		*Right_X -= Delta;
+	}
+
 public:
 	float X1, Y1, X2, Y2; // Bounds
 
 	float X1o, Y1o, X2o, Y2o; // Offset
-	UI_Transformed_Coordinates(float X1p, float Y1p, float X2p, float Y2p, float UI_Border_Size)
+	UI_Transformed_Coordinates(float X1p, float Y1p, float X2p, float Y2p, float UI_Border_Size, bool Clamp_To_Side, bool Fill_Screen = false)
 	{
+		if (Clamp_To_Side) // This preserves the horizontal dimensions of the UI element
+		{
+			float Width = X2p - X1p;
+
+			if ((X1p + X2p) > 0.0f)
+			{
+				Shift_Left(&X1p, &X2p);
+
+				X2p = (1.0f / Window_Aspect_Ratio) + (1.0f + X2p);
+				X1p = X2p - Width;
+			}
+			else
+			{
+				Shift_Right(&X1p, &X2p);
+
+				X1p = (X1p + 1.0f) - (1.0f / Window_Aspect_Ratio);
+				X2p = X1p + Width;
+
+			}
+		}
+
+		if (Fill_Screen)
+		{
+			X1p /= Window_Aspect_Ratio;
+			X2p /= Window_Aspect_Ratio;
+		}
+
 		X1 = X1p;
 		X1o = X1p + UI_Border_Size;
 
@@ -199,7 +246,7 @@ class UI_Element // The subclasses hereof will handle things like text, buttons,
 public:
 	float X1, Y1, X2, Y2;
 
-	bool Flags[2] = { false, true };
+	bool Flags[6] = { false, true, false, false, false, true };
 
 	float UI_Border_Size = 1.0f / 20.0f;
 
@@ -207,18 +254,24 @@ public:
 
 	glm::vec4 Colour = glm::vec4(1, 1, 1, 1.0f);
 
+	Texture Image;
+
 	// X1 and Y1 are the top-left corner of the screen
 
 	// X2 and Y2 are the bottom-right corner of the screen
 
 	UI_Element() {}
 
-	UI_Element(float X1p, float Y1p, float X2p, float Y2p)
+	UI_Element(float X1p, float Y1p, float X2p, float Y2p, Texture Imagep = Texture())
 	{
 		X1 = X1p;
 		Y1 = Y1p;
 		X2 = X2p;
 		Y2 = Y2p;
+
+		Image = Imagep;
+
+		Flags[UF_IMAGE] = Image.Texture_Created();
 	}
 
 	bool Button_Hover(UI_Transformed_Coordinates Coords)
@@ -276,13 +329,18 @@ public:
 		if (Flags[UF_RENDER_BORDER])
 			Render_Border(Coords);
 
-		Render_Screen_Sprite(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o,
-			{ 0, 1 }, { 1, 1 }, { 0, 0 }, { 1, 0 });
+		if (Flags[UF_IMAGE])
+			Bind_UI_Uniforms(UI_Shader, Image, Colour);
+
+
+		if(Flags[UF_RENDER_CONTENTS])
+			Render_Screen_Sprite(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o,
+				{ 0, 1 }, { 1, 1 }, { 0, 0 }, { 1, 0 });
 	}
 
 	virtual void Update_UI()
 	{
-		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size);
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
 
 		Render(Coords);
 
@@ -292,14 +350,18 @@ public:
 
 class Text_UI_Element : public UI_Element
 {
+public:
 	std::vector<uint32_t> Character_Indices; // These are the indices of the letters in the font
 
 	float Size;
 
+	float Italic_Slant;
+
 	bool Centered_X = false, Centered_Y = false;
 
-public:
-	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, float Sizep = 1.0f / 15.0f)
+	Text_UI_Element() {}
+
+	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -309,11 +371,13 @@ public:
 		Font_Table::Generate_Text_Indices(Textp.c_str(), &Character_Indices);
 
 		Size = Sizep;
+
+		Italic_Slant = Italic_Slantp;
 	}
 
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
 	{
-		// glDisable(GL_BLEND);
+		// 62 is the character index of the space
 
 		Billboard_Vertex_Buffer Letter(
 			Coords.X1o + Size * Window_Aspect_Ratio,
@@ -321,24 +385,24 @@ public:
 			Coords.X1o + Size * 2 * Window_Aspect_Ratio,
 			Coords.Y2o - Size * (1 + Font_Table::Character_Aspect_Ratio),
 
-			glm::vec2(0, 0.2f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/16.0f, 0.2f),
-			glm::vec2(0, 0.0f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/16.0f, 0.0f)
+			glm::vec2(0, 0.2f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/static_cast<float>(Font_Table::Font_Grid_Width), 0.2f),
+			glm::vec2(0, 0.0f), glm::vec2((155.0f/static_cast<float>(Font_Table::Character_Width))/static_cast<float>(Font_Table::Font_Grid_Width), 0.0f),
 
-			// glm::vec2(0.03f / 16.0f, 0.2f), glm::vec2(0.97f / 16.0f, 0.2f),
-			// glm::vec2(0.03f / 16.0f, 0.0f), glm::vec2(0.97f / 16.0f, 0.0f)
+			Italic_Slant * Window_Aspect_Ratio
 		);
 
-		//Billboard_Vertex_Buffer Letter(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o);
+		size_t Line_Length = static_cast<size_t>((Coords.X2o - Coords.X1o - Size * 2 * Window_Aspect_Ratio) / ((Size + 0.01f) * Window_Aspect_Ratio));
+
+		glUniform1ui(glGetUniformLocation(Text_Shader.Program_ID, "Line_Length"), Line_Length);
 
 		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Size_Of_Letter"), (Size + 0.01f) * Window_Aspect_Ratio);
+		glUniform1f(glGetUniformLocation(Text_Shader.Program_ID, "Height_Of_Letter"), (Size) * (0.9f + Font_Table::Character_Aspect_Ratio));
 
 		glUniform1uiv(glGetUniformLocation(Text_Shader.Program_ID, "Character_Indices"), Character_Indices.size(), Character_Indices.data());
 		
 		glDrawElementsInstanced(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u, Character_Indices.size());
 
 		Letter.Delete_Buffer();
-
-		// glEnable(GL_BLEND);
 	}
 
 	virtual void Render(UI_Transformed_Coordinates Coords) override
@@ -347,8 +411,6 @@ public:
 
 		if (Flags[UF_RENDER_BORDER])
 			Render_Border(Coords);
-
-		// Bind_UI_Uniforms(Pull_Texture("Assets/Font/Eszett.png").Texture, Colour);
 
 		Render_Screen_Sprite(Coords.X1o, Coords.Y1o, Coords.X2o, Coords.Y2o,
 			{ 0, 1 }, { 1, 1 }, { 0, 0 }, { 1, 0 });
@@ -366,7 +428,7 @@ class Button_UI_Element : public UI_Element
 public:
 	void (*Button_Function)(UI_Element*);
 
-	Button_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*))
+	Button_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), Texture Imagep = Texture())
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -374,22 +436,75 @@ public:
 		Y2 = Y2p;
 
 		Button_Function = Button_Functionp;
+
+		Image = Imagep;
+
+		Flags[UF_IMAGE] = Image.Texture_Created();
 	}
 
 	virtual void Update_UI() override
 	{
-		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size);
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
 
 		bool Hovering = Button_Hover(Coords);
 
+		Colour = glm::vec4(1, 1, 1, 1.0f);
+
 		if (Hovering)
-			Colour.b = 0.5f;
+			Colour.b = 0.75f;
 		else
 			Colour.b = 1.0f;
 
+		if (Mouse_Inputs[0])
+			Colour *= glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
+
 		Render(Coords);
 
-		if (Hovering && Mouse_Inputs[0]) // If we're hovering over the button and the mouse is clicking, 
+		if (Hovering && Mouse_Unclick(0)) // If we're hovering over the button and the mouse just unclicked, 
+			Button_Function(this);		// run the button-function
+	}
+};
+
+class Button_Text_UI_Element : public Text_UI_Element
+{
+public:
+	void (*Button_Function)(UI_Element*);
+
+	Button_Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), std::string Textp, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	{
+		X1 = X1p;
+		Y1 = Y1p;
+		X2 = X2p;
+		Y2 = Y2p;
+
+		Font_Table::Generate_Text_Indices(Textp.c_str(), &Character_Indices);
+
+		Size = Sizep;
+
+		Italic_Slant = Italic_Slantp;
+
+		Button_Function = Button_Functionp;
+	}
+
+	virtual void Update_UI() override
+	{
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
+
+		bool Hovering = Button_Hover(Coords);
+
+		Colour = glm::vec4(1, 1, 1, 1.0f);
+
+		if (Hovering)
+			Colour.b = 0.75f;
+		else
+			Colour.b = 1.0f;
+
+		if (Hovering && Mouse_Inputs[0])
+			Colour *= glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
+
+		Render(Coords);
+
+		if (Hovering && Mouse_Unclick(0)) // If we're hovering over the button and the mouse just unclicked, 
 			Button_Function(this);		// run the button-function
 	}
 };

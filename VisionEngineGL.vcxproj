@@ -163,6 +163,8 @@
     <ClInclude Include="Engine_Loop.h" />
     <ClInclude Include="Fast_Maths.h" />
     <ClInclude Include="Float_Text_Encoder.h" />
+    <ClInclude Include="Game_Scenes\Shader_Etc_Initialisation.h" />
+    <ClInclude Include="Game_Scenes\Title_Screen_Handling.h" />
     <ClInclude Include="Hitdetection.h" />
     <ClInclude Include="Hitdetection_Declarations.h" />
     <ClInclude Include="Input_Handler.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="Particle_System_Declarations.h" />
     <ClInclude Include="Physics_Engine.h" />
     <ClInclude Include="Post_Processor_Declarations.h" />
+    <ClInclude Include="Engine_Loop_Includes.h" />
     <ClInclude Include="Shadow_Map_Renderer_Declarations.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="UI_Renderer_Declarations.h" />

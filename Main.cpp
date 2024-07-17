@@ -11,6 +11,11 @@
 #include "Job_System_Declarations.h"
 
 #include "UI_Renderer_Declarations.h"
+
+#include "Game_Scenes/Title_Screen_Handling.h"
+
+#include "Game_Scenes/Shader_Etc_Initialisation.h"
+
 int main()
 {
 	printf(" >> Hello!\n");
@@ -23,8 +28,12 @@ int main()
 	Font_Table::Initialise_Font_Texture();
 
 	Initialise_Sound_Engine();
+
+	Initialise_Shaders_And_Particle_Emitters();
 	
-	Engine_Loop();
+	Create_Title_Screen_Page();
+
+	//Engine_Loop();
 
 	// Test_Shadow_Loop();
 
