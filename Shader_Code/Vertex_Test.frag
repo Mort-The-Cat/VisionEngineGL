@@ -147,7 +147,7 @@ void main()
 
 	Reflection_Vector = normalize(reflect(Camera_To_Pixel, Final_Normal));
 	
-	vec3 Light = Lighting();
+	// vec3 Light = Lighting();
 
 	float Reflectivity = texture(Material, UV).g;
 

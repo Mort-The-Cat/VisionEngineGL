@@ -118,7 +118,7 @@ void Load_New_Texture(std::string Directory, Cache::Texture_Cache_Info* Target_I
 
 	stbi_set_flip_vertically_on_load(false);
 
-	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 0);
+	Target_Info->Pixels = stbi_load(Directory.c_str(), &Target_Info->Texture_Width, &Target_Info->Texture_Height, &Target_Info->Texture_Channels, 4u);
 
 	if (Target_Info->Pixels)
 	{
@@ -177,7 +177,10 @@ void Push_Merged_Material(const char* T_1, const char* T_2, const char* T_3, con
 	std::array<const char*, 3> Directories = { T_1, T_2, T_3 };
 
 	for (size_t W = 0; W < 3; W++)
-		Textures[W].Pixels = stbi_load(Directories[W], &Textures[W].Texture_Width, &Textures[W].Texture_Height, &Textures[W].Texture_Channels, STBI_rgb_alpha);
+		if (Directories[W] != nullptr)
+			Textures[W].Pixels = stbi_load(Directories[W], &Textures[W].Texture_Width, &Textures[W].Texture_Height, &Textures[W].Texture_Channels, STBI_rgb_alpha);
+		else
+			Textures[W].Pixels = (stbi_uc*)malloc(Textures[0].Texture_Width * Textures[0].Texture_Height * Textures[0].Texture_Channels);
 
 	size_t Total_Size = Textures[0].Texture_Width * Textures[0].Texture_Height * 4;
 

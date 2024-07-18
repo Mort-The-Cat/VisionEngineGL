@@ -140,10 +140,10 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(193,16): warning C4305: 'argument
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(196,53): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(257,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(256,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(38,59): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(38,60): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(61,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data

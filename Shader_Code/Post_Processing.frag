@@ -199,7 +199,7 @@ void main()
 
 	float Reflectivity = texture(Material_Texture, UV).y;
 
-	Out_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1.0f - Reflectivity), 1) * texture(Screen_Texture, UV));
+	Out_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, UV));
 
 	// Out_Colour = texture(Screen_Texture, UV);
 }
