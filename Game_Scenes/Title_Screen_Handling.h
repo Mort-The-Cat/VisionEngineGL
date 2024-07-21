@@ -22,10 +22,12 @@ void Title_Screen_Loop();
 
 void Create_Title_Screen_Page()
 {
-	for (float Radius = 0.3f; Radius < 10.0f; Radius += 0.15f)
+	for (float Radius = 0.1f; Radius < 10.0f; Radius += 0.15f)
 	{
-		for (size_t W = 0; W < 64 * Radius; W++)
-			Galaxy_Particles.Particles.Spawn_Particle(Radius + RNG() * 0.3f, (W + RNG()) * 3.14159f * 2.0f / (64 * Radius));
+		float Total = 64 * Radius;
+
+		for (size_t W = 0; W < Total; W++)
+			Galaxy_Particles.Particles.Spawn_Particle(Radius + RNG() * 0.3f, (W + RNG()) * 3.14159f * 2.0f / Total);
 
 		for (size_t W = 0; W < 256 * Radius; W++)
 			Galaxy_Particles.Particles.Spawn_Particle(Radius + RNG() * 0.1f, 6.28318f + (W + RNG() * 4.0f) * 3.14159f * 2.0f / (64 * Radius));

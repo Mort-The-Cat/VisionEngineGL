@@ -31,7 +31,7 @@ vec3 Final_Normal;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
 
-float Inverse_Material_W = 1.0f; //texture(Material, UV).a;
+// float Inverse_Material_W = 1.0f; //texture(Material, UV).a;
 
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position.xyz);
 
@@ -58,7 +58,7 @@ vec3 Normal_Map_Read()
 {
 	vec3 New_Values;
 
-	New_Values.z = -(texture(Material, UV).z * Inverse_Material_W * 2 - 1);
+	New_Values.z = -(texture(Material, UV).z * 2 - 1);
 	New_Values.x = -(texture(Material, UV).w * 2 - 1);
 
 	New_Values.y = sqrt(1 - (New_Values.x * New_Values.x + New_Values.z * New_Values.z));

@@ -10,10 +10,11 @@
 
 class Test_Animation_Controller : public Controller
 {
-	Mesh_Animator Animator;
 	std::string Animation_Name;
 
 public:
+	Mesh_Animator Animator;
+
 	Test_Animation_Controller(const char* Directory)
 	{
 		Animation_Name = Directory;
