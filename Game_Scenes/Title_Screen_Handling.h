@@ -3,6 +3,7 @@
 
 #include "../Engine_Loop_Includes.h"
 #include "../Engine_Loop.h"
+#include "../UI_Textbox_Definitions.h"
 
 void Run_Engine_Loop(UI_Element* Element) 
 { 
@@ -41,6 +42,10 @@ void Create_Title_Screen_Page()
 	UI_Elements.back()->Image = Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture;
 
 	UI_Elements.back()->Flags[UF_IMAGE] = true;
+
+	//
+
+	UI_Elements.push_back(new Textbox_UI_Element(-1.0f, -0.25f, 1.0f, 0.75f));
 
 	Cursor_Reset = false;
 

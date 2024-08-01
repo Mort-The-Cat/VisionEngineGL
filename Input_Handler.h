@@ -39,6 +39,25 @@ std::array<uint16_t, 11> Inputs_Keycode = // The values of these keycodes can be
 	GLFW_KEY_R // Reload / auxilliary
 };
 
+namespace Controls // These are the indices for every user input. This may need some extra work if the user wishes to *type* something into an in-engine text box.
+{
+	uint8_t Forwards = 0;
+	uint8_t Backwards = 1;
+	uint8_t Left = 2;
+	uint8_t Right = 3;
+
+	uint8_t Up = 4;
+	uint8_t Down = 5;
+
+	uint8_t Pause = 6;
+
+	uint8_t Lean_Left = 7;
+	uint8_t Lean_Right = 8;
+
+	uint8_t Use = 9;
+	uint8_t Auxilliary = 10;
+};
+
 float Mouse_Sensitivity = 0.5;
 
 bool Cursor_Reset = true;
@@ -58,25 +77,6 @@ bool Mouse_Unclick(bool Left_Or_Right_Mouse_Button)
 {
 	return !Mouse_Inputs[Left_Or_Right_Mouse_Button] && Mouse_Last_Clicked_Flags[Left_Or_Right_Mouse_Button];
 }
-
-namespace Controls // These are the indices for every user input. This may need some extra work if the user wishes to *type* something into an in-engine text box.
-{
-	uint8_t Forwards = 0;
-	uint8_t Backwards = 1;
-	uint8_t Left = 2;
-	uint8_t Right = 3;
-
-	uint8_t Up = 4;
-	uint8_t Down = 5;
-
-	uint8_t Pause = 6;
-
-	uint8_t Lean_Left = 7;
-	uint8_t Lean_Right = 8;
-
-	uint8_t Use = 9;
-	uint8_t Auxilliary = 10;
-};
 
 //
 
@@ -118,11 +118,12 @@ void Spawn_Test_Object()
 {
 	if(Player_Object_Spawn_Timer < 0.0f)
 	{
-		Player_Object_Spawn_Timer = 0.1f;
+		Player_Object_Spawn_Timer = 0.05f;
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
 		//Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		
 		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
@@ -146,26 +147,25 @@ void Shoot_Fire(float Angle)
 
 		Scene_Lights.push_back(new Lightsource(Info.Collision_Position - Info.Collision_Normal * glm::vec3(0.3), glm::vec3(RNG() * 1 + 2, RNG() + 1, RNG()), Info.Collision_Normal, 360, 1, 0.0f));
 		Scene_Lights.back()->Flags[LF_TO_BE_DELETED] = true;
-
-		std::swap(Scene_Lights.back(), Scene_Lights[0]);
+		Scene_Lights.back()->Flags[LF_CAST_SHADOWS] = true;
 		
 		//if(RNG() < 0.75)
 
-Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6)* Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		Billboard_Fire_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-6)* Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 
-//if(RNG() < 0.25)
-//	Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-4) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
+		//if(RNG() < 0.25)
+		//	Billboard_Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-4) * Info.Collision_Normal + glm::vec3(.25 * RNG() - 0.125, .25 * RNG() - 0.125, .25 * RNG() - 0.125));
 
-//	Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
+		//	Smoke_Particles.Particles.Spawn_Particle(Info.Collision_Position + glm::vec3(0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05, 0.1 * RNG() - 0.05), glm::vec3(-2) * Info.Collision_Normal + glm::vec3(.5 * RNG() - 0.25, .5 * RNG() - 0.25, .5 * RNG() - 0.25));
 
-if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
-{
-	Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
+		if (Target->Object->Flags[MF_PHYSICS_TEST]) // If the object is a physics object
+		{
+			Physics_Object_Controller* Control = (Physics_Object_Controller*)Target->Object->Control;
 
-	Control->Time = -1;
+			Control->Time = -1;
 
-	Sound_Engine->play2D(Sound_Effect_Source);
-}
+			Sound_Engine->play2D(Sound_Effect_Source);
+		}
 	}
 }
 
@@ -251,7 +251,10 @@ void Player_Movement()
 
 	if (Inputs[Controls::Auxilliary])
 	{
-		printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
+		for (size_t W = 0; W < Physics::Scene_Physics_Objects.size(); W++)
+			Physics::Scene_Physics_Objects[W]->Forces -= glm::vec3(0.25f) * glm::normalize(Physics::Scene_Physics_Objects[W]->Object->Position - Player_Camera.Position);
+
+		// printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
 	}
 }
 

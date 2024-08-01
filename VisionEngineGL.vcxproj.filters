@@ -113,6 +113,9 @@
     <ClInclude Include="Game_Scenes\Shader_Etc_Initialisation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI_Textbox_Definitions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />

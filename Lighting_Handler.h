@@ -44,7 +44,8 @@ public:
 	}
 } Light_Uniforms;
 
-#define LF_TO_BE_DELETED 0
+#define LF_TO_BE_DELETED 0u
+#define LF_CAST_SHADOWS 1u
 
 class Lightsource
 {
@@ -58,7 +59,7 @@ public:
 
 	float Attenuation; // This is important for things like fire vs things like ordinary lights- it'd be strange if your viewmodel's colour was overexposed the whole game usw.
 
-	bool Flags[1] = { false };
+	bool Flags[2] = { false, false };
 	Lightsource() {}
 
 	Lightsource(glm::vec3 Positionp, glm::vec3 Colourp, glm::vec3 Directionp, float FOVp = 360, float Blurp = 1.0f, float Attenuationp = 0.6f)
@@ -74,8 +75,23 @@ public:
 
 std::vector<Lightsource*> Scene_Lights;
 
+void Rearrange_Light_Priority()
+{
+	size_t Counter = 0u;
+
+	for (size_t W = 0; W < Scene_Lights.size(); W++)
+		if (Scene_Lights[W]->Flags[LF_CAST_SHADOWS])
+		{
+			std::swap(Scene_Lights[W], Scene_Lights[Counter]);
+
+			Counter++;
+		}
+}
+
 void Update_Lighting_Buffer()
 {
+	Rearrange_Light_Priority();
+
 	size_t Max_Index = std::min((int)Scene_Lights.size(), NUMBER_OF_LIGHTS);
 	for (size_t W = 0; W < Max_Index; W++)
 	{

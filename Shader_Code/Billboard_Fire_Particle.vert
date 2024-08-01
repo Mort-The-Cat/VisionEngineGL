@@ -5,15 +5,15 @@ layout(location = 1) in vec2 In_UV;
 
 uniform mat4 Projection_Matrix;
 
-out DATA
-{
-	vec3 Normal;
-	mat4 Projection_Matrix;
-	vec2 UV;
-	float Lighting_Transparency;
+out vec3 Normal;
+out vec4 Position;
 
-	float Vertex_Transparency;
-} data_out;
+out vec3 UV_Tangent;
+out vec3 UV_Bitangent;
+
+out vec2 UV;
+out float Lighting_Transparency;
+out float Vertex_Transparency;
 
 uniform float Particle_Data[2400]; // We know that the smoke particle has 8 floats in it total
 
@@ -63,13 +63,16 @@ void main()
 	Transformed_Position.xyz -= Camera_Right_Direction * Rotated.x;
 	Transformed_Position.xyz += Camera_Up_Direction * Rotated.y;
 
-	gl_Position = Transformed_Position;
+	Position = Transformed_Position;
 
-	data_out.Normal = normalize(Camera_Position - Transformed_Position.xyz);
-	data_out.UV = In_UV;
-	data_out.Projection_Matrix = Projection_Matrix;
+	gl_Position = Projection_Matrix * Transformed_Position;
 
-	data_out.Lighting_Transparency = 0.5;
+	Normal = normalize(Camera_Position - Transformed_Position.xyz);
+	UV = In_UV;
+
+	Lighting_Transparency = 0.5;
+
 	
-	data_out.Vertex_Transparency = 1.0 / (Particle_Age * 10 + 1);
+	
+	Vertex_Transparency = 1.0 / (Particle_Age * 2.0f + length(Position.xyz - Particle_Position));
 }

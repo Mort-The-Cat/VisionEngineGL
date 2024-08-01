@@ -108,9 +108,11 @@ namespace Physics
 				float A_Inv_Mass = Inv_Mass;
 				float B_Inv_Mass = Collision->B != nullptr ? Collision->B->Inv_Mass : 0.0f;
 
+				float Inv_Combined_Mass = 1.0f / (A_Inv_Mass + B_Inv_Mass);
+
 				float E = Elasticity * (Collision->B != nullptr ? Collision->B->Elasticity : 1.0f);
 
-				J = -(1.0f + E) * Normal_Speed / (A_Inv_Mass + B_Inv_Mass);
+				J = -(1.0f + E) * Normal_Speed * Inv_Combined_Mass;
 
 				Impulse = J * Collision->Collision.Collision_Normal + Perpendicular_Velocity * B_Friction * Friction * (1 - expf(J));
 
@@ -187,6 +189,9 @@ namespace Physics
 
 			Object->Orientation = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation));
 			Object->Orientation_Up = glm::normalize(Quaternion::Rotate(Interpolated_Rotation, Object->Orientation_Up));
+
+			// if (glm::dot(Rotation_Vector, Rotation_Vector) < 0.1f)
+			//	Rotation_Vector *= powf(0.25f, Tick);
 
 			// Rotation_Vector *= powf(0.9, Tick);
 

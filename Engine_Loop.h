@@ -11,6 +11,10 @@ void Render_All()
 
 	glDisable(GL_BLEND);
 
+	glEnable(GL_LINEAR_MIPMAP_LINEAR);
+
+	//
+
 	Test_Cubemap.Parse_Texture(Scene_Object_Shader, "Cubemap", 0);
 	Test_Cubemap.Bind_Texture();
 

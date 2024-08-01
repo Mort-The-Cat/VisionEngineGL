@@ -183,6 +183,7 @@
     <ClInclude Include="Shadow_Map_Renderer_Declarations.h" />
     <ClInclude Include="Texture_Declarations.h" />
     <ClInclude Include="UI_Renderer_Declarations.h" />
+    <ClInclude Include="UI_Textbox_Definitions.h" />
     <ClInclude Include="Uniform_Buffer_Declarations.h" />
     <ClInclude Include="Vertex_Buffer_Declarations.h" />
   </ItemGroup>

@@ -82,7 +82,6 @@ namespace Font_Table
 
 	void Initialise_Font_Texture()
 	{
-
 		Create_Font_Texture(
 			{
 				"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
@@ -422,6 +421,8 @@ public:
 		Render_Text(Coords);
 	}
 };
+
+class Textbox_UI_Element; // This just declares that the Textbox_UI_Element exists. The definition thereof is in UI_Textbox_Definitions.h
 
 class Button_UI_Element : public UI_Element
 {
