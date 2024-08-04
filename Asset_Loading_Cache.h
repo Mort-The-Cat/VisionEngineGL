@@ -180,7 +180,10 @@ void Push_Merged_Material(const char* T_1, const char* T_2, const char* T_3, con
 		if (Directories[W] != nullptr)
 			Textures[W].Pixels = stbi_load(Directories[W], &Textures[W].Texture_Width, &Textures[W].Texture_Height, &Textures[W].Texture_Channels, STBI_rgb_alpha);
 		else
+		{
 			Textures[W].Pixels = (stbi_uc*)malloc(Textures[0].Texture_Width * Textures[0].Texture_Height * Textures[0].Texture_Channels);
+			memset(Textures[W].Pixels, 0u, sizeof(Textures[W].Pixels));
+		}
 
 	size_t Total_Size = Textures[0].Texture_Width * Textures[0].Texture_Height * 4;
 

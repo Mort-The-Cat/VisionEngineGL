@@ -58,6 +58,13 @@ void Render_All()
 	Test_Cubemap.Bind_Texture();
 	Billboard_Smoke_Particles.Render();
 
+	glEnable(GL_DEPTH_CLAMP);
+	Volumetric_Cone_Particles.Shader.Activate();
+	Post_Processor::Bind_G_Buffer_Textures(Volumetric_Cone_Particles.Shader);
+	Bind_Screen_Dimensions(Volumetric_Cone_Particles.Shader);
+	Volumetric_Cone_Particles.Render();
+	glDisable(GL_DEPTH_CLAMP);
+
 	//
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
@@ -66,86 +73,6 @@ void Render_All()
 
 	// Galaxy_Particles.Shader.Activate();
 	// Galaxy_Particles.Render();
-}
-
-void Setup_Test_Scene()
-{
-	// Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1.5, 1, 1.3), glm::vec3(0, 0, 1), 60, 3));
-	Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1, 1, 1.1), glm::vec3(0, 0, 1), 60, 3, 0.6f));
-
-	
-
-	// UI_Elements.push_back(new Button_UI_Element(-0.25, -0.1, 0.55, 0.5, Return_To_Game_Loop));
-
-	// UI_Elements.push_back(new Button_UI_Element(-0.75, -0.9, -0.3, -0.3, Return_To_Game_Loop));
-
-	// UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture));
-
-	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das  sieht schön aus!"));
-	//UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;
-
-	UI_Elements.back()->Flags[UF_CLAMP_TO_SIDE] = true;
-
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Makarov.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Arm_Texture_2.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Makarov.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
-
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Makarov_Shoot.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Gun_Texture.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Makarov_Shoot.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
-
-
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(-12, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Animation.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Vertex_Anims.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
-
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(-8, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Two_Bones_Test.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Viking_Room.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Two_Bones_Test.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
-
-	//
-
-	Scene_Models.push_back(new Model({ MF_CAST_SHADOWS }));
-	Scene_Models.back()->Position = glm::vec3(0, 6, 0);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Reddened_Wall.jpg").Texture, Pull_Texture("NPP_Wall").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
-
-	//
-
-	Scene_Lights.push_back(new Lightsource(glm::vec3(-3, -4, -3), 0.5f * glm::vec3(2, 3, 4), glm::vec3(-1, 0, 0), 80, 10, 5.0f));
-
-	// Scene_Lights.push_back(new Lightsource(glm::vec3(-5, -3, 2), 0.5f * glm::vec3(4, 3, 3), glm::normalize(glm::vec3(0.75, 0.5, 1)), 100, 0.1));
-
-	Scene_Models.push_back(new Model( { MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(0, 0, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Stone").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(5, -5, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(18, -5, -3);
-	Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture, Pull_Texture("Floor_Reflect").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-	if(false)
-	{
-		Scene_Models.push_back(new Model({ MF_SOLID }));
-		Scene_Models.back()->Position = glm::vec3(-5, -5, -3);
-		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-		Scene_Models.push_back(new Model({ MF_SOLID }));
-		Scene_Models.back()->Position = glm::vec3(0, -5, -8);
-		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-		Scene_Models.push_back(new Model({ MF_SOLID }));
-		Scene_Models.back()->Position = glm::vec3(0, -5, 2);
-		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
-	}
-
-	Scene_Models.push_back(new Model({ MF_SOLID }));
-	Scene_Models.back()->Position = glm::vec3(0, -5, -5);
-	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Ramp.obj").Mesh));
 }
 
 void End_Of_Frame()
@@ -209,6 +136,7 @@ void Engine_Loop()
 		Smoke_Particles.Update();
 		Billboard_Smoke_Particles.Update();
 		Billboard_Fire_Particles.Update();
+		Volumetric_Cone_Particles.Update();
 		// Galaxy_Particles.Update();
 
 		Scene_Object_Shader.Activate();

@@ -132,6 +132,27 @@ namespace Post_Processor
 		glBindFramebuffer(GL_FRAMEBUFFER, Frame_Buffer_ID);
 	}
 
+	void Bind_G_Buffer_Textures(Shader Shader_Program)
+	{
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Texture"), 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture); // This is important for getting the screen texture
+
+		//
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Position_Texture"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Position_Buffer_Texture);
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Normal_Texture"), 2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, Normal_Buffer_Texture); // This is important for getting the screen texture
+
+		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Material_Texture"), 3);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, Material_Buffer_Texture); // This is important for getting the screen texture
+	}
+
 	void Finish_Rendering()	// This takes what has been rendered and redraws it on the screen with a quick post-processing pass
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0u);
@@ -155,23 +176,7 @@ namespace Post_Processor
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		
-		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Texture"), 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, Frame_Buffer_Texture); // This is important for getting the screen texture
-
-		//
-
-		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Position_Texture"), 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, Position_Buffer_Texture);
-
-		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Normal_Texture"), 2);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, Normal_Buffer_Texture); // This is important for getting the screen texture
-
-		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Material_Texture"), 3);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, Material_Buffer_Texture); // This is important for getting the screen texture
+		Bind_G_Buffer_Textures(Shader_Program);
 
 		glDrawElements(GL_TRIANGLES, Vertex_Buffer.Indices_Count, GL_UNSIGNED_INT, 0); // This does the draw call
 

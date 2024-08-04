@@ -5,6 +5,21 @@
 #include "Vertex_Buffer_Declarations.h"
 #include "Texture_Declarations.h"
 
+// I want to make a pseudo-volumetric light volume in the engine
+
+struct Volumetric_Cone_Particle
+{
+	float Volume_Density;
+
+	float C, Cosine_Theta_Squared, Dot_Source_Direction; // dot(alef - alpha, delta)
+
+	glm::mat3 Scaling_Rotation; // This handles the scaling and rotation thereof
+
+	glm::vec3 Cone_Origin;
+	glm::vec3 Cone_Direction;
+	glm::vec3 Colour;
+};
+
 struct Smoke_Particle
 {
 	glm::vec4 Position; // .w is age
@@ -125,10 +140,68 @@ public:
 	}
 };
 
+class Volumetric_Cone_Particle_Info : public Particle_Info<Volumetric_Cone_Particle>
+{
+public:
+	Volumetric_Cone_Particle_Info() 
+	{
+		Particles_Per_Call = 50;
+	}
+
+	void Spawn_Particle(glm::vec3 Cone_Origin, glm::vec3 Cone_Direction, glm::vec3 Colour, float Density, float Cone_Angle) // Cone angle is in degrees
+	{
+		Volumetric_Cone_Particle New_Particle;
+		New_Particle.Cone_Origin = Cone_Origin;
+		New_Particle.Cone_Direction = -Cone_Direction;
+
+		New_Particle.Cosine_Theta_Squared = (cosf(Cone_Angle * DTR));
+		New_Particle.Cosine_Theta_Squared *= New_Particle.Cosine_Theta_Squared; // This squares it
+
+		New_Particle.Colour = Colour;
+		New_Particle.Volume_Density = Density;
+
+		/*New_Particle.Scaling_Rotation = glm::mat3(
+			glm::scale(glm::mat4(1.0f), glm::vec3(tanf(Cone_Angle * DTR), 1.0f, tanf(Cone_Angle * DTR))) * 
+			glm::lookAt(Cone_Direction, glm::vec3(0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));*/
+
+
+
+		/*New_Particle.Scaling_Rotation = glm::mat3(
+			// glm::scale(glm::mat4(1.0f), glm::vec3(tanf(Cone_Angle * DTR), 1.0f, tanf(Cone_Angle * DTR))) *
+			glm::lookAt(Random_Perpendicular_Vector(Cone_Direction), glm::vec3(0.0f), Cone_Direction)
+		);*/
+
+		New_Particle.Scaling_Rotation = Random_Direction_Matrix(Cone_Direction);
+
+		// This will give us a matrix for the cone that is properly scaled and rotated in the direction we want
+
+		Particles_Data.push_back(New_Particle);
+	}
+
+	void Update()
+	{
+		for (size_t W = 0; W < Particles_Data.size(); W++)
+		{
+			// Update value of c and dot(alef - alpha, delta)
+
+			glm::vec3 Alef_Alpha = (Player_Camera.Position - Particles_Data[W].Cone_Origin);
+
+			Particles_Data[W].Dot_Source_Direction = glm::dot(Alef_Alpha, Particles_Data[W].Cone_Direction);
+
+			Particles_Data[W].C = Particles_Data[W].Dot_Source_Direction * Particles_Data[W].Dot_Source_Direction - Particles_Data[W].Cosine_Theta_Squared * glm::dot(Alef_Alpha, Alef_Alpha);
+		}
+
+		// Might be cool if I used these often in the game
+	}
+};
+
 template<typename Particle, typename Vertex_Buffer>
 	class Particle_Renderer
 	{
 	public:
+
+		bool Bind_Textures = true;
+
 		Shader Shader;
 		Particle Particles;
 		Vertex_Buffer Mesh;
@@ -153,11 +226,14 @@ template<typename Particle, typename Vertex_Buffer>
 
 			Mesh.Bind_Buffer();
 
-			Albedo.Parse_Texture(Shader, "Albedo", 0);
-			Albedo.Bind_Texture();
+			if (Bind_Textures)
+			{
+				Albedo.Parse_Texture(Shader, "Albedo", 0);
+				Albedo.Bind_Texture();
 
-			Material.Parse_Texture(Shader, "Material", 1);
-			Material.Bind_Texture();
+				Material.Parse_Texture(Shader, "Material", 1);
+				Material.Bind_Texture();
+			}
 
 			for (size_t W = 0; W < Particles.Particles_Data.size(); W += Particles.Particles_Per_Call)
 			{
@@ -187,5 +263,9 @@ Particle_Renderer<Smoke_Particle_Info, Billboard_Vertex_Buffer> Billboard_Fire_P
 //
 
 Particle_Renderer<Galaxy_Particle_Info, Billboard_Vertex_Buffer> Galaxy_Particles;
+
+//
+
+Particle_Renderer<Volumetric_Cone_Particle_Info, Model_Vertex_Buffer> Volumetric_Cone_Particles;
 
 #endif

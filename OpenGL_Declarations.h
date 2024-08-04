@@ -74,6 +74,25 @@ glm::mat4 Projection_Matrix; // This is the projection matrix of the current cam
 glm::vec3 Camera_Up_Direction;
 glm::vec3 Camera_Direction;
 
+glm::vec3 Random_Perpendicular_Vector(glm::vec3 Vector)
+{
+	glm::vec3 Random_Vector = glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f);
+
+	Random_Vector += Vector;
+
+	glm::vec3 Perpendicular_Vector = glm::normalize(glm::cross(Vector, Random_Vector));
+
+	return Perpendicular_Vector;
+}
+
+glm::mat3 Random_Direction_Matrix(glm::vec3 Vector)
+{
+	glm::vec3 Perpendicular_Vector = Random_Perpendicular_Vector(Vector);
+	glm::vec3 Tangent_Vector = glm::cross(Perpendicular_Vector, Vector);
+
+	return glm::mat3(Perpendicular_Vector, Vector, Tangent_Vector);
+}
+
 glm::vec3 Calculate_Surface_Normal(glm::vec3 A, glm::vec3 B, glm::vec3 C)
 {
 	// We'll need to calculate the surface normal of these three vectors
@@ -265,6 +284,11 @@ public:
 	}
 	
 };
+
+void Bind_Screen_Dimensions(Shader Shader_Program)
+{
+	glUniform2f(glGetUniformLocation(Shader_Program.Program_ID, "Screen_Dimensions"), 1.0f / Window_Width, 1.0f / Window_Height);
+}
 
 Shader Scene_Object_Shader;
 
