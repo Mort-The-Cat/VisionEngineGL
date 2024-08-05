@@ -42,7 +42,13 @@ void main()
 	float Distance_From_Camera = length(texture(Position_Texture, gl_FragCoord.xy * Screen_Dimensions).xyz - Camera_Position.xyz);
 
 	float Lambda_Near = min(0, Omega - Delta);
+
+	Lambda_Near = -length(Camera_Position - Position);
+
 	float Lambda_Far = max(-Distance_From_Camera, Omega + Delta);
+
+	if(Lambda_Far > 0)
+		Lambda_Far = -Distance_From_Camera;
 
 	// Colour = vec4(exp(-abs(Delta)), 0, 0, 1.0);
 

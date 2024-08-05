@@ -136,7 +136,7 @@ void Create_Title_Screen_Page()
 
 	//
 
-	UI_Elements.push_back(new Textbox_UI_Element(-1.0f, -0.25f, 1.0f, 0.75f));
+	// UI_Elements.push_back(new Textbox_UI_Element(-1.0f, -0.25f, 1.0f, 0.75f));
 
 	Cursor_Reset = false;
 
