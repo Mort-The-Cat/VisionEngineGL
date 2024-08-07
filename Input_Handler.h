@@ -96,6 +96,8 @@ void Receive_Inputs() // This sets all of the bits in "inputs", ready to be proc
 
 	if (Cursor_Reset) glfwSetCursorPos(Window, Window_Width >> 1, Window_Height >> 1); // Middle of the screen
 
+	glfwSetInputMode(Window, GLFW_CURSOR, Cursor_Reset ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+
 	Cursor = { X - (Window_Width >> 1), Y - (Window_Height >> 1) }; // This gets the cursor position! Very simple ^^
 
 	Cursor *= glm::vec2(2.0f / Window_Width, -2.0f / Window_Height);

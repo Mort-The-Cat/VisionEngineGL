@@ -65,11 +65,11 @@ void Render_All()
 	Volumetric_Cone_Particles.Render();
 	glDisable(GL_DEPTH_CLAMP);
 
-	//
-
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // We'll be using purely additive blending for the fire particles
 	Billboard_Fire_Particles.Shader.Activate();
 	Billboard_Fire_Particles.Render();
+
+	//
 
 	// Galaxy_Particles.Shader.Activate();
 	// Galaxy_Particles.Render();

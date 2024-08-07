@@ -60,7 +60,7 @@ void main()
 
 	vec4 Transformed_Position = Projection_Matrix * vec4(Position, 1.0f);
 
-	// Transformed_Position.z = max(0.01, Transformed_Position.z);
+	// Transformed_Position.w = max(0.01, Transformed_Position.w);
 
 	gl_Position = Transformed_Position;
 }

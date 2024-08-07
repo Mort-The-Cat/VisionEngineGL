@@ -1,17 +1,107 @@
 #ifndef VISION_UI_TEXTBOX_DEFINITIONS
 #define VISION_UI_TEXTBOX_DEFINITIONS
 
+#include "OpenGL_Declarations.h"
 #include "UI_Renderer_Declarations.h"
 #include "Input_Handler.h"
 
 namespace UI_Typing
 {
-#define NUMBER_OF_KEYS 270u
+	struct Key_Press_Info
+	{
+		float Duration; // Length of time that the key is pressed
 
-	bool Previous_Keys[NUMBER_OF_KEYS];
-	bool Current_Keys[NUMBER_OF_KEYS];
+		unsigned int Key_Code;
+	};
 
-	bool Key_Pressed(size_t Key)
+#define Control_Key_Size 3u
+
+	Key_Press_Info Control_Key_Inputs[3] = {
+		{ 0, GLFW_KEY_BACKSPACE },
+		{ 0, GLFW_KEY_LEFT },
+		{ 0, GLFW_KEY_RIGHT }
+	};	// These are keys that cannot be traditionally read with glfwcharcallback function and must be simulated in-engine
+
+	unsigned int Char_Callback = 0x0000u;
+
+	void Read_Control_Keys()
+	{
+		for (size_t W = 0; W < Control_Key_Size; W++)
+		{
+			if (glfwGetKey(Window, Control_Key_Inputs[W].Key_Code))
+			{
+				if (Control_Key_Inputs[W].Duration == 0.0f)
+					Char_Callback = Control_Key_Inputs[W].Key_Code;
+
+				if (Control_Key_Inputs[W].Duration > 0.5f)
+				{
+					Char_Callback = Control_Key_Inputs[W].Key_Code;
+					Control_Key_Inputs[W].Duration -= 0.03f;
+				}
+
+				Control_Key_Inputs[W].Duration += Tick;
+			}
+			else
+				Control_Key_Inputs[W].Duration = 0;
+		}
+	}
+
+	void Character_Typing_Callback(GLFWwindow* Window, unsigned int Character_Code)
+	{
+		Char_Callback = Character_Code;
+	}
+
+	bool Handle_Writing_Character_Inputs(std::string& Text, size_t& Cursor_Position)
+	{
+		Read_Control_Keys(); // Control keys take priority over character keys
+
+		const unsigned int Backspace = GLFW_KEY_BACKSPACE;
+		const unsigned int Left = GLFW_KEY_LEFT;
+		const unsigned int Right = GLFW_KEY_RIGHT;
+
+		bool Update = false;
+
+		switch (Char_Callback)
+		{
+
+		case Backspace:
+			if (Cursor_Position)
+			{
+				Update = true;
+				Text.erase(Cursor_Position - 1, 1u);
+				Cursor_Position--;
+			}
+			break;
+
+		case Left:
+			Cursor_Position -= (Cursor_Position > 0u);
+			break;
+
+		case Right:
+			Cursor_Position += (Cursor_Position < Text.length());
+			break;
+
+		case 0u:	// If the value is zero, do nothing!
+			break;
+
+		default:
+			Update = true;
+			char Letters[2] = " ";
+
+			Letters[0] = Char_Callback;
+
+			Text.insert(Cursor_Position, Letters);
+
+			Cursor_Position++;
+			break;
+		}
+
+		Char_Callback = 0u;
+
+		return Update;
+	}
+
+	/*bool Key_Pressed(size_t Key)
 	{
 		return Current_Keys[Key] && !Previous_Keys[Key];
 	}
@@ -59,7 +149,7 @@ namespace UI_Typing
 			}
 
 		return Update;
-	}
+	}*/
 }
 
 class Textbox_UI_Element : public Text_UI_Element // This is a textbox which the user can type in
@@ -82,6 +172,8 @@ public:
 
 		Size = Sizep;
 		Italic_Slant = Italic_Slantp;
+
+		glfwSetCharCallback(Window, UI_Typing::Character_Typing_Callback);
 	}
 
 	void Render_Cursor(UI_Transformed_Coordinates Coords)

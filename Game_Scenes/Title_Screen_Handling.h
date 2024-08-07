@@ -90,7 +90,7 @@ void Setup_Test_Scene()
 	Scene_Models.back()->Position = glm::vec3(0, -5, -5);
 	Create_Model(Pull_Mesh("Assets/Models/Ramp.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/White.png").Texture, Pull_Texture("Brick").Texture, Scene_Models.back(), new Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Ramp.obj").Mesh));
 
-	glm::vec3 Rand_Direction = glm::vec3(0, -1, 0); // glm::normalize(glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f));
+	glm::vec3 Rand_Direction = glm::normalize(glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f));
 
 	for (float X = 10; X < 40; X += 10)
 		Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
@@ -136,7 +136,7 @@ void Create_Title_Screen_Page()
 
 	//
 
-	// UI_Elements.push_back(new Textbox_UI_Element(-1.0f, -0.25f, 1.0f, 0.75f));
+	UI_Elements.push_back(new Textbox_UI_Element(-1.0f, -0.25f, 1.0f, 0.75f));
 
 	Cursor_Reset = false;
 

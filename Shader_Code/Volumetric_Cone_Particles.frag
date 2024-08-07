@@ -43,16 +43,12 @@ void main()
 
 	float Lambda_Near = min(0, Omega - Delta);
 
-	Lambda_Near = -length(Camera_Position - Position);
+	// Lambda_Near = -length(Camera_Position - Position);
 
 	float Lambda_Far = max(-Distance_From_Camera, Omega + Delta);
 
 	if(Lambda_Far > 0)
 		Lambda_Far = -Distance_From_Camera;
 
-	// Colour = vec4(exp(-abs(Delta)), 0, 0, 1.0);
-
-	// Colour = vec4(Colour_Out, 1.0f - exp(Delta));
-
-	Colour = vec4(Colour_Out, 0.97f - exp(0.6 * -abs(Lambda_Far - Lambda_Near)));
+	Colour = vec4(Colour_Out, 0.95f - exp(0.6f * -abs(Lambda_Far - Lambda_Near)));
 }
