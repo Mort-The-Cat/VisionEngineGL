@@ -8,7 +8,7 @@
 
 void Handle_Scene();
 
-#define NUMBER_OF_WORKERS 3u
+#define NUMBER_OF_WORKERS 5u
 
 class Model;
 

@@ -116,6 +116,9 @@
     <ClInclude Include="UI_Textbox_Definitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Light_BVH_Tree_Handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader_Code\Vertex_Test.frag" />
