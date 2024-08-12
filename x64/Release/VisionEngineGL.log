@@ -14,7 +14,7 @@ C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(126,11): warning C4244: '*=': conv
 C:\VisionEngineGL\VisionEngineGL\Audio_Declarations.h(32,31): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(123,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(124,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(181,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
@@ -137,16 +137,19 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(126,53): warning C4244: 'argument
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(187,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
+C:\VisionEngineGL\VisionEngineGL\Light_BVH_Tree_Handler.h(116,27): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+  (compiling source file 'Main.cpp')
+  
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(23,71): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(23,59): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(136,60): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(145,60): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(163,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(172,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(16,98): warning C4305: 'argument': truncation from 'double' to 'float'
@@ -211,9 +214,9 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(83,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  2 of 3855 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  37 of 3924 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    14 functions had inline decision re-evaluated but remain unchanged
+    19 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info

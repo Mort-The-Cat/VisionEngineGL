@@ -182,7 +182,7 @@ void Push_Merged_Material(const char* T_1, const char* T_2, const char* T_3, con
 		else
 		{
 			Textures[W].Pixels = (stbi_uc*)malloc(Textures[0].Texture_Width * Textures[0].Texture_Height * Textures[0].Texture_Channels);
-			memset(Textures[W].Pixels, 0u, sizeof(Textures[W].Pixels));
+			memset(Textures[W].Pixels, 0u, Textures[0].Texture_Width * Textures[0].Texture_Height * Textures[0].Texture_Channels);
 		}
 
 	size_t Total_Size = Textures[0].Texture_Width * Textures[0].Texture_Height * 4;

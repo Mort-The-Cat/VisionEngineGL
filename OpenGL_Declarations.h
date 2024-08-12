@@ -24,6 +24,7 @@
 #include<iostream>
 #include<functional>
 #include<unordered_map>
+#include<algorithm>
 
 float Time_Elapsed_Since_FPS_Update = 0;
 

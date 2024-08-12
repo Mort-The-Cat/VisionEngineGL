@@ -73,7 +73,7 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		glm::vec2 Position; // This is the assessed position of each node - changes can be made to this manually according to artist parameters
 	};
 
-	const size_t Binary_Tree_Depth = 6; // How many layers in the tree there are
+	const size_t Binary_Tree_Depth = 5; // How many layers in the tree there are
 
 	constexpr const size_t Number_Of_Partition_Nodes = (1u << (Binary_Tree_Depth - 1u)) - 1u;
 
@@ -86,6 +86,43 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 	//
 
 	Leaf_Node_Bounds Leaf_Nodes_Info[Number_Of_Leaf_Nodes]; // Again, this is entirely CPU-side, used to assess each node's optimal lights
+
+	void Parse_Partition_Nodes_To_Shader(Shader& Shader)
+	{
+		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Partition_Nodes"), Number_Of_Partition_Nodes >> 2, (const GLuint*)Partition_Nodes);
+
+		// We specifically use a count of (Number_Of_Partition_Nodes / 4) because we pack the integers in such a way that each byte is stored in 1/4th of a full 32-bit word
+	}
+
+	void Update_Leaf_Node_Data()
+	{
+		for (size_t W = 0; W < Number_Of_Leaf_Nodes; W++)
+		{
+			struct Lightsource_Index_Data
+			{
+				unsigned char Index;
+				float Distance;
+
+				bool operator<(Lightsource_Index_Data& Other)
+				{
+					return Distance < Other.Distance;
+				}
+			};
+
+			std::vector<Lightsource_Index_Data> Index_Data(Scene_Lights.size());
+
+			for (size_t V = 0; V < Scene_Lights.size(); V++)
+			{
+				Index_Data[V].Index = V;
+				Index_Data[V].Distance = squaref(Scene_Lights[V]->Position.x - Leaf_Nodes_Info[W].Position.x) + squaref(Scene_Lights[V]->Position.z - Leaf_Nodes_Info[W].Position.y);
+			}
+
+			std::sort(Index_Data.begin(), Index_Data.end());
+
+			for (size_t Indices = 0; Indices < 8; Indices++)
+				Leaf_Nodes[W].Light_Indices[Indices] = Index_Data[Indices].Index;
+		}
+	}
 
 	void Wipe_Light_BVH_Tree() // This will clear all of the associated light BVH tree data
 	{
@@ -140,7 +177,6 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 	void Generate_Light_BVH_Tree() // The light BVH tree will probably need to be updated on a semi-regular basis, every half second at least
 	{
 		Boundary Boundaries[Number_Of_Partition_Nodes + Number_Of_Leaf_Nodes];
-
 
 		for (size_t W = 0; W < Number_Of_Partition_Nodes; W++)
 		{
@@ -206,6 +242,20 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 				Boundaries[Child_Node + 1] = Boundaries[W];
 				Boundaries[Child_Node + 1].Min_Y = Partition_Nodes[W].Y;
 			}
+		}
+
+		for (size_t W = Number_Of_Partition_Nodes; W < Number_Of_Partition_Nodes + Number_Of_Leaf_Nodes; W++)
+		{
+			float Conversion = 1.0f / 200.0f;
+
+			// UI_Elements.push_back(new UI_Element(Conversion * Boundaries[W].Min_X, Conversion * Boundaries[W].Min_Y, Conversion * Boundaries[W].Max_X, Conversion * Boundaries[W].Max_Y, Pull_Texture("Assets/Textures/Gun_Texture.png").Texture));
+			// UI_Elements.back()->Flags[UF_RENDER_BORDER] = false;
+			// UI_Elements.back()->UI_Border_Size = 0.0f;
+
+			//
+
+			Leaf_Nodes_Info[W - Number_Of_Partition_Nodes].Position.x = (Boundaries[W].Max_X + Boundaries[W].Min_X) * 0.5f;
+			Leaf_Nodes_Info[W - Number_Of_Partition_Nodes].Position.y = (Boundaries[W].Max_Y + Boundaries[W].Min_Y) * 0.5f;
 		}
 
 		// From there, we'll generate all the leaf node's average positions
