@@ -15,9 +15,11 @@ const int Number_Of_Shadow_Maps = 1;
 
 uniform samplerCubeShadow Shadow_Maps;
 
-uniform vec4 Light_Position[20];
-uniform vec4 Light_Colour[20];
-uniform vec4 Light_Direction[20];
+const uint Number_Of_Lights = 32;
+
+uniform vec4 Light_Position[Number_Of_Lights];
+uniform vec4 Light_Colour[Number_Of_Lights];
+uniform vec4 Light_Direction[Number_Of_Lights];
 
 uniform vec3 Camera_Position;
 uniform vec3 Camera_Direction;
@@ -29,6 +31,33 @@ vec3 Position = texture(Position_Texture, UV).xyz;
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 
 mat3 TBN;
+
+//
+
+const uint Binary_Tree_Depth = 7;
+
+uniform uint Leaf_Node_Indices[512];
+uniform vec2 Partition_Nodes[127];
+uniform float BVH_Conversion;
+uniform float BVH_Inverse_Conversion;
+
+uint Traverse_Partition_Nodes()
+{
+	uint Index = 0u;
+	for(uint W = 0; W < 6; W++)
+	{
+		vec2 Node = Partition_Nodes[Index];
+
+		uint Side = uint((Position.x > Node.x) || (Position.z > Node.y));
+
+		Index = Index + Index;
+		Index = Index + 1u + Side;
+	}
+
+	return Index;
+}
+
+//
 
 vec3 Rotate_Vector(vec3 Vector, vec4 Quaternion)
 {
@@ -110,7 +139,7 @@ float Specular_Texture = texture(Material_Texture, UV).x;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
 
-void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, int Light_Index)
+void Handle_Specular(float In_FOV, vec3 Light_To_Pixel, uint Light_Index)
 {
 	float Specular_Value = In_FOV * pow(max(0, dot(reflect(-Light_To_Pixel, Normal), Camera_To_Pixel)), 1 + 124 * Specular_Texture);
 
@@ -124,8 +153,6 @@ float Vector_To_Depth (vec3 Vec, float Length)
     vec3 Abs_Vec = abs(Vec);
     float Local_Z = Length * max(Abs_Vec.x, max(Abs_Vec.y, Abs_Vec.z));
 
-    // Replace f and n with the far and near plane values you used when
-    //   you drew your cube map.
     const float Far = 25.0f;
     const float Near = 0.01f;
 
@@ -133,7 +160,7 @@ float Vector_To_Depth (vec3 Vec, float Length)
     return (Norm_Z + 1.0) * 0.5;
 }
 
-float Shadow_Check(vec3 Light_To_Pixel, float Distance, int Light_Index)
+float Shadow_Check(vec3 Light_To_Pixel, float Distance, uint Light_Index)
 {
 	// float Closest_Depth = 25.0f * texture(Shadow_Maps, vec4(Light_To_Pixel, 0.0f));
 
@@ -146,8 +173,14 @@ vec3 Lighting()
 {
 	vec3 Sum_Of_Light = vec3(Occlusion); //vec3(0.1, 0.1, 0.1);
 
-	for(int W = 0; W < 8; W++)
+	uint Leaf_Node_Index = (Traverse_Partition_Nodes() - 63u) * 8;
+
+	uint W = 1;
+
+	for(uint Index = 0; Index < 8; Index++)
 	{
+		W = Leaf_Node_Indices[Leaf_Node_Index + Index];
+
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
 
 		float Squared_Distance = dot(Light_To_Pixel, Light_To_Pixel);
@@ -179,6 +212,13 @@ vec3 Lighting()
 
 vec4 Quaternion;
 
+vec3 HSV(vec3 C)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 P = abs(fract(C.xxx + K.xyz) * 6.0 - K.www);
+    return mix(K.xxx, clamp(P - K.xxx, 0.0, 1.0), 1.0f);
+}
+
 void main()
 {
 	Normal = texture(Normal_Texture, UV).xyz; //
@@ -197,7 +237,15 @@ void main()
 
 	vec3 Light = Lighting();
 
+	// Light = vec3(float(Traverse_Partition_Nodes()) / 31.0f);
+
+	// Light = vec3(float(Position.x > Partition_Nodes[9].x || Position.z > Partition_Nodes[9].y));
+	
+	// vec3((float((Traverse_Partition_Nodes()) - 14.0f) / 16.0f));
+
 	float Reflectivity = texture(Material_Texture, UV).y;
+
+	// Out_Colour = vec4(Light, 1.0f);
 
 	Out_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, UV));
 

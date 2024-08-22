@@ -14,7 +14,7 @@ C:\VisionEngineGL\VisionEngineGL\Fast_Maths.h(126,11): warning C4244: '*=': conv
 C:\VisionEngineGL\VisionEngineGL\Audio_Declarations.h(32,31): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(123,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(124,32): warning C4305: 'argument': truncation from 'double' to 'irrklang::ik_f32'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Vertex_Buffer_Declarations.h(181,36): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
@@ -137,16 +137,19 @@ C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(126,53): warning C4244: 'argument
 C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(187,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(21,71): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Light_BVH_Tree_Handler.h(99,27): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(21,59): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(23,71): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(132,60): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(23,59): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(159,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(143,60): warning C4305: 'argument': truncation from 'double' to 'float'
+  (compiling source file 'Main.cpp')
+  
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(170,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(16,98): warning C4305: 'argument': truncation from 'double' to 'float'
@@ -209,5 +212,5 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(83,40): warning 
   		C:\VisionEngineGL\VisionEngineGL\Engine_Loop.h(65,34):
   		see the first reference to 'Particle_Renderer<Volumetric_Cone_Particle_Info,Model_Vertex_Buffer>::Render' in 'Render_All'
   
-C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(184): warning C4715: 'Get_File_Contents': not all control paths return a value
+C:\VisionEngineGL\VisionEngineGL\OpenGL_Declarations.h(185): warning C4715: 'Get_File_Contents': not all control paths return a value
   VisionEngineGL.vcxproj -> C:\VisionEngineGL\VisionEngineGL\VisionEngineGL.exe

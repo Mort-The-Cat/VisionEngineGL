@@ -20,9 +20,9 @@ void Render_All()
 
 	Update_Lighting_Buffer();
 
-	Scene_Lights[0]->Position = Player_Camera.Position;
+	// Scene_Lights[0]->Position = Player_Camera.Position;
 
-	Scene_Lights[0]->Direction = Camera_Direction;
+	// Scene_Lights[0]->Direction = Camera_Direction;
 
 	for (size_t W = 0; W < Scene_Models.size(); W++)
 	{

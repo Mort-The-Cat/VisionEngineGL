@@ -5,6 +5,11 @@
 
 #include "Shadow_Map_Renderer_Declarations.h"
 
+namespace Lighting_BVH
+{
+	void Parse_Partition_Nodes_To_Shader(Shader& Shader);
+}
+
 struct Light_Uniform_Location_Object
 {
 	int Position;
@@ -27,7 +32,7 @@ Light_Uniform_Location_Object Initialise_Light_Uniform_Locations_Object(Shader S
 	return Location;
 }
 
-#define NUMBER_OF_LIGHTS 20
+#define NUMBER_OF_LIGHTS 32
 
 class Light_Uniform_Buffer // We'll update this and implement any BVH code later on. Until then, we don't need any more
 {

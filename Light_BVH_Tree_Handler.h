@@ -34,38 +34,15 @@
 
 namespace Lighting_BVH // This uses considerably less memory than my previous design of the lighting BVH tree
 {
-	float BVH_Bounds = 32.0f;
-	float BVH_Conversion = 4.0f;
-	float BVH_Inverse_Conversion = 0.25f;
-
-	void Set_Bounds(float Bounds) // You can consider bounds as the "radius" of the map's BVH 
-	{
-		BVH_Bounds = Bounds;
-
-		BVH_Conversion = 128.0f / Bounds;
-		BVH_Inverse_Conversion = Bounds / 128.0f;
-	}
+#define Boundary_Max_Value 15.0f
 
 	struct Node_Partition
 	{
-		char X, Y; // We will be using 8-bit integers for this to reduce memory sent to the GPU
-
-		// Goes between 127 to -128
+		float X = Boundary_Max_Value, Y = Boundary_Max_Value;
 	};
-
-	float BVH_Byte_To_Float(char X) 
-	{
-		return (float)(X) * BVH_Inverse_Conversion;
-	}
-
-	char BVH_Float_To_Byte(float X)
-	{
-		return (char)(X * BVH_Conversion);
-	}
-
 	struct Leaf_Node
 	{
-		unsigned char Light_Indices[8]; // Each leaf node should have 8 light indices
+		unsigned int Light_Indices[8]; // Each leaf node should have 8 light indices
 	};
 
 	struct Leaf_Node_Bounds // This is used only by the CPU-side to assess each node's optimal lights
@@ -73,7 +50,7 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		glm::vec2 Position; // This is the assessed position of each node - changes can be made to this manually according to artist parameters
 	};
 
-	const size_t Binary_Tree_Depth = 5; // How many layers in the tree there are
+	const size_t Binary_Tree_Depth = 7; // How many layers in the tree there are
 
 	constexpr const size_t Number_Of_Partition_Nodes = (1u << (Binary_Tree_Depth - 1u)) - 1u;
 
@@ -87,12 +64,20 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 	Leaf_Node_Bounds Leaf_Nodes_Info[Number_Of_Leaf_Nodes]; // Again, this is entirely CPU-side, used to assess each node's optimal lights
 
+	void Update_Leaf_Node_Data();
+
 	void Parse_Partition_Nodes_To_Shader(Shader& Shader)
 	{
-		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Partition_Nodes"), Number_Of_Partition_Nodes >> 2, (const GLuint*)Partition_Nodes);
+		Update_Leaf_Node_Data();
+
+		glUniform2fv(glGetUniformLocation(Shader.Program_ID, "Partition_Nodes"), Number_Of_Partition_Nodes, (const GLfloat*)Partition_Nodes);
+
+		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Leaf_Node_Indices"), Number_Of_Leaf_Nodes * 8, (const GLuint*)Leaf_Nodes);
 
 		// We specifically use a count of (Number_Of_Partition_Nodes / 4) because we pack the integers in such a way that each byte is stored in 1/4th of a full 32-bit word
 	}
+
+	void Generate_Light_BVH_Tree();
 
 	void Update_Leaf_Node_Data()
 	{
@@ -131,8 +116,10 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 	bool Determine_Side_Of_Node(float X, float Y, Node_Partition Node)
 	{
-		return (Node.X < BVH_Float_To_Byte(X)) || 
-			(Node.Y < BVH_Float_To_Byte(Y));
+		//return (Node.X < BVH_Float_To_Byte(X)) || 
+		//	(Node.Y < BVH_Float_To_Byte(Y));
+
+		return (Node.X < X || Node.Y < Y);
 
 		// If the x coordinate is further right than the boundary OR the y coordinate is further up than the boundary, it's the right-hand child node in the binary tree
 
@@ -156,7 +143,7 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 			return true;
 	}
 
-	std::vector<Lightsource*> Get_All_Lightsources_In_Node(size_t Node_Index)
+	/*std::vector<Lightsource*> Get_All_Lightsources_In_Node(size_t Node_Index)
 	{
 		// We'll traverse the tree upwards
 
@@ -167,12 +154,31 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 				List_Of_Lights.push_back(Scene_Lights[W]);
 
 		return List_Of_Lights;
-	}
+	}*/
 
 	struct Boundary
 	{
-		char Min_X = -128, Max_X = 127, Min_Y = -128, Max_Y = 127;
+		float Min_X = -Boundary_Max_Value, 
+			Max_X = Boundary_Max_Value, 
+			Min_Y = -Boundary_Max_Value, 
+			Max_Y = Boundary_Max_Value;
+		//char Min_X = -128, Max_X = 127, Min_Y = -128, Max_Y = 127;
 	};
+
+	std::vector<Lightsource*> Get_All_Lightsources_In_Node(Boundary Volume)
+	{
+		std::vector<Lightsource*> List_Of_Lights;
+
+		for (size_t W = 0; W < Scene_Lights.size(); W++)
+			if (
+				Scene_Lights[W]->Position.x > Volume.Min_X &&
+				Scene_Lights[W]->Position.x < Volume.Max_X &&
+				Scene_Lights[W]->Position.z > Volume.Min_Y &&
+				Scene_Lights[W]->Position.z < Volume.Max_Y)
+				List_Of_Lights.push_back(Scene_Lights[W]);
+
+		return List_Of_Lights;
+	}
 
 	void Generate_Light_BVH_Tree() // The light BVH tree will probably need to be updated on a semi-regular basis, every half second at least
 	{
@@ -182,15 +188,19 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		{
 			// This will decide, for each node, where the partition should go based on all of the found lights within this node
 
-			std::vector<Lightsource*> Lightsources = Get_All_Lightsources_In_Node(W);
+			std::vector<Lightsource*> Lightsources = Get_All_Lightsources_In_Node(Boundaries[W]);
 
 			size_t Child_Node = (W << 1) + 1;
 
-			if (Lightsources.size())
-			{
-				glm::vec2 Min = glm::vec2(Lightsources[0]->Position.x, Lightsources[0]->Position.z);
+			glm::vec2 Min = glm::vec2(Boundaries[W].Min_X, Boundaries[W].Min_Y),
+				Max = glm::vec2(Boundaries[W].Max_X, Boundaries[W].Max_Y),
+				Middle;
 
-				glm::vec2 Max = Min;
+			if (Lightsources.size() > 1)
+			{
+				Min = glm::vec2(Lightsources[0]->Position.x, Lightsources[0]->Position.z);
+
+				Max = Min;
 
 				for (size_t V = 1; V < Lightsources.size(); V++)
 				{
@@ -200,41 +210,30 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 					Max.x = std::fmaxf(Max.x, Lightsources[V]->Position.x);
 					Max.y = std::fmaxf(Max.y, Lightsources[V]->Position.z);
 				}
+			}
 
-				glm::vec2 Middle = Min + Max;
-				Middle *= 0.5f;
+			Middle = Min + Max;
+			Middle *= 0.5f;
 
-				if (Max.x - Min.x > Max.y - Min.y)
-				{
-					Partition_Nodes[W].X = BVH_Float_To_Byte(Middle.x);
-					Partition_Nodes[W].Y = 127;
+			if ((Max.x - Min.x) >= (Max.y - Min.y))
+			{
+				Partition_Nodes[W].X = Middle.x;// BVH_Float_To_Byte(Middle.x);
+				Partition_Nodes[W].Y = Boundary_Max_Value; // 127;
 
-					Boundaries[Child_Node] = Boundaries[W];
+				Boundaries[Child_Node] = Boundaries[W];
 
-					Boundaries[Child_Node].Max_X = Partition_Nodes[W].X;
+				Boundaries[Child_Node].Max_X = Partition_Nodes[W].X;
 
-					//
+				//
 
-					Boundaries[Child_Node + 1] = Boundaries[W];
+				Boundaries[Child_Node + 1] = Boundaries[W];
 
-					Boundaries[Child_Node + 1].Min_X = Partition_Nodes[W].X;
-				}
-				else
-				{
-					Partition_Nodes[W].X = 127;
-					Partition_Nodes[W].Y = BVH_Float_To_Byte(Middle.y);
-
-					Boundaries[Child_Node] = Boundaries[W];
-					Boundaries[Child_Node].Max_Y = Partition_Nodes[W].Y;
-
-					Boundaries[Child_Node + 1] = Boundaries[W];
-					Boundaries[Child_Node + 1].Min_Y = Partition_Nodes[W].Y;
-				}
+				Boundaries[Child_Node + 1].Min_X = Partition_Nodes[W].X;
 			}
 			else
 			{
-				Partition_Nodes[W].X = 127;
-				Partition_Nodes[W].Y = Boundaries[W].Min_Y + ((Boundaries[W].Max_Y - Boundaries[W].Min_Y) >> 1);
+				Partition_Nodes[W].X = Boundary_Max_Value;
+				Partition_Nodes[W].Y = Middle.y;// BVH_Float_To_Byte(Middle.y);
 
 				Boundaries[Child_Node] = Boundaries[W];
 				Boundaries[Child_Node].Max_Y = Partition_Nodes[W].Y;
@@ -246,11 +245,14 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 		for (size_t W = Number_Of_Partition_Nodes; W < Number_Of_Partition_Nodes + Number_Of_Leaf_Nodes; W++)
 		{
-			float Conversion = 1.0f / 200.0f;
+			float Conversion = 1.0f / 5.0f;
 
-			// UI_Elements.push_back(new UI_Element(Conversion * Boundaries[W].Min_X, Conversion * Boundaries[W].Min_Y, Conversion * Boundaries[W].Max_X, Conversion * Boundaries[W].Max_Y, Pull_Texture("Assets/Textures/Gun_Texture.png").Texture));
-			// UI_Elements.back()->Flags[UF_RENDER_BORDER] = false;
-			// UI_Elements.back()->UI_Border_Size = 0.0f;
+			if(false)
+			{
+				UI_Elements.push_back(new UI_Element(Conversion * Boundaries[W].Min_X, Conversion * Boundaries[W].Min_Y, Conversion * Boundaries[W].Max_X, Conversion * Boundaries[W].Max_Y, Pull_Texture("Assets/Textures/Pillow.png").Texture));
+				UI_Elements.back()->Flags[UF_RENDER_BORDER] = false;
+				UI_Elements.back()->UI_Border_Size = 0.0f;
+			}
 
 			//
 

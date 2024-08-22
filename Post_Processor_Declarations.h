@@ -173,6 +173,8 @@ namespace Post_Processor
 
 		Light_Uniforms.Update_Buffer(Deferred_Lighting_Uniform_Locations);
 
+		Lighting_BVH::Parse_Partition_Nodes_To_Shader(Shader_Program);
+
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		

@@ -5,6 +5,8 @@
 #include "../Engine_Loop.h"
 #include "../UI_Textbox_Definitions.h"
 
+#include "../Light_BVH_Tree_Handler.h"
+
 void Setup_Test_Scene()
 {
 	// Scene_Lights.push_back(new Lightsource(glm::vec3(0, 3, -3), glm::vec3(1.5, 1, 1.3), glm::vec3(0, 0, 1), 60, 3));
@@ -44,7 +46,7 @@ void Setup_Test_Scene()
 
 	Scene_Models.push_back(new Model({ MF_CAST_SHADOWS }));
 	Scene_Models.back()->Position = glm::vec3(0, 6, 0);
-	Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Reddened_Wall.jpg").Texture, Pull_Texture("NPP_Wall").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
+	Create_Model(Pull_Mesh("Assets/Models/Test_Level.obj", LOAD_MESH_OBJ_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Reddened_Wall.jpg").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Test_Level.obj").Mesh));
 
 	//
 
@@ -94,6 +96,15 @@ void Setup_Test_Scene()
 
 	for (float X = 10; X < 40; X += 10)
 		Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
+
+	for (size_t W = 0; W < 6; W++)
+	{
+		Scene_Lights.push_back(new Lightsource(glm::vec3(RNG() * 10 - 5, -4, RNG() * 10 - 5), glm::vec3(RNG(), RNG(), RNG()), glm::vec3(0, 0, 0), 360.0f, 1.0f, 0.6f));
+	}
+
+	Lighting_BVH::Generate_Light_BVH_Tree();
+
+	Lighting_BVH::Update_Leaf_Node_Data();
 }
 
 void Run_Engine_Loop(UI_Element* Element) 

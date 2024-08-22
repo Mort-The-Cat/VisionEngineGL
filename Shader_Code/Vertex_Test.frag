@@ -5,6 +5,8 @@ layout(location = 1) out vec4 Position_Out;
 layout(location = 2) out vec4 Normal_Out;
 layout(location = 3) out vec4 Material_Out;
 
+//
+
 uniform vec4 Light_Position[20];
 uniform vec4 Light_Colour[20];
 uniform vec4 Light_Direction[20];
@@ -102,8 +104,6 @@ vec3 Lighting()
 
 		float Attenuation_Value = inversesqrt(Light_Colour[W].w + Squared_Distance);
 
-		// Light_Colour[W].w refers to the attenuation value
-
 		Sum_Of_Light += Dot_Normal_Light * Attenuation_Value * Light_Colour[W].xyz;
 	}
 
@@ -147,8 +147,6 @@ void main()
 
 	Reflection_Vector = normalize(reflect(Camera_To_Pixel, Final_Normal));
 	
-	// vec3 Light = Lighting();
-
 	float Reflectivity = texture(Material, UV).g;
 
 	float Opacity = texture(Albedo, UV).a * Vertex_Transparency;
@@ -157,16 +155,8 @@ void main()
 	
 	Position_Out = Position;
 	Material_Out = vec4(texture(Material, UV).xy, 0, 0);
-	
-	// Output_Normal_Quaternion();
 
 	Normal_Out = vec4(Final_Normal, 0); // TBN_To_Quaternion(TBN(Final_Normal));
 	
 	// Out_Colour = vec4(Specular_Lighting, 0) + vec4(Reflectivity, Reflectivity, Reflectivity, Opacity) * texture(Cubemap, Reflection_Vector) + vec4(Light * (1 - Reflectivity), Opacity) * texture(Albedo, UV); // vec4(1, 1, 1, 1);
-
-	// NOTE: TBN MATRICES ARE PURELY ROTATIONAL
-
-	// ORTHOGONAL ROTATION MATRICES ALWAYS HAVE A POSITION DETERMINANT 
-
-	// WE CAN USE THE SIMPLEST METHOD FOR CALCULATING A QUATERNION
 }
