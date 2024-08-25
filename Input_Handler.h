@@ -258,7 +258,7 @@ void Player_Movement()
 			Physics::Scene_Physics_Objects[W]->Forces -= glm::vec3(0.25f) * glm::normalize(Physics::Scene_Physics_Objects[W]->Object->Position - Player_Camera.Position);
 		}
 
-		// printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
+		printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
 	}
 }
 

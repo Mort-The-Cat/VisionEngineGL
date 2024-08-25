@@ -42,12 +42,12 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 	};
 	struct Leaf_Node
 	{
-		unsigned int Light_Indices[8]; // Each leaf node should have 8 light indices
+		unsigned char Light_Indices[8]; // Each leaf node should have 8 light indices
 	};
 
 	struct Leaf_Node_Bounds // This is used only by the CPU-side to assess each node's optimal lights
 	{
-		glm::vec2 Position; // This is the assessed position of each node - changes can be made to this manually according to artist parameters
+		glm::vec2 Position = glm::vec2(99999, 99999); // This is the assessed position of each node - changes can be made to this manually according to artist parameters
 	};
 
 	const size_t Binary_Tree_Depth = 7; // How many layers in the tree there are
@@ -68,20 +68,21 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 	void Parse_Partition_Nodes_To_Shader(Shader& Shader)
 	{
-		Update_Leaf_Node_Data();
-
 		glUniform2fv(glGetUniformLocation(Shader.Program_ID, "Partition_Nodes"), Number_Of_Partition_Nodes, (const GLfloat*)Partition_Nodes);
 
-		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Leaf_Node_Indices"), Number_Of_Leaf_Nodes * 8, (const GLuint*)Leaf_Nodes);
+		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Leaf_Node_Indices"), Number_Of_Leaf_Nodes * 2, (const GLuint*)Leaf_Nodes);
 
 		// We specifically use a count of (Number_Of_Partition_Nodes / 4) because we pack the integers in such a way that each byte is stored in 1/4th of a full 32-bit word
 	}
 
 	void Generate_Light_BVH_Tree();
 
-	void Update_Leaf_Node_Data()
+	void Update_Leaf_Node_Data_Threaded(void* Parameters)
 	{
-		for (size_t W = 0; W < Number_Of_Leaf_Nodes; W++)
+		size_t* Offset = (size_t*)Parameters;
+
+
+		for (size_t W = *Offset; W < Number_Of_Leaf_Nodes; W += NUMBER_OF_WORKERS)
 		{
 			struct Lightsource_Index_Data
 			{
@@ -107,11 +108,16 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 			for (size_t Indices = 0; Indices < 8; Indices++)
 				Leaf_Nodes[W].Light_Indices[Indices] = Index_Data[Indices].Index;
 		}
+
+		delete Offset;
 	}
 
-	void Wipe_Light_BVH_Tree() // This will clear all of the associated light BVH tree data
+	void Update_Leaf_Node_Data()
 	{
-		
+		for (size_t W = 0; W < NUMBER_OF_WORKERS - 1u; W++)
+			Job_System::Submit_Job(Job_System::Job(Update_Leaf_Node_Data_Threaded, new size_t(W)));
+
+		Update_Leaf_Node_Data_Threaded(new size_t(NUMBER_OF_WORKERS - 1u));
 	}
 
 	bool Determine_Side_Of_Node(float X, float Y, Node_Partition Node)
@@ -142,19 +148,6 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		else
 			return true;
 	}
-
-	/*std::vector<Lightsource*> Get_All_Lightsources_In_Node(size_t Node_Index)
-	{
-		// We'll traverse the tree upwards
-
-		std::vector<Lightsource*> List_Of_Lights;
-
-		for (size_t W = 0; W < Scene_Lights.size(); W++)
-			if (Validate_Position_Upwards_Traverse(Scene_Lights[W]->Position.x, Scene_Lights[W]->Position.z, Node_Index))
-				List_Of_Lights.push_back(Scene_Lights[W]);
-
-		return List_Of_Lights;
-	}*/
 
 	struct Boundary
 	{

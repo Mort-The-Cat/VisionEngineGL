@@ -20,7 +20,10 @@ void Setup_Test_Scene()
 
 	// UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture));
 
+	
 	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das  sieht schön aus!"));
+	
+	
 	//UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;
 
 	UI_Elements.back()->Flags[UF_CLAMP_TO_SIDE] = true;
@@ -97,9 +100,9 @@ void Setup_Test_Scene()
 	for (float X = 10; X < 40; X += 10)
 		Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
 
-	for (size_t W = 0; W < 6; W++)
+	for (size_t W = 0; W < 20; W++)
 	{
-		Scene_Lights.push_back(new Lightsource(glm::vec3(RNG() * 10 - 5, -4, RNG() * 10 - 5), glm::vec3(RNG(), RNG(), RNG()), glm::vec3(0, 0, 0), 360.0f, 1.0f, 0.6f));
+		Scene_Lights.push_back(new Lightsource(glm::vec3(RNG() * 10 - 5, -4.1, RNG() * 10 - 5), glm::vec3(RNG(), RNG(), RNG()), glm::vec3(0, 0, 0), 360.0f, 1.0f, 0.6f));
 	}
 
 	Lighting_BVH::Generate_Light_BVH_Tree();
@@ -117,6 +120,10 @@ void Run_Engine_Loop(UI_Element* Element)
 	Setup_Test_Scene();
 
 	Cursor_Reset = true;
+
+	Player_Camera.Position = glm::vec3(
+		-1, -1.2, -4
+	);
 
 	Engine_Loop(); 
 }

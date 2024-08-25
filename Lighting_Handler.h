@@ -93,6 +93,11 @@ void Rearrange_Light_Priority()
 		}
 }
 
+namespace Lighting_BVH
+{
+	void Update_Leaf_Node_Data();
+}
+
 void Update_Lighting_Buffer()
 {
 	Rearrange_Light_Priority();
@@ -131,6 +136,8 @@ void Update_Lighting_Buffer()
 	}
 
 	Light_Uniforms.Update_Buffer(Light_Uniform_Location);
+
+	Lighting_BVH::Update_Leaf_Node_Data();
 }
 
 #endif

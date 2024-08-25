@@ -36,7 +36,7 @@ mat3 TBN;
 
 const uint Binary_Tree_Depth = 7;
 
-uniform uint Leaf_Node_Indices[512];
+uniform uint Leaf_Node_Indices[128];
 uniform vec2 Partition_Nodes[127];
 uniform float BVH_Conversion;
 uniform float BVH_Inverse_Conversion;
@@ -169,17 +169,28 @@ float Shadow_Check(vec3 Light_To_Pixel, float Distance, uint Light_Index)
 	return texture(Shadow_Maps, vec4(-Light_To_Pixel, Vector_To_Depth(Light_To_Pixel, Distance - 0.00f)));
 }
 
+uint Get_Leaf_Node_Index(uint Node, uint Index)
+{
+	uint Value = Leaf_Node_Indices[Node + (Index >> 2u)];
+
+	Value >>= (Index & 3u) << 3u;
+
+	Value &= 255u;
+
+	return Value;
+}
+
 vec3 Lighting()
 {
-	vec3 Sum_Of_Light = vec3(Occlusion); //vec3(0.1, 0.1, 0.1);
+	vec3 Sum_Of_Light = vec3(Occlusion);
 
-	uint Leaf_Node_Index = (Traverse_Partition_Nodes() - 63u) * 8;
+	uint Leaf_Node_Index = (Traverse_Partition_Nodes() - 63u) << 1u;
 
 	uint W = 1;
 
 	for(uint Index = 0; Index < 8; Index++)
 	{
-		W = Leaf_Node_Indices[Leaf_Node_Index + Index];
+		W = Get_Leaf_Node_Index(Leaf_Node_Index, Index);
 
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
 
