@@ -26,7 +26,7 @@ void Setup_Test_Scene()
 	
 	//UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;
 
-	UI_Elements.back()->Flags[UF_CLAMP_TO_SIDE] = true;
+	UI_Elements.back()->Flags[UF_CLAMP_TO_SIDE] = true; 
 
 	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
 	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
@@ -97,8 +97,8 @@ void Setup_Test_Scene()
 
 	glm::vec3 Rand_Direction = glm::normalize(glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f));
 
-	for (float X = 10; X < 40; X += 10)
-		Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
+	//for (float X = 10; X < 40; X += 10)
+	//	Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
 
 	for (size_t W = 0; W < 20; W++)
 	{

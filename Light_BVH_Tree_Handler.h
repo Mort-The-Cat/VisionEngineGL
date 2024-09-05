@@ -64,6 +64,29 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 	Leaf_Node_Bounds Leaf_Nodes_Info[Number_Of_Leaf_Nodes]; // Again, this is entirely CPU-side, used to assess each node's optimal lights
 
+	//
+
+	struct Light_Occluder
+	{
+		glm::vec2 A, B;
+	};
+
+	std::vector<Light_Occluder> Light_Occluders; // These are the light occluders, added by the level designer
+
+	bool Occluded(glm::vec2 Node_Position, glm::vec2 Light_Position)
+	{
+		// This just finds if there's a collision between the two
+
+		glm::vec2 Delta = Light_Position - Node_Position;
+
+		for (size_t W = 0; W < Light_Occluders.size(); W++)
+		{
+
+		}
+
+		return false;
+	}
+
 	void Update_Leaf_Node_Data();
 
 	void Parse_Partition_Nodes_To_Shader(Shader& Shader)
@@ -101,6 +124,11 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 			{
 				Index_Data[V].Index = V;
 				Index_Data[V].Distance = squaref(Scene_Lights[V]->Position.x - Leaf_Nodes_Info[W].Position.x) + squaref(Scene_Lights[V]->Position.z - Leaf_Nodes_Info[W].Position.y);
+
+				Index_Data[V].Distance += 1000 * Occluded(Leaf_Nodes_Info[W].Position, 
+					glm::vec2(Scene_Lights[V]->Position.x, Scene_Lights[V]->Position.z));
+
+				// If the light is occluded, it can be treated as though it is much lower priority than it is
 			}
 
 			std::sort(Index_Data.begin(), Index_Data.end());

@@ -34,6 +34,7 @@ namespace Physics
 	};
 
 #define PF_TO_BE_DELETED 0u
+#define PF_NO_ROTATION 1u
 
 	class Physics_Object
 	{
@@ -57,7 +58,7 @@ namespace Physics
 
 		float Friction = 0.9f; // The product of two objects friction and the perpendicular velocity is equal and opposite to the force created by friction.
 
-		bool Flags[1] = { false };
+		bool Flags[2] = { false, false };
 
 		glm::vec3 Get_Rotational_Velocity_Tangent(Quaternion::Quaternion Object_Rotation, glm::vec3 Object_Position, Impulse_Object* Collision)
 		{
@@ -131,11 +132,11 @@ namespace Physics
 
 			glm::vec3 Perpendicular = glm::normalize(glm::cross(Rotation_Axis, To_Collision));
 
-			float Perpendicular_Force = glm::dot(Impulse, Perpendicular);
+			float Perpendicular_Force = 0.5f * glm::dot(Impulse, Perpendicular);
 
 			float Rotational_Acceleration_Angle = Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
-			if (!std::isnan(Rotational_Acceleration_Angle))
+			if (!std::isnan(Rotational_Acceleration_Angle) && !Flags[PF_NO_ROTATION])
 				Rotation_Vector -= Rotation_Axis * Rotational_Acceleration_Angle;
 
 			// https://en.wikipedia.org/wiki/Angular_acceleration#Relation_to_torque
@@ -160,10 +161,10 @@ namespace Physics
 				Rotation_Axis = glm::normalize(glm::cross(-Impulse, To_Collision));
 				Perpendicular = glm::normalize(glm::cross(Rotation_Axis, To_Collision));
 
-				Perpendicular_Force = glm::dot(Impulse, Perpendicular);
+				Perpendicular_Force = 0.5f * glm::dot(Impulse, Perpendicular);
 				Rotational_Acceleration_Angle = Collision->B->Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
-				if (!std::isnan(Rotational_Acceleration_Angle))
+				if (!std::isnan(Rotational_Acceleration_Angle) && !Collision->B->Flags[PF_NO_ROTATION])
 					Collision->B->Rotation_Vector += Rotation_Axis * Rotational_Acceleration_Angle;
 			}
 		}

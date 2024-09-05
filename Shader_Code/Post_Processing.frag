@@ -118,7 +118,7 @@ void Check_Occlusion(vec3 Point)
 	Screen_Point.xy /= Screen_Point.w;
 	Screen_Point.xy = Screen_Point.xy * 0.5 + 0.5;
 
-	Occlusion -= texture(Position_Texture, Screen_Point.xy).w + 0.01 < Screen_Point.w ? 0.04 : 0;
+	Occlusion -= texture(Position_Texture, Screen_Point.xy).w + 0.01 < Screen_Point.w ? 0.05 : 0;
 
 	// Occlusion -= 0.05 * Smoothing_Function(10 * (Screen_Point.w - texture(Position_Texture, Screen_Point.xy).w - 0.01));
 }
@@ -191,6 +191,8 @@ vec3 Lighting()
 	for(uint Index = 0; Index < 8; Index++)
 	{
 		W = Get_Leaf_Node_Index(Leaf_Node_Index, Index);
+
+		// W = Index;
 
 		vec3 Light_To_Pixel = Light_Position[W].xyz - Position;
 

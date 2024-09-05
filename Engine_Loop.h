@@ -15,10 +15,10 @@ void Render_All()
 
 	//
 
+	Update_Lighting_Buffer();
+
 	Test_Cubemap.Parse_Texture(Scene_Object_Shader, "Cubemap", 0);
 	Test_Cubemap.Bind_Texture();
-
-	Update_Lighting_Buffer();
 
 	// Scene_Lights[0]->Position = Player_Camera.Position;
 
