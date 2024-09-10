@@ -242,9 +242,9 @@ void main()
 	
 	// Normal = Rotate_Vector(vec3(0, 0, 1), Quaternion);
 
-	// Generate_TBN();
+	Generate_TBN();
 
-	// Ambient_Occlusion();
+	Ambient_Occlusion();
 
 	vec3 Reflection_Vector = normalize(reflect(Camera_To_Pixel, Normal));
 

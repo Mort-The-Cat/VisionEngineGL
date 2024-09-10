@@ -124,7 +124,7 @@ void Spawn_Test_Object()
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
 		Scene_Models.back()->Position = Player_Camera.Position + glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
-		//Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		// Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
 		
 		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
@@ -193,12 +193,26 @@ void Player_Movement()
 	float Movement_X = sin(Angle) * Speed;
 	float Movement_Z = cos(Angle) * Speed;
 
-	//if (Inputs[Controls::Auxilliary] && Frame_Counter % 10 == 0)
-	//{
-		//Audio::Audio_Sources.back()->Play_Sound(Sound_Effect_Source);
+	if (Mouse_Inputs[1] && Frame_Counter % 5 == 0)
+	{
+		// Audio::Audio_Sources.back()->Play_Sound(Sound_Effect_Source);
 
-		//Billboard_Smoke_Particles.Particles.Spawn_Particle(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-	//}
+		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
+		Scene_Models.back()->Position = Player_Camera.Position; // +glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
+
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		
+		// static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Mass = 10;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Inv_Mass = 1.0f / 10.0f;
+
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Velocity = glm::vec3(4) * glm::vec3(-sin(Angle) * cos(DTR * Player_Camera.Orientation.y), -sin(DTR * Player_Camera.Orientation.y), -cos(Angle) * cos(DTR * Player_Camera.Orientation.y));
+
+		Sound_Engine->play2D(Sound_Effect_Source);
+
+		// Billboard_Smoke_Particles.Particles.Spawn_Particle(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+	}
 
 	if (Mouse_Inputs[0]) // If left-click,
 	{

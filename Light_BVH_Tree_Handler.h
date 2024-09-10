@@ -66,26 +66,145 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 	//
 
-	struct Light_Occluder
+	struct Boundary
 	{
-		glm::vec2 A, B;
+		float Min_X = -Boundary_Max_Value,
+			Max_X = Boundary_Max_Value,
+			Min_Y = -Boundary_Max_Value,
+			Max_Y = Boundary_Max_Value;
+		//char Min_X = -128, Max_X = 127, Min_Y = -128, Max_Y = 127;
 	};
 
-	std::vector<Light_Occluder> Light_Occluders; // These are the light occluders, added by the level designer
-
-	bool Occluded(glm::vec2 Node_Position, glm::vec2 Light_Position)
+	class Light_Occluder
 	{
-		// This just finds if there's a collision between the two
+	public:
+		bool Z_Axis; // This shows the split is parallel to the Z-axis et vice versa
 
-		glm::vec2 Delta = Light_Position - Node_Position;
+		float Axis_Coordinate;
 
-		for (size_t W = 0; W < Light_Occluders.size(); W++)
+		float Start, End;	// Start is always a smaller value than end
+
+		Light_Occluder(bool Z_Axisp, float Axis_Coordinatep, float Startp, float Endp)
 		{
-
+			Z_Axis = Z_Axisp;
+			Axis_Coordinate = Axis_Coordinatep;
+			Start = Startp;
+			End = Endp;
 		}
+
+		void Handle_Is_In_Node(glm::vec2& Middle, glm::vec2& Max, glm::vec2& Min)
+		{
+			if (Z_Axis)
+			{
+				Max.x = Axis_Coordinate + 9999.0f;
+				Min.x = Axis_Coordinate - 9999.0f;
+
+				// Max.y = Axis_Coordinate;
+				// Min.y = Axis_Coordinate;
+			}
+			else
+			{
+				Max.y = Axis_Coordinate + 9999.0f;
+				Min.y = Axis_Coordinate - 9999.0f;
+
+				// Max.x = Axis_Coordinate;
+				// Min.x = Axis_Coordinate;
+			}
+		}
+
+		bool In_Node(Boundary Node)
+		{
+			const float Offset = 0.125f; // This is how far within the node the light occluder line needs to be in order to count as being within the node
+
+			bool X_Within, Z_Within;
+
+			if (Z_Axis)
+			{
+				X_Within = 
+					Axis_Coordinate > Node.Min_X + Offset &&
+					Axis_Coordinate < Node.Max_X - Offset;
+
+				Z_Within =
+					End > Node.Min_Y + Offset &&
+					Start < Node.Max_Y - Offset;
+			}
+			else
+			{
+				Z_Within =
+					Axis_Coordinate > Node.Min_Y + Offset &&
+					Axis_Coordinate < Node.Max_Y - Offset;
+
+				X_Within =
+					End > Node.Min_X + Offset &&
+					Start < Node.Max_X - Offset;
+			}
+
+			return X_Within && Z_Within;
+		}
+
+		bool Colliding(glm::vec2 Node_Position, glm::vec2 Light_Position)
+		{
+			float Delta_X, Delta_Y, Point;
+
+			Delta_X = Node_Position.x - Light_Position.x;
+			Delta_Y = Node_Position.y - Light_Position.y;
+
+			if (Z_Axis)
+			{
+				if ((Node_Position.x > Axis_Coordinate) ==
+					(Light_Position.x > Axis_Coordinate))
+					return false; // If they're on the same side of the line, it's no good
+
+				float Delta = Axis_Coordinate - Light_Position.x;
+
+				if (!(0 <= Delta * copysignf(1.0f, Delta_X) && Delta * copysignf(1.0f, Delta_X) < fabsf(Delta_X)))
+					return false;
+
+				Point = (Delta) * Delta_Y / Delta_X + Light_Position.y;
+			}
+			else
+			{
+				if ((Node_Position.y > Axis_Coordinate) ==
+					(Light_Position.y > Axis_Coordinate))
+					return false;
+
+				float Delta = Axis_Coordinate - Light_Position.y;
+
+				if (!(0 <= Delta * copysignf(1.0f, Delta_Y) && Delta * copysignf(1.0f, Delta_Y) < fabsf(Delta_Y)))
+					return false;
+
+				Point = (Delta) * Delta_X / Delta_Y + Light_Position.x;
+			}
+
+			return Point > Start && Point < End;
+		}
+	};
+
+	std::vector<Light_Occluder> Light_Occluders;
+
+	void Add_Light_Occluders()
+	{
+		Light_Occluders.clear();
+
+		Light_Occluders.push_back(Light_Occluder(true, -0.752580, -4.94359f, 2.764217f));
+
+		Light_Occluders.push_back(Light_Occluder(false, 2.815258, -0.676318, 4.363094));
+
+		//
+
+		Light_Occluders.push_back(Light_Occluder(false, -2.822303, 2.671534, 6.539208));
+	}
+
+	bool Is_Occluded(glm::vec2 Node_Position, glm::vec2 Light_Position)
+	{
+		for (size_t W = 0; W < Light_Occluders.size(); W++)
+			if (Light_Occluders[W].Colliding(Node_Position, Light_Position))
+				return true;
 
 		return false;
 	}
+
+	//
 
 	void Update_Leaf_Node_Data();
 
@@ -94,7 +213,7 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		glUniform2fv(glGetUniformLocation(Shader.Program_ID, "Partition_Nodes"), Number_Of_Partition_Nodes, (const GLfloat*)Partition_Nodes);
 
 		glUniform1uiv(glGetUniformLocation(Shader.Program_ID, "Leaf_Node_Indices"), Number_Of_Leaf_Nodes * 2, (const GLuint*)Leaf_Nodes);
-
+		
 		// We specifically use a count of (Number_Of_Partition_Nodes / 4) because we pack the integers in such a way that each byte is stored in 1/4th of a full 32-bit word
 	}
 
@@ -125,9 +244,8 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 				Index_Data[V].Index = V;
 				Index_Data[V].Distance = squaref(Scene_Lights[V]->Position.x - Leaf_Nodes_Info[W].Position.x) + squaref(Scene_Lights[V]->Position.z - Leaf_Nodes_Info[W].Position.y);
 
-				Index_Data[V].Distance += 1000 * Occluded(Leaf_Nodes_Info[W].Position, 
-					glm::vec2(Scene_Lights[V]->Position.x, Scene_Lights[V]->Position.z));
-
+				Index_Data[V].Distance += 999999.0f * Is_Occluded(Leaf_Nodes_Info[W].Position, glm::vec2(Scene_Lights[V]->Position.x, Scene_Lights[V]->Position.z));
+				
 				// If the light is occluded, it can be treated as though it is much lower priority than it is
 			}
 
@@ -143,7 +261,8 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 	void Update_Leaf_Node_Data()
 	{
 		for (size_t W = 0; W < NUMBER_OF_WORKERS - 1u; W++)
-			Job_System::Submit_Job(Job_System::Job(Update_Leaf_Node_Data_Threaded, new size_t(W)));
+			Update_Leaf_Node_Data_Threaded(new size_t(W));
+			//Job_System::Submit_Job(Job_System::Job(Update_Leaf_Node_Data_Threaded, new size_t(W)));
 
 		Update_Leaf_Node_Data_Threaded(new size_t(NUMBER_OF_WORKERS - 1u));
 	}
@@ -176,15 +295,6 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 		else
 			return true;
 	}
-
-	struct Boundary
-	{
-		float Min_X = -Boundary_Max_Value, 
-			Max_X = Boundary_Max_Value, 
-			Min_Y = -Boundary_Max_Value, 
-			Max_Y = Boundary_Max_Value;
-		//char Min_X = -128, Max_X = 127, Min_Y = -128, Max_Y = 127;
-	};
 
 	std::vector<Lightsource*> Get_All_Lightsources_In_Node(Boundary Volume)
 	{
@@ -233,6 +343,14 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 				}
 			}
 
+			//
+
+			for (size_t V = 0; V < Light_Occluders.size(); V++)
+				if (Light_Occluders[V].In_Node(Boundaries[W]))
+					Light_Occluders[V].Handle_Is_In_Node(Middle, Max, Min);
+
+			//
+
 			Middle = Min + Max;
 			Middle *= 0.5f;
 
@@ -266,7 +384,7 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 
 		for (size_t W = Number_Of_Partition_Nodes; W < Number_Of_Partition_Nodes + Number_Of_Leaf_Nodes; W++)
 		{
-			float Conversion = 1.0f / 5.0f;
+			float Conversion = 1.0f / 30.0f;
 
 			if(false)
 			{

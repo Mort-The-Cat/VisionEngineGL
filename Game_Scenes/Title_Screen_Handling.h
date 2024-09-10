@@ -97,13 +97,17 @@ void Setup_Test_Scene()
 
 	glm::vec3 Rand_Direction = glm::normalize(glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f));
 
-	//for (float X = 10; X < 40; X += 10)
+	// for (float X = 10; X < 40; X += 10)
 	//	Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
 
 	for (size_t W = 0; W < 20; W++)
 	{
 		Scene_Lights.push_back(new Lightsource(glm::vec3(RNG() * 10 - 5, -4.1, RNG() * 10 - 5), glm::vec3(RNG(), RNG(), RNG()), glm::vec3(0, 0, 0), 360.0f, 1.0f, 0.6f));
 	}
+
+	Scene_Lights.push_back(new Lightsource(glm::vec3(2.310351, -4.430879, 9.878356), glm::vec3(RNG(), RNG(), RNG()), glm::vec3(0, 0, 0), 360.0f, 1.0f, 0.6f));
+
+	Lighting_BVH::Add_Light_Occluders();
 
 	Lighting_BVH::Generate_Light_BVH_Tree();
 
