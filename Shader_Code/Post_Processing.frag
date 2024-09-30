@@ -37,9 +37,11 @@ mat3 TBN;
 const uint Binary_Tree_Depth = 7;
 
 uniform uint Leaf_Node_Indices[128];
-uniform vec2 Partition_Nodes[127];
+uniform vec2 Partition_Nodes[63];
 uniform float BVH_Conversion;
 uniform float BVH_Inverse_Conversion;
+
+uniform float Shader_Time;
 
 uint Traverse_Partition_Nodes()
 {
@@ -188,6 +190,10 @@ vec3 Lighting()
 
 	uint W = 1;
 
+	vec3 Light_To_Pixel = Light_Position[0].xyz - Position;
+
+	float Shadow_Check_Result = Shadow_Check(normalize(Light_To_Pixel), sqrt(dot(Light_To_Pixel, Light_To_Pixel)), 0u);
+
 	for(uint Index = 0; Index < 8; Index++)
 	{
 		W = Get_Leaf_Node_Index(Leaf_Node_Index, Index);
@@ -205,7 +211,7 @@ vec3 Lighting()
 
 		float Angle = 57 * acos(dot(Light_To_Pixel, -Light_Direction[W].xyz));
 
-		float In_FOV = min(1, Light_Position[W].w * max(0, 1.0f - (Angle - Light_Direction[W].w)))  * max(Shadow_Check(Light_To_Pixel, sqrt(Squared_Distance), W), float(W > 0));
+		float In_FOV = min(1, Light_Position[W].w * max(0, 1.0f - (Angle - Light_Direction[W].w))) * max(Shadow_Check_Result, float(W > 0u));
 
 		Dot_Normal_Light *= In_FOV;
 
@@ -225,11 +231,11 @@ vec3 Lighting()
 
 vec4 Quaternion;
 
-vec3 HSV(vec3 C)
+float Add_Screen_Grain()
 {
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 P = abs(fract(C.xxx + K.xyz) * 6.0 - K.www);
-    return mix(K.xxx, clamp(P - K.xxx, 0.0, 1.0), 1.0f);
+	float X = (UV.x + 4.1) * (UV.y + 4) * (Shader_Time * 10 + 2);
+
+	return mod((mod(X, 13) + 1) * (mod(X, 123) + 1), 0.01) - 0.005f;
 }
 
 void main()
@@ -246,21 +252,17 @@ void main()
 
 	Ambient_Occlusion();
 
+	// Out_Colour = texture(Screen_Texture, UV);
+
+	// return;
+
 	vec3 Reflection_Vector = normalize(reflect(Camera_To_Pixel, Normal));
 
 	vec3 Light = Lighting();
 
-	// Light = vec3(float(Traverse_Partition_Nodes()) / 31.0f);
-
-	// Light = vec3(float(Position.x > Partition_Nodes[9].x || Position.z > Partition_Nodes[9].y));
-	
-	// vec3((float((Traverse_Partition_Nodes()) - 14.0f) / 16.0f));
-
 	float Reflectivity = texture(Material_Texture, UV).y;
 
-	// Out_Colour = vec4(Light, 1.0f);
+	vec4 Final_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, UV));
 
-	Out_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, UV));
-
-	// Out_Colour = texture(Screen_Texture, UV);
+	Out_Colour = Final_Colour + vec4(vec3(Add_Screen_Grain() * 17.0f), 0.0f);
 }

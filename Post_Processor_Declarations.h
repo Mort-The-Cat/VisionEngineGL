@@ -36,6 +36,8 @@ namespace Post_Processor
 
 	Shader Shader_Program;
 
+	float Shader_Time = 0.0f; // This is a time variable, used by the shader
+
 	void Delete_Buffers()
 	{
 		glDeleteFramebuffers(1, &Frame_Buffer_ID);
@@ -151,6 +153,10 @@ namespace Post_Processor
 		glUniform1i(glGetUniformLocation(Shader_Program.Program_ID, "Material_Texture"), 3);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, Material_Buffer_Texture); // This is important for getting the screen texture
+
+		//
+
+		glUniform1f(glGetUniformLocation(Shader_Program.Program_ID, "Shader_Time"), Shader_Time);
 	}
 
 	void Finish_Rendering()	// This takes what has been rendered and redraws it on the screen with a quick post-processing pass
@@ -167,6 +173,10 @@ namespace Post_Processor
 
 		Test_Cubemap.Parse_Texture(Shader_Program, "Cubemap", 0);
 		Test_Cubemap.Bind_Texture();
+
+		Shader_Time += Tick;
+
+		if (Shader_Time > 100.0f) Shader_Time -= 100.0f;
 
 		if (Shadow_Mapper::Shadow_Mapping)
 			Shadow_Mapper::Bind_Shadow_Maps(Shader_Program);
