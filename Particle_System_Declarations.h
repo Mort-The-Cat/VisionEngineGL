@@ -28,8 +28,6 @@ struct Smoke_Particle
 
 //
 
-
-
 struct Galaxy_Test_Particle
 {
 	float Radius; // Angular offset of orbit is determined by the radius so this isn't a problem
@@ -199,7 +197,6 @@ template<typename Particle, typename Vertex_Buffer>
 	class Particle_Renderer
 	{
 	public:
-
 		bool Bind_Textures = true;
 
 		Shader Shader;
@@ -220,6 +217,9 @@ template<typename Particle, typename Vertex_Buffer>
 		void Render()
 		{
 			Shader.Activate();
+
+			// glUniform2f(glGetUniformLocation(Shader.Program_ID, "Window_Dimensions"), Window_Width, Window_Height);
+			glUniform2f(glGetUniformLocation(Shader.Program_ID, "Inv_Window_Dimensions"), 1.0f / (float)(Window_Width), 1.0f / (float)(Window_Height));
 
 			Player_Camera.Bind_Buffers(Particles.Camera_Location);
 			Light_Uniforms.Update_Buffer(Particles.Light_Location);
@@ -243,6 +243,7 @@ template<typename Particle, typename Vertex_Buffer>
 			}
 		}
 	};
+
 template<typename Particle, typename Vertex_Buffer>
 	void Create_Particle_Renderer(Shader Shader, Vertex_Buffer Mesh, Texture Albedo, Texture Material, Particle_Renderer<Particle, Vertex_Buffer>* Target_Renderer)
 	{
@@ -267,5 +268,7 @@ Particle_Renderer<Galaxy_Particle_Info, Billboard_Vertex_Buffer> Galaxy_Particle
 //
 
 Particle_Renderer<Volumetric_Cone_Particle_Info, Model_Vertex_Buffer> Volumetric_Cone_Particles;
+
+Particle_Renderer<Smoke_Particle_Info, Model_Vertex_Buffer> Bubble_Particles;
 
 #endif

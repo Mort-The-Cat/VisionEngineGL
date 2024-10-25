@@ -20,7 +20,7 @@ void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Mo
 		Target_Model->Hitbox->Object = Target_Model;
 
 		Scene_Hitboxes.push_back(Hitboxp);
-		if (Target_Model->Flags[MF_PHYSICS_TEST] && Scene_Hitboxes.size() > Physics::Scene_Physics_Objects.size())
+		if (Target_Model->Flags[MF_PHYSICS_TEST] && Scene_Hitboxes.size() > Physics::Scene_Physics_Objects.size()) // If it's a physics object, we need it at the *front* of the vector
 			std::swap(Scene_Hitboxes[Physics::Scene_Physics_Objects.size() - 1], Scene_Hitboxes.back());
 	}
 }

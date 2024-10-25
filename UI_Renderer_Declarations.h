@@ -358,9 +358,11 @@ public:
 
 	bool Centered_X = false, Centered_Y = false;
 
+	glm::vec3 Text_Colour;
+
 	Text_UI_Element() {}
 
-	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f, 1.0f, 1.0f), float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -372,6 +374,8 @@ public:
 		Size = Sizep;
 
 		Italic_Slant = Italic_Slantp;
+
+		Text_Colour = Text_Colourp;
 	}
 
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
@@ -471,7 +475,7 @@ class Button_Text_UI_Element : public Text_UI_Element
 public:
 	void (*Button_Function)(UI_Element*);
 
-	Button_Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), std::string Textp, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	Button_Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f), float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -481,6 +485,8 @@ public:
 		Font_Table::Generate_Text_Indices(Textp.c_str(), &Character_Indices);
 
 		Size = Sizep;
+
+		Text_Colour = Text_Colourp;
 
 		Italic_Slant = Italic_Slantp;
 

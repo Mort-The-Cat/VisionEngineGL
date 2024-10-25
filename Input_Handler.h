@@ -171,8 +171,14 @@ void Shoot_Fire(float Angle)
 	}
 }
 
+Physics::Physics_Object Player_Physics_Object;
+
 void Player_Movement()
 {
+	Player_Camera.Position = Player_Physics_Object.Object->Position;
+
+	//
+
 	Player_Object_Spawn_Timer -= Tick;
 
 	if (Inputs[Controls::Pause] && Cursor_Reset)
@@ -186,7 +192,7 @@ void Player_Movement()
 		Spawn_Test_Object();
 	}
 
-	float Speed = -2.5 * Tick;
+	float Speed = -12.5 * Tick;
 
 	float Angle = -DTR * Player_Camera.Orientation.x;
 
@@ -225,23 +231,23 @@ void Player_Movement()
 
 	if (Inputs[Controls::Forwards])
 	{
-		Player_Camera.Position.x += Movement_X;
-		Player_Camera.Position.z += Movement_Z;
+		Player_Physics_Object.Forces.x += Movement_X;
+		Player_Physics_Object.Forces.z += Movement_Z;
 	}
 	if (Inputs[Controls::Backwards])
 	{
-		Player_Camera.Position.x -= Movement_X;
-		Player_Camera.Position.z -= Movement_Z;
+		Player_Physics_Object.Forces.x -= Movement_X;
+		Player_Physics_Object.Forces.z -= Movement_Z;
 	}
 	if (Inputs[Controls::Left])
 	{
-		Player_Camera.Position.x += Movement_Z;
-		Player_Camera.Position.z -= Movement_X;
+		Player_Physics_Object.Forces.x += Movement_Z;
+		Player_Physics_Object.Forces.z -= Movement_X;
 	}
 	if (Inputs[Controls::Right])
 	{
-		Player_Camera.Position.x -= Movement_Z;
-		Player_Camera.Position.z += Movement_X;
+		Player_Physics_Object.Forces.x -= Movement_Z;
+		Player_Physics_Object.Forces.z += Movement_X;
 	}
 
 	if (Inputs[Controls::Lean_Left])

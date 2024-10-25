@@ -339,6 +339,19 @@ namespace Physics
 	}
 }
 
+void Initialise_Physics_Object(Physics::Physics_Object* Physics_Info, Model* Object)
+{
+	Physics_Info->Mass = 1.0f;
+	Physics_Info->Inv_Mass = 1.0f;
+	Physics_Info->Elasticity = 0.9f;
+
+	Physics::Scene_Physics_Objects.push_back(Physics_Info);
+
+	Physics_Info->SFX = Audio::Create_Audio_Source(Object->Position, 1);
+
+	Physics_Info->Object = Object;
+}
+
 class Physics_Object_Controller : public Controller
 {
 public:
@@ -354,15 +367,7 @@ public:
 
 		Physics_Info = new Physics::Physics_Object();
 
-		Physics_Info->Mass = 1.0f;
-		Physics_Info->Inv_Mass = 1.0f;
-		Physics_Info->Elasticity = 0.9f;
-
-		Physics::Scene_Physics_Objects.push_back(Physics_Info);
-
-		Physics_Info->SFX = Audio::Create_Audio_Source(Object->Position, 1);
-
-		Physics_Info->Object = Object;
+		Initialise_Physics_Object(Physics_Info, Object);
 	}
 
 	virtual void Control_Function() override

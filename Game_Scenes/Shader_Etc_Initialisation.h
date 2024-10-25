@@ -3,8 +3,32 @@
 
 #include "..\Engine_Loop_Includes.h"
 
+void Init_Player_Physics_Object()
+{
+	if (Player_Physics_Object.Object == nullptr)
+	{
+		Player_Physics_Object.Flags[PF_NO_ROTATION] = true;
+		
+		Player_Physics_Object.Object = new Model();
+		Player_Physics_Object.Object->Position = glm::vec3(-2.0f, -6.0f, -2.0f);
+
+		Initialise_Physics_Object(&Player_Physics_Object, Player_Physics_Object.Object);
+
+		Player_Physics_Object.Elasticity = 0.0f;
+
+		Player_Physics_Object.Object->Hitbox = Generate_AABB_Hitbox(*Pull_Mesh("Assets/Hitboxes/Player_Hitbox.obj").Mesh);
+		Player_Physics_Object.Object->Hitbox->Object = Player_Physics_Object.Object;
+		Player_Physics_Object.Object->Hitbox->Position = &Player_Physics_Object.Object->Position;
+
+		Scene_Hitboxes.push_back(Player_Physics_Object.Object->Hitbox);
+		std::swap(Scene_Hitboxes[Physics::Scene_Physics_Objects.size() - 1], Scene_Hitboxes.back());
+	}
+}
+
 void Initialise_Particles()
 {
+	Init_Player_Physics_Object();
+
 	Shader Smoke_Particle_Shader;
 	Smoke_Particle_Shader.Create_Shader("Shader_Code/Smoke_Particle.vert", "Shader_Code/Particle.frag", "Shader_Code/Vertex_Test.geom");
 
@@ -37,6 +61,13 @@ void Initialise_Particles()
 	Create_Particle_Renderer(Volumetric_Cone_Shader, Pull_Mesh("Assets/Models/Normalised_Cone.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke_Noise.png").Texture, Pull_Texture("Black").Texture, &Volumetric_Cone_Particles);
 	Volumetric_Cone_Particles.Bind_Textures = false;
 
+	//
+
+	Shader Bubble_Shader;
+	Bubble_Shader.Create_Shader("Shader_Code/Bubble_Particle.vert", "Shader_Code/Bubble_Particle.frag", nullptr);
+
+	Create_Particle_Renderer(Bubble_Shader, Pull_Mesh("Assets/Models/Bubble.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke_Noise.png").Texture, Pull_Texture("Black").Texture, &Bubble_Particles);
+	Bubble_Particles.Bind_Textures = false; // We don't need textures for the *bubble* shader
 
 	/*for (float Radius = 0.3f; Radius < 10.0f; Radius += 0.15f)
 	{

@@ -9,6 +9,8 @@ uniform sampler2D Position_Texture;
 uniform sampler2D Normal_Texture;	// This is a quaternion, representing the TBN matrix of the surface normals
 uniform sampler2D Material_Texture;
 
+vec2 Final_UV = UV + texture(Material_Texture, UV).zw;
+
 uniform samplerCube Cubemap;
 
 const int Number_Of_Shadow_Maps = 1;
@@ -26,7 +28,7 @@ uniform vec3 Camera_Direction;
 
 uniform mat4 Projection_Matrix;
 
-vec3 Position = texture(Position_Texture, UV).xyz;
+vec3 Position = texture(Position_Texture, Final_UV).xyz;
 
 vec3 Camera_To_Pixel = normalize(Camera_Position - Position);
 
@@ -137,7 +139,7 @@ void Ambient_Occlusion()
 
 //
 
-float Specular_Texture = texture(Material_Texture, UV).x;
+float Specular_Texture = texture(Material_Texture, Final_UV).x;
 
 vec3 Specular_Lighting = vec3(0, 0, 0);
 
@@ -240,7 +242,7 @@ float Add_Screen_Grain()
 
 void main()
 {
-	Normal = texture(Normal_Texture, UV).xyz; //
+	Normal = texture(Normal_Texture, Final_UV).xyz; //
 
 	// Quaternion = texture(Normal_Texture, UV);
 
@@ -260,9 +262,9 @@ void main()
 
 	vec3 Light = Lighting();
 
-	float Reflectivity = texture(Material_Texture, UV).y;
+	float Reflectivity = texture(Material_Texture, Final_UV).y;
 
-	vec4 Final_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, UV));
+	vec4 Final_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, Final_UV));
 
 	Out_Colour = Final_Colour + vec4(vec3(Add_Screen_Grain() * 17.0f), 0.0f);
 }

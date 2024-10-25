@@ -29,6 +29,14 @@ void Render_All()
 		Scene_Models[W]->Render(Scene_Object_Shader);
 	}
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDepthMask(GL_FALSE);
+	Bubble_Particles.Shader.Activate();
+	Bubble_Particles.Render();
+
+	glDisable(GL_BLEND);
+
 	if (Shadow_Mapper::Shadow_Mapping)
 		Shadow_Mapper::Render_All_Shadows();
 
@@ -137,6 +145,9 @@ void Engine_Loop()
 		Billboard_Smoke_Particles.Update();
 		Billboard_Fire_Particles.Update();
 		Volumetric_Cone_Particles.Update();
+
+		Bubble_Particles.Update();
+
 		// Galaxy_Particles.Update();
 
 		Scene_Object_Shader.Activate();
@@ -164,6 +175,12 @@ void Engine_Loop()
 		//
 
 		End_Of_Frame();
+
+		if (Time_Elapsed_Since_FPS_Update == 0)
+			for (size_t W = 0; W < 10; W++)
+			{
+				Bubble_Particles.Particles.Spawn_Particle(glm::vec3(RNG() - 3.0f, RNG() - 4.0f, RNG() - 3.0f), glm::vec3(RNG() * 0.01f, RNG() * 0.01f, RNG() * 0.01f));
+			}
 	}
 }
 
