@@ -15,6 +15,16 @@
 
 #include "Particle_System_Declarations.h"
 
+Physics::Physics_Object Player_Physics_Object;
+
+namespace Collision_Test
+{
+	bool Not_Against_Player_Compare(Hitbox* A, Hitbox* B)
+	{
+		return B != Player_Physics_Object.Object->Hitbox;
+	}
+}
+
 void UI_Loop();
 
 bool Inputs[11];
@@ -141,7 +151,7 @@ void Shoot_Fire(float Angle)
 	glm::vec3 Raycast_Velocity(-sin(Angle) * cos(DTR * Player_Camera.Orientation.y), -sin(DTR * Player_Camera.Orientation.y), -cos(Angle) * cos(DTR * Player_Camera.Orientation.y));
 
 	Hitbox* Target = nullptr;
-	Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.05), 500, Collision_Test::Always_Compare, &Target);
+	Collision_Info Info = Collision_Test::Raycast(Player_Camera.Position, Raycast_Velocity * glm::vec3(0.05), 500, Collision_Test::Not_Against_Player_Compare, &Target);
 
 	if (Target != nullptr)
 	{
@@ -171,7 +181,34 @@ void Shoot_Fire(float Angle)
 	}
 }
 
-Physics::Physics_Object Player_Physics_Object;
+bool Check_Feet_Touching_Ground(glm::vec3 Forward_Vector, glm::vec3* Perpendicular_Forward, glm::vec3* Perpendicular_Right)
+{
+	float Y_Position = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitbox)->B.y;
+	float Radius = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitbox)->B.x - 0.005f;
+
+	glm::vec3 Position = Player_Physics_Object.Object->Position;
+
+	AABB_Hitbox Foot_Hitbox;
+	Foot_Hitbox.Position = &Position;
+	Foot_Hitbox.A = glm::vec3(-Radius, Y_Position + 0.01f, -Radius);
+	Foot_Hitbox.B = glm::vec3(Radius, Y_Position + 0.01f, Radius);
+
+	Hitbox* Collided_Hitbox;
+
+	Collision_Info Collision = Collision_Test::Find_Collision(&Foot_Hitbox, Collision_Test::Always_Compare, &Collided_Hitbox);
+
+	if (Collided_Hitbox != nullptr)
+		if(Collision.Collision_Normal.y > 0.3)
+		{
+			*Perpendicular_Right = glm::normalize(glm::cross(Collision.Collision_Normal, Forward_Vector));
+
+			*Perpendicular_Forward = glm::normalize(glm::cross(Collision.Collision_Normal, *Perpendicular_Right));
+
+			return true;
+		}
+
+	return false;
+}
 
 void Player_Movement()
 {
@@ -192,7 +229,7 @@ void Player_Movement()
 		Spawn_Test_Object();
 	}
 
-	float Speed = -12.5 * Tick;
+	float Speed = -15.5 * Tick;
 
 	float Angle = -DTR * Player_Camera.Orientation.x;
 
@@ -229,25 +266,39 @@ void Player_Movement()
 	else
 		Fire_Sound->setVolume(0);
 
-	if (Inputs[Controls::Forwards])
+	glm::vec3 Forward_Vector, Right_Vector;
+
+	bool Feet_Touching_Ground = Check_Feet_Touching_Ground(glm::vec3(Movement_X, 0, Movement_Z), &Forward_Vector, &Right_Vector);
+
+	if(Feet_Touching_Ground)
 	{
-		Player_Physics_Object.Forces.x += Movement_X;
-		Player_Physics_Object.Forces.z += Movement_Z;
-	}
-	if (Inputs[Controls::Backwards])
-	{
-		Player_Physics_Object.Forces.x -= Movement_X;
-		Player_Physics_Object.Forces.z -= Movement_Z;
-	}
-	if (Inputs[Controls::Left])
-	{
-		Player_Physics_Object.Forces.x += Movement_Z;
-		Player_Physics_Object.Forces.z -= Movement_X;
-	}
-	if (Inputs[Controls::Right])
-	{
-		Player_Physics_Object.Forces.x -= Movement_Z;
-		Player_Physics_Object.Forces.z += Movement_X;
+		Forward_Vector *= Speed;
+		Right_Vector *= Speed;
+
+		if (Inputs[Controls::Forwards])
+		{
+			Player_Physics_Object.Forces += Forward_Vector;
+			//Player_Physics_Object.Forces.x += Movement_X;
+			//Player_Physics_Object.Forces.z += Movement_Z;
+		}
+		if (Inputs[Controls::Backwards])
+		{
+			Player_Physics_Object.Forces -= Forward_Vector;
+			//Player_Physics_Object.Forces.x -= Movement_X;
+			//Player_Physics_Object.Forces.z -= Movement_Z;
+		}
+		if (Inputs[Controls::Left])
+		{
+			Player_Physics_Object.Forces -= Right_Vector;
+			//Player_Physics_Object.Forces.x += Movement_Z;
+			//Player_Physics_Object.Forces.z -= Movement_X;
+		}
+		if (Inputs[Controls::Right])
+		{
+			Player_Physics_Object.Forces += Right_Vector;
+			//Player_Physics_Object.Forces.x -= Movement_Z;
+			//Player_Physics_Object.Forces.z += Movement_X;
+		}
 	}
 
 	if (Inputs[Controls::Lean_Left])
@@ -255,10 +306,15 @@ void Player_Movement()
 	if (Inputs[Controls::Lean_Right])
 		Player_Camera.Orientation.z -= Tick * 90;
 
-	if (Inputs[Controls::Down])
-		Player_Camera.Position.y -= Speed;
-	if (Inputs[Controls::Up])
-		Player_Camera.Position.y += Speed;
+	if (Feet_Touching_Ground && Inputs[Controls::Up])
+	{
+		Player_Physics_Object.Forces.y -= 3.0f;
+	}
+
+	//if (Inputs[Controls::Down])
+	//	Player_Camera.Position.y -= Speed;
+	//if (Inputs[Controls::Up])
+	//	Player_Camera.Position.y += Speed;
 
 	Player_Camera.Orientation.x += Cursor.x * 90 * Mouse_Sensitivity;
 	Player_Camera.Orientation.y += Cursor.y * 90 * Mouse_Sensitivity;
