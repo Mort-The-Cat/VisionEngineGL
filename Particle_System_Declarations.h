@@ -214,6 +214,7 @@ template<typename Particle, typename Vertex_Buffer>
 		{
 			Particles.Update();	// This will update all of the particles to account for the new delta time
 		}
+
 		void Render()
 		{
 			Shader.Activate();

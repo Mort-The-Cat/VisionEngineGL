@@ -266,5 +266,5 @@ void main()
 
 	vec4 Final_Colour = (vec4(Specular_Lighting, 0) + vec4(vec3(Reflectivity), 1) * texture(Cubemap, Reflection_Vector) + vec4(Light, 1) * texture(Screen_Texture, Final_UV));
 
-	Out_Colour = Final_Colour + vec4(vec3(Add_Screen_Grain() * 17.0f), 0.0f);
+	Out_Colour = Final_Colour; // + vec4(vec3(Add_Screen_Grain() * 17.0f), 0.0f);
 }

@@ -28,12 +28,12 @@ void Setup_Test_Scene()
 
 	UI_Elements.back()->Flags[UF_CLAMP_TO_SIDE] = true; 
 
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
+	Scene_Models.push_back(new Model({ MF_ACTIVE }));
+	Scene_Models.back()->Position = glm::vec3(0, -0.8, 0);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Makarov.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Arm_Texture_2.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Makarov.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
-	Scene_Models.push_back(new Model({ MF_SOLID, MF_ACTIVE }));
-	Scene_Models.back()->Position = glm::vec3(0, -3, 0);
+	Scene_Models.push_back(new Model({ MF_ACTIVE }));
+	Scene_Models.back()->Position = glm::vec3(0, -0.8, 0);
 	Create_Model(Pull_Mesh("Assets/Models/Test_Makarov_Shoot.obj", LOAD_MESH_OBJ_BIT | LOAD_MESH_ANIM_BIT).Vertex_Buffer, Pull_Texture("Assets/Textures/Gun_Texture.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Test_Animation_Controller("Assets/Animations/Test_Makarov_Shoot.anim"), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Viking_Room.obj").Mesh));
 
 
@@ -88,7 +88,6 @@ void Setup_Test_Scene()
 		Scene_Models.push_back(new Model({ MF_SOLID }));
 		Scene_Models.back()->Position = glm::vec3(0, -5, 2);
 		Create_Model(Pull_Mesh("Assets/Models/Floor.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Brick1.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Controller(), Generate_AABB_Hitbox(*Pull_Mesh("Assets/Models/Floor.obj").Mesh));
-
 	}
 
 	Scene_Models.push_back(new Model({ MF_SOLID }));
@@ -97,7 +96,7 @@ void Setup_Test_Scene()
 
 	glm::vec3 Rand_Direction = glm::normalize(glm::vec3(RNG() - 0.5f, RNG() - 0.5f, RNG() - 0.5f));
 
-	// for (float X = 10; X < 40; X += 10)
+	//for (float X = 10; X < 40; X += 10)
 	//	Volumetric_Cone_Particles.Particles.Spawn_Particle(glm::vec3(7.021941, -6.984860, -3.516123 + (X - 25.0f) * 0.3), Rand_Direction, glm::vec3(0.75, 0.75, sin(X * DTR)), 1.0f, X);
 
 	for (size_t W = 0; W < 20; W++)

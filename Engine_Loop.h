@@ -179,7 +179,17 @@ void Engine_Loop()
 		if (Time_Elapsed_Since_FPS_Update == 0)
 			for (size_t W = 0; W < 10; W++)
 			{
-				Bubble_Particles.Particles.Spawn_Particle(glm::vec3(RNG() - 3.0f, RNG() - 4.0f, RNG() - 3.0f), glm::vec3(RNG() * 0.01f, RNG() * 0.01f, RNG() * 0.01f));
+				glm::vec3 Position, Velocity;
+
+				Position = glm::vec3(RNG() - 3.0f, RNG() - 4.0f, RNG() - 3.0f);
+
+				Velocity = glm::vec3(RNG() * 0.01f, RNG() * 0.01f, RNG() * 0.01f);
+
+				Bubble_Particles.Particles.Spawn_Particle(Position, Velocity);
+				// Bubble_Colour_Particles.Particles.Spawn_Particle(Position, Velocity);
+
+				// Bubble_Particles.Particles.Spawn_Particle(glm::vec3(RNG() - 3.0f, RNG() - 4.0f, RNG() - 3.0f), glm::vec3(RNG() * 0.01f, RNG() * 0.01f, RNG() * 0.01f));
+				// Bubble_Colour_Particles.Particles.Spawn_Particle(glm::vec3(RNG() - 3.0f, RNG() - 4.0f, RNG() - 3.0f), glm::vec3(RNG() * 0.01f, RNG() * 0.01f, RNG() * 0.01f));
 			}
 	}
 }

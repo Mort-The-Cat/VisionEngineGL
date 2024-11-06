@@ -320,6 +320,16 @@ void Initialise_OpenGL_Window()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
+	/*printf(" >> Open in fullscreen? [Y/N]\n\n >> ");
+
+	char Fullscreen;
+
+	std::cin >> Fullscreen;
+
+	if(std::tolower(Fullscreen) == 'y')
+		Window = glfwCreateWindow(Window_Width, Window_Height, "Vision engine test!", glfwGetPrimaryMonitor(), NULL);
+	else*/
+		
 	Window = glfwCreateWindow(Window_Width, Window_Height, "Vision engine test!", NULL, NULL);
 
 	if (Window == NULL)

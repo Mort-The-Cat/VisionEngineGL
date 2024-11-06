@@ -49,6 +49,25 @@ std::array<uint16_t, 11> Inputs_Keycode = // The values of these keycodes can be
 	GLFW_KEY_R // Reload / auxilliary
 };
 
+GLFWgamepadstate Controller_Inputs;
+
+// Note that these only apply to keyboard usage!
+
+namespace Gamepad_Controls
+{
+	uint8_t Pause = GLFW_GAMEPAD_BUTTON_START;
+	uint8_t Use = GLFW_GAMEPAD_BUTTON_SQUARE;
+	uint8_t Attack = GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+
+	uint8_t Up = GLFW_GAMEPAD_BUTTON_CROSS;
+
+	uint8_t Forward_Back = 1u;
+	uint8_t Left_Right = 0u;
+
+	uint8_t Fire = 5u;
+	uint8_t Auxilliary = 4u;
+}
+
 namespace Controls // These are the indices for every user input. This may need some extra work if the user wishes to *type* something into an in-engine text box.
 {
 	uint8_t Forwards = 0;
@@ -210,6 +229,90 @@ bool Check_Feet_Touching_Ground(glm::vec3 Forward_Vector, glm::vec3* Perpendicul
 	return false;
 }
 
+void Controller_Player_Movement()
+{
+	Player_Camera.Position = Player_Physics_Object.Object->Position;
+
+	Player_Object_Spawn_Timer -= Tick;
+
+	glfwGetGamepadState(GLFW_JOYSTICK_1, &Controller_Inputs);
+
+	if (Controller_Inputs.buttons[Gamepad_Controls::Pause])
+	{
+		Cursor_Reset = false;
+		UI_Loop();
+	}
+
+	if (Controller_Inputs.buttons[Gamepad_Controls::Use])
+	{
+		Spawn_Test_Object();
+	}
+
+	float Speed = -18.5 * Tick;
+
+	float Angle = -DTR * Player_Camera.Orientation.x;
+
+	float Movement_X = sin(Angle) * Speed;
+	float Movement_Z = cos(Angle) * Speed;
+
+	if (Controller_Inputs.buttons[Gamepad_Controls::Attack] && Frame_Counter % 5 == 0)
+	{
+		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
+		Scene_Models.back()->Position = Player_Camera.Position; // +glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
+
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+
+		// static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Mass = 10;
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Inv_Mass = 1.0f / 10.0f;
+
+		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Velocity = glm::vec3(4) * glm::vec3(-sin(Angle) * cos(DTR * Player_Camera.Orientation.y), -sin(DTR * Player_Camera.Orientation.y), -cos(Angle) * cos(DTR * Player_Camera.Orientation.y));
+
+		Sound_Engine->play2D(Sound_Effect_Source);
+	}
+
+	glm::vec3 Forward_Vector, Right_Vector;
+
+	bool Feet_Touching_Ground = Check_Feet_Touching_Ground(glm::vec3(Movement_X, 0, Movement_Z), &Forward_Vector, &Right_Vector);
+
+	if (Feet_Touching_Ground)
+	{
+		Forward_Vector *= Speed;
+		Right_Vector *= Speed;
+
+		Player_Physics_Object.Forces -= Forward_Vector * Controller_Inputs.axes[Gamepad_Controls::Forward_Back];
+		Player_Physics_Object.Forces += Right_Vector * Controller_Inputs.axes[Gamepad_Controls::Left_Right];
+	}
+
+	if (Feet_Touching_Ground && Controller_Inputs.buttons[Gamepad_Controls::Up])
+	{
+		Player_Physics_Object.Forces.y -= 3.0f;
+
+		Player_Physics_Object.Forces += Forward_Vector * (1 / Speed) * Controller_Inputs.axes[Gamepad_Controls::Forward_Back];
+	}
+
+	// glfwGetGamepadState(GLFW_JOYSTICK_2, &Controller_Inputs);
+
+	if(Controller_Inputs.axes[Gamepad_Controls::Fire] > 0.5)
+	{
+		// we wanna apply a force onto some objects!
+
+		Shoot_Fire(Angle);
+	}
+	else
+		Fire_Sound->setVolume(0);
+
+	Cursor.x += Controller_Inputs.axes[2] * 0.3f;
+	Cursor.y -= Controller_Inputs.axes[3] * 0.3f;
+
+	Player_Camera.Orientation.x += Cursor.x * 90 * Mouse_Sensitivity;
+	Player_Camera.Orientation.y += Cursor.y * 90 * Mouse_Sensitivity;
+
+	Player_Camera.Orientation.y = std::max(Player_Camera.Orientation.y, -90.0f);
+	Player_Camera.Orientation.y = std::min(Player_Camera.Orientation.y, 90.0f);
+}
+
 void Player_Movement()
 {
 	Player_Camera.Position = Player_Physics_Object.Object->Position;
@@ -229,7 +332,7 @@ void Player_Movement()
 		Spawn_Test_Object();
 	}
 
-	float Speed = -15.5 * Tick;
+	float Speed = -18.5 * Tick;
 
 	float Angle = -DTR * Player_Camera.Orientation.x;
 
@@ -306,9 +409,13 @@ void Player_Movement()
 	if (Inputs[Controls::Lean_Right])
 		Player_Camera.Orientation.z -= Tick * 90;
 
+	Player_Camera.Orientation.z *= powf(0.9f, Tick);
+
 	if (Feet_Touching_Ground && Inputs[Controls::Up])
 	{
 		Player_Physics_Object.Forces.y -= 3.0f;
+
+		Player_Physics_Object.Forces += Forward_Vector * (-1 / Speed);
 	}
 
 	//if (Inputs[Controls::Down])
