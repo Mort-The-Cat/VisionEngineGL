@@ -47,14 +47,14 @@ C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(43,31): warning C4267: '=': conve
 C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(92,58): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(205,38): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(205,38): warning C4267:         with
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(205,38): warning C4267:         [
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(205,38): warning C4267:             _Ty=std::seed_seq::result_type
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(205,38): warning C4267:         ]
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(239,38): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(239,38): warning C4267:         with
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(239,38): warning C4267:         [
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(239,38): warning C4267:             _Ty=std::seed_seq::result_type
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(239,38): warning C4267:         ]
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(264,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Mesh_Loader.h(300,57): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Hitdetection.h(97,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
@@ -170,46 +170,46 @@ C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(24,71): war
 C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(24,59): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(153,60): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(155,60): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(180,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Title_Screen_Handling.h(182,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(40,98): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(45,98): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(40,92): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(45,92): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(40,86): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(45,86): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(40,79): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(45,79): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(47,91): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(52,91): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(47,86): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(52,86): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(47,81): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(52,81): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(47,75): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(52,75): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(54,93): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(59,93): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(54,88): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(59,88): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(54,83): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(59,83): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
-C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(54,77): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\VisionEngineGL\VisionEngineGL\Game_Scenes\Shader_Etc_Initialisation.h(59,77): warning C4305: 'argument': truncation from 'double' to 'float'
   (compiling source file 'Main.cpp')
   
 C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(243,83): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
@@ -238,9 +238,9 @@ C:\VisionEngineGL\VisionEngineGL\Particle_System_Declarations.h(81,40): warning 
   
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  3 of 3948 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 4003 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    14 functions had inline decision re-evaluated but remain unchanged
+    15 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glfw3.lib(context.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(context.obj)' or at ''; linking object as if no debug info
 glfw3.lib(input.obj) : warning LNK4099: PDB '' was not found with 'glfw3.lib(input.obj)' or at ''; linking object as if no debug info

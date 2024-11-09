@@ -21,7 +21,7 @@ namespace Collision_Test
 {
 	bool Not_Against_Player_Compare(Hitbox* A, Hitbox* B)
 	{
-		return B != Player_Physics_Object.Object->Hitbox;
+		return B != Player_Physics_Object.Object->Hitboxes[0];
 	}
 }
 
@@ -155,7 +155,7 @@ void Spawn_Test_Object()
 
 		// Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
 		
-		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh));
+		Create_Model(Pull_Mesh("Assets/Models/Cube.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), { Generate_Mesh_Hitbox(*Pull_Mesh("Assets/Models/Cube.obj").Mesh) });
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
 
@@ -202,8 +202,8 @@ void Shoot_Fire(float Angle)
 
 bool Check_Feet_Touching_Ground(glm::vec3 Forward_Vector, glm::vec3* Perpendicular_Forward, glm::vec3* Perpendicular_Right)
 {
-	float Y_Position = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitbox)->B.y;
-	float Radius = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitbox)->B.x - 0.005f;
+	float Y_Position = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitboxes[0])->B.y;
+	float Radius = ((AABB_Hitbox*)Player_Physics_Object.Object->Hitboxes[0])->B.x - 0.005f;
 
 	glm::vec3 Position = Player_Physics_Object.Object->Position;
 
@@ -260,7 +260,7 @@ void Controller_Player_Movement()
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
 		Scene_Models.back()->Position = Player_Camera.Position; // +glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
-		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), { Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh) });
 
 		// static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
@@ -346,7 +346,7 @@ void Player_Movement()
 		Scene_Models.push_back(new Model({ MF_ACTIVE, MF_PHYSICS_TEST, MF_SOLID, MF_CAST_SHADOWS }));
 		Scene_Models.back()->Position = Player_Camera.Position; // +glm::vec3(RNG() * 1 - .5, RNG() * 1 - .5, RNG() * 1 - .5);
 
-		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh));
+		Create_Model(Pull_Mesh("Assets/Models/Particle_Test.obj").Vertex_Buffer, Pull_Texture("Assets/Textures/Smoke.png").Texture, Pull_Texture("Black").Texture, Scene_Models.back(), new Physics_Object_Controller(), { Generate_Sphere_Hitbox(*Pull_Mesh("Assets/Models/Particle_Test.obj").Mesh) });
 		
 		// static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Physics_Info->Elasticity *= 0.25;
 		static_cast<Physics_Object_Controller*>(Scene_Models.back()->Control)->Time = 60;
@@ -436,12 +436,11 @@ void Player_Movement()
 
 	if (Inputs[Controls::Auxilliary])
 	{
-		for (size_t W = 0; W < Physics::Scene_Physics_Objects.size(); W++)
-		{
-			Physics::Scene_Physics_Objects[W]->Forces -= glm::vec3(0.25f) * glm::normalize(Physics::Scene_Physics_Objects[W]->Object->Position - Player_Camera.Position);
-		}
+		//for (size_t W = 0; W < Physics::Scene_Physics_Objects.size(); W++)
+		//{
+		//	Physics::Scene_Physics_Objects[W]->Forces -= glm::vec3(0.25f) * glm::normalize(Physics::Scene_Physics_Objects[W]->Object->Position - Player_Camera.Position);
 
-		// printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
+		printf(" >> Camera info:\n%f, %f, %f\n%f, %f, %f\n", Player_Camera.Position.x, Player_Camera.Position.y, Player_Camera.Position.z, Player_Camera.Orientation.x, Player_Camera.Orientation.y, Player_Camera.Orientation.z);
 	}
 }
 

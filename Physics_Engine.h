@@ -200,7 +200,8 @@ namespace Physics
 
 			// This provides a bit of damping to the rotational velocity to prevent wobbling
 
-			Object->Hitbox->Update_Hitbox();
+			for(size_t W = 0; W < Object->Hitboxes.size(); W++)
+				Object->Hitboxes[W]->Update_Hitbox();
 
 			Forces *= Inv_Mass * 0.5;
 
@@ -236,7 +237,7 @@ namespace Physics
 			{
 				Impulse_Object Impulse;
 
-				Impulse.Collision = Scene_Physics_Objects[W]->Object->Hitbox->Hitdetection(Scene_Physics_Objects[V]->Object->Hitbox);
+				Impulse.Collision = Scene_Physics_Objects[W]->Object->Hitboxes[0]->Hitdetection(Scene_Physics_Objects[V]->Object->Hitboxes[0]);
 
 				Impulse.A = Scene_Physics_Objects[W];
 				Impulse.B = Scene_Physics_Objects[V];
@@ -262,7 +263,7 @@ namespace Physics
 			{
 				Impulse_Object Impulse;
 
-				Impulse.Collision = Scene_Physics_Objects[W]->Object->Hitbox->Hitdetection(Scene_Hitboxes[V]);
+				Impulse.Collision = Scene_Physics_Objects[W]->Object->Hitboxes[0]->Hitdetection(Scene_Hitboxes[V]);
 
 				Impulse.A = Scene_Physics_Objects[W];
 				Impulse.B = nullptr;
@@ -378,7 +379,7 @@ public:
 
 		Object->Flags[MF_TO_BE_DELETED] |= Should_Delete;
 		Physics_Info->Flags[PF_TO_BE_DELETED] |= Should_Delete;
-		Object->Hitbox->Flags[HF_TO_BE_DELETED] |= Should_Delete;
+		Object->Hitboxes[0]->Flags[HF_TO_BE_DELETED] |= Should_Delete;
 		Physics_Info->SFX->Flags[ASF_TO_BE_DELETED] |= Should_Delete;
 	}
 };

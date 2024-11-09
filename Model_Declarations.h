@@ -50,7 +50,7 @@ public:
 
 	Controller* Control;
 
-	Hitbox* Hitbox;
+	std::vector<Hitbox*> Hitboxes;
 
 	bool Flags[6] = { false, false, false, false, false, false }; // Doesn't really matter how many bits we use for this
 
@@ -96,7 +96,7 @@ glm::mat4 Hitbox_Direction_Matrix_Calculate(Model* Model)
 	return Direction_Matrix_Calculate(glm::vec3(0, 0, 0), Model->Orientation, Model->Orientation_Up);
 }
 
-void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp, Hitbox* Hitboxp);
+void Create_Model(Model_Vertex_Buffer Mesh, Texture Albedo, Texture Material, Model* Target_Model, Controller* Controlp, std::vector<Hitbox*> Hitboxp);
 
 std::vector<Model*> Scene_Models;
 

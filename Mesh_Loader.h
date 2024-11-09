@@ -124,6 +124,40 @@ bool Identify_Existing_Vertex(std::vector<Vertex_Indices>& Unique_Vertices, Vert
 	return false;
 }
 
+void Load_Hitbox_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh)
+{
+	std::ifstream File(File_Name);
+
+	if (File.is_open())
+	{
+		std::string Line;
+		while (std::getline(File, Line))
+		{
+			std::stringstream Buffer;
+			std::string Prefix;
+			Buffer << Line;
+			Buffer >> Prefix;
+
+			if (Prefix == "v")
+			{
+				Model_Vertex Vertex;
+
+				Buffer >> Vertex.Position.x >> Vertex.Position.y >> Vertex.Position.z;
+
+				Vertex.Position.y *= -1;
+
+				Target_Mesh->Vertices.push_back(Vertex);
+			}
+		}
+	}
+	else
+	{
+		Throw_Error("Unable to open file!\n");
+	}
+
+	File.close();
+}
+
 void Load_Mesh_Obj_Old(const char* File_Name, Model_Mesh* Target_Mesh)
 {
 	std::vector<glm::vec3> Positions;
@@ -211,6 +245,8 @@ void Load_Mesh_Obj_Old(const char* File_Name, Model_Mesh* Target_Mesh)
 	}
 	else
 		Throw_Error("Unable to open file!\n");
+
+	File.close();
 }
 
 void Load_Mesh_Obj(const char* File_Name, Model_Mesh* Target_Mesh, bool Anim_Mesh = false)

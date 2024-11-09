@@ -10,17 +10,22 @@ void Init_Player_Physics_Object()
 		Player_Physics_Object.Flags[PF_NO_ROTATION] = true;
 		
 		Player_Physics_Object.Object = new Model();
-		Player_Physics_Object.Object->Position = glm::vec3(3.0f, -6.0f, -2.0f);
+
+		Player_Camera.Position = glm::vec3(
+			2.0f, -5.009266, 10.0f
+		);
 
 		Initialise_Physics_Object(&Player_Physics_Object, Player_Physics_Object.Object);
 
+		Player_Physics_Object.Object->Position = Player_Camera.Position;
+
 		Player_Physics_Object.Elasticity = 0.0f;
 
-		Player_Physics_Object.Object->Hitbox = Generate_AABB_Hitbox(*Pull_Mesh("Assets/Hitboxes/Player_Hitbox.obj").Mesh);
-		Player_Physics_Object.Object->Hitbox->Object = Player_Physics_Object.Object;
-		Player_Physics_Object.Object->Hitbox->Position = &Player_Physics_Object.Object->Position;
+		Player_Physics_Object.Object->Hitboxes = { Generate_AABB_Hitbox(*Pull_Mesh("Assets/Hitboxes/Player_Hitbox.obj").Mesh) };
+		Player_Physics_Object.Object->Hitboxes[0]->Object = Player_Physics_Object.Object;
+		Player_Physics_Object.Object->Hitboxes[0]->Position = &Player_Physics_Object.Object->Position;
 
-		Scene_Hitboxes.push_back(Player_Physics_Object.Object->Hitbox);
+		Scene_Hitboxes.push_back(Player_Physics_Object.Object->Hitboxes[0]);
 		std::swap(Scene_Hitboxes[Physics::Scene_Physics_Objects.size() - 1], Scene_Hitboxes.back());
 	}
 }

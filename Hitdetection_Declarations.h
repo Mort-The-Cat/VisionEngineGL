@@ -56,7 +56,7 @@ public:
 class AABB_Hitbox : public Hitbox
 {
 public:
-	glm::vec3 A, B;
+	glm::vec3 A = glm::vec3(999,999,999), B = glm::vec3(-999,-999,-999);
 	virtual Collision_Info Hitdetection(Hitbox* Other) override
 	{
 		return Other->AABB_Hitdetection(this);
@@ -128,6 +128,91 @@ public:
 };
 
 std::vector<Hitbox*> Scene_Hitboxes; // The first n objects (where n = Scene_Physics_Objects.size()) are always physics objects
+
+std::vector<Hitbox*> Generate_AABB_Hitboxes(std::string File_Name)
+{
+	std::vector<Hitbox*> Return;
+
+	// This will load the file of the hitbox
+
+	std::ifstream File(File_Name);
+
+	if (File.is_open())
+	{
+		std::string Line;
+
+		size_t Count = 0u;
+
+		while (std::getline(File, Line))
+		{
+			std::stringstream Buffer;
+
+			Buffer << Line;
+
+			std::string Prefix;
+
+			Buffer >> Prefix;
+
+			if (Prefix == "o" || Prefix == "g" ||
+				(Count == 8)) // This signals that a new hitbox object needs to be created
+			{
+				Return.push_back(new AABB_Hitbox());
+
+				Count = 0;
+			}
+
+			if (Prefix == "v") // This will tell the engine to evaluate and add the positions of this object's vertices to the hitbox
+			{
+				glm::vec3 Vertex;
+
+				Buffer >> Vertex.x >> Vertex.y >> Vertex.z;
+
+				Vertex.y *= -1;
+
+				//
+
+				((AABB_Hitbox*)Return.back())->A.x = std::fminf(reinterpret_cast<AABB_Hitbox*>(Return.back())->A.x, Vertex.x);
+				((AABB_Hitbox*)Return.back())->A.y = std::fminf(reinterpret_cast<AABB_Hitbox*>(Return.back())->A.y, Vertex.y);
+				((AABB_Hitbox*)Return.back())->A.z = std::fminf(reinterpret_cast<AABB_Hitbox*>(Return.back())->A.z, Vertex.z);
+
+				((AABB_Hitbox*)Return.back())->B.x = std::fmaxf(reinterpret_cast<AABB_Hitbox*>(Return.back())->B.x, Vertex.x);
+				((AABB_Hitbox*)Return.back())->B.y = std::fmaxf(reinterpret_cast<AABB_Hitbox*>(Return.back())->B.y, Vertex.y);
+				((AABB_Hitbox*)Return.back())->B.z = std::fmaxf(reinterpret_cast<AABB_Hitbox*>(Return.back())->B.z, Vertex.z);
+
+				Count++;
+			}
+		}
+
+		File.close();
+
+		return Return;
+	}
+	else
+		Throw_Error("Unable to open hitbox file!\n");
+}
+
+/*std::vector<Hitbox*> Generate_AABB_Hitboxes(Model_Mesh& Mesh)
+{
+	std::vector<Hitbox*> Return;
+
+	for (size_t Cube = 0; Cube < Mesh.Vertices.size(); Cube += 8) // Cubes have 8 vertices xd I'm silly
+	{
+		Return.push_back(new AABB_Hitbox());
+
+		for (size_t W = Cube; W < Cube + 8; W++)
+		{
+			((AABB_Hitbox*)Return.back())->A.x = std::fminf(((AABB_Hitbox*)Return.back())->A.x, Mesh.Vertices[W].Position.x);
+			((AABB_Hitbox*)Return.back())->A.y = std::fminf(((AABB_Hitbox*)Return.back())->A.y, Mesh.Vertices[W].Position.y);
+			((AABB_Hitbox*)Return.back())->A.z = std::fminf(((AABB_Hitbox*)Return.back())->A.z, Mesh.Vertices[W].Position.z);
+
+			((AABB_Hitbox*)Return.back())->B.x = std::fmaxf(((AABB_Hitbox*)Return.back())->B.x, Mesh.Vertices[W].Position.x);
+			((AABB_Hitbox*)Return.back())->B.y = std::fmaxf(((AABB_Hitbox*)Return.back())->B.y, Mesh.Vertices[W].Position.y);
+			((AABB_Hitbox*)Return.back())->B.z = std::fmaxf(((AABB_Hitbox*)Return.back())->B.z, Mesh.Vertices[W].Position.z);
+		}
+	}
+
+	return Return;
+}*/
 
 AABB_Hitbox* Generate_AABB_Hitbox(Model_Mesh& Mesh)
 {

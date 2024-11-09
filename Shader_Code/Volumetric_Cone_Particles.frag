@@ -50,5 +50,7 @@ void main()
 	if(Lambda_Far > 0)
 		Lambda_Far = -Distance_From_Camera;
 
-	Colour = vec4(Colour_Out, 0.95f - exp(0.6f * -abs(Lambda_Far - Lambda_Near)));
+	float Transparency = 0.95f - exp(0.6f * (-abs(Lambda_Far - Lambda_Near)));
+
+	Colour = vec4(Colour_Out, Transparency);
 }
