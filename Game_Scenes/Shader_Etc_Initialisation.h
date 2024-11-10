@@ -12,12 +12,14 @@ void Init_Player_Physics_Object()
 		Player_Physics_Object.Object = new Model();
 
 		Player_Camera.Position = glm::vec3(
-			2.0f, -5.009266, 10.0f
+			2.0f, -4.909266, 10.0f
 		);
 
 		Initialise_Physics_Object(&Player_Physics_Object, Player_Physics_Object.Object);
 
 		Player_Physics_Object.Object->Position = Player_Camera.Position;
+
+		Player_Physics_Object.Friction = 0.99f;
 
 		Player_Physics_Object.Elasticity = 0.0f;
 

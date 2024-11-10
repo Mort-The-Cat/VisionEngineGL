@@ -254,13 +254,12 @@ Cache::Animation_Cache_Info Pull_Animation(const char* Directory)
 #define LOAD_MESH_OBJ_BIT 1u
 #define LOAD_MESH_FBX_BIT 2u
 #define LOAD_MESH_ANIM_BIT 4u
-#define LOAD_MESH_HITBOX_BIT 8u
 
 Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, unsigned char Flags = LOAD_MESH_OBJ_BIT)
 {
 	Cache::Mesh_Cache_Info Cache_Info;
 
-	if (Cache::Search_Mesh_Cache(Directory, &Cache_Info) && !(Flags & LOAD_MESH_HITBOX_BIT))
+	if (Cache::Search_Mesh_Cache(Directory, &Cache_Info))
 	{
 		if (Flags & LOAD_MESH_ANIM_BIT) // If this mesh is an anim mesh, we need it to have a unique vertex buffer
 		{
@@ -289,9 +288,6 @@ Cache::Mesh_Cache_Info Pull_Mesh(const char* Directory, unsigned char Flags = LO
 		break;
 	case LOAD_MESH_FBX_BIT:
 		Load_Mesh_Fbx(Directory, Cache_Info.Mesh);
-		break;
-	case LOAD_MESH_HITBOX_BIT:
-		Load_Hitbox_Mesh_Obj(Directory, Cache_Info.Mesh);
 		break;
 	}
 

@@ -186,13 +186,13 @@ namespace Lighting_BVH // This uses considerably less memory than my previous de
 	{
 		Light_Occluders.clear();
 
-		Light_Occluders.push_back(Light_Occluder(true, -0.752580, -4.94359f, 2.764217f));
+		Light_Occluders.push_back(Light_Occluder(true, -0.751, -6.0f, 2.305f));
 
-		Light_Occluders.push_back(Light_Occluder(false, 2.815258, -0.676318, 4.363094));
+		Light_Occluders.push_back(Light_Occluder(false, 2.151, -0.631, 5.06));
 
 		//
 
-		Light_Occluders.push_back(Light_Occluder(false, -2.822303, 2.671534, 6.539208));
+		Light_Occluders.push_back(Light_Occluder(false, -3.14, 2.27, 6.539208));
 	}
 
 	bool Is_Occluded(glm::vec2 Node_Position, glm::vec2 Light_Position)

@@ -9,7 +9,8 @@
 
 #include "OpenGL_Declarations.h"
 
-#define ASF_TO_BE_DELETED 0
+#define ASF_TO_BE_DELETED 0u
+#define ASF_WITHOUT_POSITION 1u
 
 // ASF stands for audio-source-flags lol
 
@@ -24,7 +25,7 @@ namespace Audio
 		float Volume = 0;
 		std::mutex Sounds_Mutex;
 		std::vector<irrklang::ISound*> Sounds;
-		bool Flags[1] = { false };
+		bool Flags[2] = { false, false };
 
 		~Audio_Source()
 		{
@@ -76,8 +77,16 @@ namespace Audio
 					}
 					else
 					{
-						Sounds[W]->setPan(Panning);
-						Sounds[W]->setVolume(Perceived_Volume);
+						if (Flags[ASF_WITHOUT_POSITION])
+						{
+							Sounds[W]->setPan(0);
+							Sounds[W]->setVolume(Volume);
+						}
+						else
+						{
+							Sounds[W]->setPan(Panning);
+							Sounds[W]->setVolume(Perceived_Volume);
+						}
 
 						if(Sounds[W]->getIsPaused())
 							Sounds[W]->setIsPaused(false);

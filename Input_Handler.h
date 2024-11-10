@@ -229,6 +229,9 @@ bool Check_Feet_Touching_Ground(glm::vec3 Forward_Vector, glm::vec3* Perpendicul
 	return false;
 }
 
+float Jump_Timer = 0.0f;
+#define Time_Between_Jumps 0.1f
+
 void Controller_Player_Movement()
 {
 	Player_Camera.Position = Player_Physics_Object.Object->Position;
@@ -283,13 +286,17 @@ void Controller_Player_Movement()
 
 		Player_Physics_Object.Forces -= Forward_Vector * Controller_Inputs.axes[Gamepad_Controls::Forward_Back];
 		Player_Physics_Object.Forces += Right_Vector * Controller_Inputs.axes[Gamepad_Controls::Left_Right];
+
+		Jump_Timer += Tick;
 	}
 
-	if (Feet_Touching_Ground && Controller_Inputs.buttons[Gamepad_Controls::Up])
+	if (Feet_Touching_Ground && Controller_Inputs.buttons[Gamepad_Controls::Up] && Jump_Timer > Time_Between_Jumps)
 	{
 		Player_Physics_Object.Forces.y -= 3.0f;
 
 		Player_Physics_Object.Forces += Forward_Vector * (1 / Speed) * Controller_Inputs.axes[Gamepad_Controls::Forward_Back];
+
+		Jump_Timer = 0.0f;
 	}
 
 	// glfwGetGamepadState(GLFW_JOYSTICK_2, &Controller_Inputs);
@@ -375,47 +382,47 @@ void Player_Movement()
 
 	if(Feet_Touching_Ground)
 	{
+		Jump_Timer += Tick;
+
 		Forward_Vector *= Speed;
 		Right_Vector *= Speed;
 
 		if (Inputs[Controls::Forwards])
 		{
 			Player_Physics_Object.Forces += Forward_Vector;
-			//Player_Physics_Object.Forces.x += Movement_X;
-			//Player_Physics_Object.Forces.z += Movement_Z;
 		}
 		if (Inputs[Controls::Backwards])
 		{
 			Player_Physics_Object.Forces -= Forward_Vector;
-			//Player_Physics_Object.Forces.x -= Movement_X;
-			//Player_Physics_Object.Forces.z -= Movement_Z;
 		}
 		if (Inputs[Controls::Left])
 		{
 			Player_Physics_Object.Forces -= Right_Vector;
-			//Player_Physics_Object.Forces.x += Movement_Z;
-			//Player_Physics_Object.Forces.z -= Movement_X;
+
+			Player_Camera.Orientation.z += Tick * 30.0f;
 		}
 		if (Inputs[Controls::Right])
 		{
 			Player_Physics_Object.Forces += Right_Vector;
-			//Player_Physics_Object.Forces.x -= Movement_Z;
-			//Player_Physics_Object.Forces.z += Movement_X;
+
+			Player_Camera.Orientation.z -= Tick * 30.0f;
 		}
 	}
 
-	if (Inputs[Controls::Lean_Left])
-		Player_Camera.Orientation.z += Tick * 90;
+	/*if (Inputs[Controls::Lean_Left])
+		Player_Camera.Orientation.z += Tick * 70;
 	if (Inputs[Controls::Lean_Right])
-		Player_Camera.Orientation.z -= Tick * 90;
+		Player_Camera.Orientation.z -= Tick * 70;*/
 
-	Player_Camera.Orientation.z *= powf(0.9f, Tick);
+	Player_Camera.Orientation.z *= powf(0.01f, Tick);
 
-	if (Feet_Touching_Ground && Inputs[Controls::Up])
+	if (Feet_Touching_Ground && Inputs[Controls::Up] && Jump_Timer > Time_Between_Jumps)
 	{
 		Player_Physics_Object.Forces.y -= 3.0f;
 
 		Player_Physics_Object.Forces += Forward_Vector * (-1 / Speed);
+
+		Jump_Timer = 0.0f;
 	}
 
 	//if (Inputs[Controls::Down])
