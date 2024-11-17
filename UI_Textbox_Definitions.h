@@ -178,6 +178,8 @@ public:
 
 	void Render_Cursor(UI_Transformed_Coordinates Coords)
 	{
+#ifndef USING_FREETYPE_FONT
+
 		// The hardest part about this is probably deciding where the cursor is to be rendered
 
 		size_t Line_Length = static_cast<size_t>((Coords.X2o - Coords.X1o - Size * 2 * Window_Aspect_Ratio) / ((Size + 0.01f) * Window_Aspect_Ratio));
@@ -207,6 +209,8 @@ public:
 		glDrawElements(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u);
 
 		Letter.Delete_Buffer();
+
+#endif
 	}
 
 	//
@@ -249,12 +253,14 @@ public:
 		{
 			bool Update = UI_Typing::Handle_Writing_Character_Inputs(Text, Cursor_Position);
 
+#ifndef USING_FREETYPE_FONT
 			if (Update)
 			{
 				Character_Indices.clear();
 
 				Font_Table::Generate_Text_Indices(Text.c_str(), &Character_Indices);
 			}
+#endif
 		}
 	}
 
@@ -277,7 +283,9 @@ public:
 
 		Text_Shader.Activate();
 
+#ifndef USING_FREETYPE_FONT
 		Bind_UI_Uniforms(Text_Shader, Font_Table::Font, Colour);
+#endif
 
 		Render_Text(Coords);
 	}

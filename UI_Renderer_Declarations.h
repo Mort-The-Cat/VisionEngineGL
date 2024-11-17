@@ -6,6 +6,80 @@
 #include "Texture_Declarations.h"
 #include "Asset_Loading_Cache.h"
 
+#define USING_FREETYPE_FONT 1u
+
+#ifdef USING_FREETYPE_FONT
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+namespace Font_Table
+{
+	struct Character
+	{
+		Texture Glyph;
+		glm::ivec2 Size; // These are the dimensions of the glyph in pixels
+		glm::ivec2 Offset; // These are the bearings of the glyph in pixels; i.e. the location of the top-left corner of the glyph
+		unsigned int Step; // This is how far along (in pixels) the next character should be placed
+	};
+
+	std::map<char, Character> Characters;
+
+	const float Character_Pixel_To_Screen_Space = 1.0f / 512;
+
+	void Initialise_Font_Texture()
+	{
+		FT_Library Interface;
+
+		if (FT_Init_FreeType(&Interface))
+			Throw_Error(" >> Unable to initialise freetype interface!\n");
+
+		FT_Face Face;
+
+		if (FT_New_Face(Interface, "Assets/Font/georgia.ttf", 0, &Face))
+			Throw_Error(" >> Unable to load font!\n");
+
+		FT_Set_Pixel_Sizes(Face, 0, 512);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1u);
+
+		for (char Char = -10; Char < 120; Char++)
+		{
+			if (FT_Load_Char(Face, Char, FT_LOAD_RENDER))
+				Throw_Error(" >> Unable to load font glyph!\n");
+
+			if (Face->glyph->bitmap.width)
+			{
+				Character Letter;
+
+				Letter.Glyph.Create_Texture();
+
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, Face->glyph->bitmap.width, Face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, Face->glyph->bitmap.buffer);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				Letter.Size = glm::ivec2(Face->glyph->bitmap.width, Face->glyph->bitmap.rows);
+				Letter.Offset = glm::ivec2(Face->glyph->bitmap_left, Face->glyph->bitmap_top);
+				Letter.Step = Face->glyph->advance.x >> 6;
+
+				Characters.insert(std::pair<char, Character>(Char, Letter));
+			}
+		}
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4u); // This sets the unpack alignment to default values
+
+		FT_Done_Face(Face);
+		FT_Done_FreeType(Interface);
+
+		// This frees the faces and interface we use to generate the glyph textures
+	}
+}
+
+#elif
+
 namespace Font_Table
 {
 	uint8_t Table[] = { 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0, 69, 0, 0, 63, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0, 69, 0, 0, 63, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 77, 76, 0, 0, 0, 0, 0, 70, 71, 0, 0, 75, 0, 74, 0, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 72, 73, 0, 0, 0, 78, 0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
@@ -99,24 +173,39 @@ namespace Font_Table
 	}
 }
 
+#endif
+
 #define UF_TO_BE_DELETED 0u
 #define UF_RENDER_BORDER 1u
 #define UF_IMAGE 2u				// This flag is set if the UI element has an image that is to be displayed- otherwise, it just uses the UI texture it was using before
 #define UF_CLAMP_TO_SIDE 3u		// This flag is set if you want the UI element to stay at either side of the screen (useful to account for widescreen aspect ratios)
 #define UF_FILL_SCREEN 4u		// This flag is set for things like backgrounds- useful for title screen
 #define UF_RENDER_CONTENTS 5u	// This flag is set if you only want the UI border to be rendered
+#define UF_CLAMP_RIGHT 6u		// This flag toggles which side of the screen the UI is clamped to
 
 bool UI_Continue_Looping = false;
 
 Shader UI_Shader;
 Shader Text_Shader;
 
+#ifndef USING_FREETYPE_FONT
+
 void Initialise_UI_Shaders()
 {
 	UI_Shader.Create_Shader("Shader_Code/UI_Shader.vert", "Shader_Code/UI_Shader.frag", nullptr);
 
+	Text_Shader.Create_Shader("Shader_Code/Text_Renderer_Old.vert", "Shader_Code/Text_Renderer_Old.frag", nullptr);
+}
+
+#else
+
+void Initialise_UI_Shaders()
+{
+	UI_Shader.Create_Shader("Shader_Code/UI_Shader.vert", "Shader_Code/UI_Shader.frag", nullptr);
 	Text_Shader.Create_Shader("Shader_Code/Text_Renderer.vert", "Shader_Code/Text_Renderer.frag", nullptr);
 }
+
+#endif
 
 void Bind_UI_Uniforms(Shader UI_Shader, Texture Image, glm::vec4 Colour)
 {
@@ -190,13 +279,14 @@ public:
 	float X1, Y1, X2, Y2; // Bounds
 
 	float X1o, Y1o, X2o, Y2o; // Offset
-	UI_Transformed_Coordinates(float X1p, float Y1p, float X2p, float Y2p, float UI_Border_Size, bool Clamp_To_Side, bool Fill_Screen = false)
+	UI_Transformed_Coordinates(float X1p, float Y1p, float X2p, float Y2p, float UI_Border_Size, bool Clamp_To_Side, bool Fill_Screen = false, bool Clamp_Right = false)
 	{
 		if (Clamp_To_Side) // This preserves the horizontal dimensions of the UI element
 		{
 			float Width = X2p - X1p;
 
-			if ((X1p + X2p) > 0.0f)
+			// if ((X1p + X2p) > 0.0f)
+			if(Clamp_Right)
 			{
 				Shift_Left(&X1p, &X2p);
 
@@ -245,7 +335,7 @@ class UI_Element // The subclasses hereof will handle things like text, buttons,
 public:
 	float X1, Y1, X2, Y2;
 
-	bool Flags[6] = { false, true, false, false, false, true };
+	bool Flags[7] = { false, true, false, false, false, true, false };
 
 	float UI_Border_Size = 1.0f / 20.0f;
 
@@ -339,7 +429,7 @@ public:
 
 	virtual void Update_UI()
 	{
-		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN], Flags[UF_CLAMP_RIGHT]);
 
 		Render(Coords);
 
@@ -347,10 +437,15 @@ public:
 	}
 };
 
+
 class Text_UI_Element : public UI_Element
 {
 public:
+#ifndef USING_FREETYPE_FONT
 	std::vector<uint32_t> Character_Indices; // These are the indices of the letters in the font
+#else
+	std::string Text;
+#endif
 
 	float Size;
 
@@ -369,7 +464,11 @@ public:
 		X2 = X2p;
 		Y2 = Y2p;
 
+#ifndef USING_FREETYPE_FONT
 		Font_Table::Generate_Text_Indices(Textp.c_str(), &Character_Indices);
+#else
+		Text = Textp;
+#endif
 
 		Size = Sizep;
 
@@ -381,6 +480,8 @@ public:
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
 	{
 		// 62 is the character index of the space
+
+#ifndef USING_FREETYPE_FONT
 
 		Billboard_Vertex_Buffer Letter(
 			Coords.X1o + Size * Window_Aspect_Ratio,
@@ -406,6 +507,44 @@ public:
 		glDrawElementsInstanced(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u, Character_Indices.size());
 
 		Letter.Delete_Buffer();
+
+#else
+		float X_Offset = 0;
+		float Y_Offset = 0;
+
+		for (size_t W = 0; W < Text.length(); W++)
+		{
+			if (Text[W] != ' ')
+			{
+				Font_Table::Character Character = Font_Table::Characters[Text[W]];
+
+				Bind_UI_Uniforms(Text_Shader, Character.Glyph, Colour);
+
+				float Left_X_Pos = Coords.X1o + (Character.Offset.x + X_Offset) * Window_Aspect_Ratio * Size * Font_Table::Character_Pixel_To_Screen_Space
+					+ Size * Window_Aspect_Ratio * 0.5f;
+				float Top_Y_Pos = Coords.Y2o + (Character.Offset.y + Y_Offset) * Size * Font_Table::Character_Pixel_To_Screen_Space - Size * 1.5f;
+
+				Billboard_Vertex_Buffer Letter(
+					Left_X_Pos,
+					Top_Y_Pos,
+					Left_X_Pos + Character.Size.x * Window_Aspect_Ratio * Size * Font_Table::Character_Pixel_To_Screen_Space,
+					Top_Y_Pos - Character.Size.y * Size * Font_Table::Character_Pixel_To_Screen_Space,
+					glm::vec2(0, 0), glm::vec2(1, 0),
+					glm::vec2(0, 1), glm::vec2(1, 1),
+					Italic_Slant * Window_Aspect_Ratio * Character.Size.y * Font_Table::Character_Pixel_To_Screen_Space
+				);
+
+				X_Offset += Character.Step;
+
+				glDrawElements(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u);
+
+				Letter.Delete_Buffer();
+			}
+			else
+				X_Offset += Font_Table::Characters['a'].Step;
+		}
+
+#endif
 	}
 
 	virtual void Render(UI_Transformed_Coordinates Coords) override
@@ -420,7 +559,9 @@ public:
 
 		Text_Shader.Activate();
 
+#ifndef USING_FREETYPE_FONT
 		Bind_UI_Uniforms(Text_Shader, Font_Table::Font, Colour);
+#endif
 
 		Render_Text(Coords);
 	}
@@ -449,7 +590,7 @@ public:
 
 	virtual void Update_UI() override
 	{
-		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN], Flags[UF_CLAMP_RIGHT]);
 
 		bool Hovering = Button_Hover(Coords);
 
@@ -482,7 +623,11 @@ public:
 		X2 = X2p;
 		Y2 = Y2p;
 
+#ifndef USING_FREETYPE_FONT
 		Font_Table::Generate_Text_Indices(Textp.c_str(), &Character_Indices);
+#else
+		Text = Textp;
+#endif
 
 		Size = Sizep;
 
@@ -495,7 +640,7 @@ public:
 
 	virtual void Update_UI() override
 	{
-		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN]);
+		UI_Transformed_Coordinates Coords(X1, Y1, X2, Y2, UI_Border_Size, Flags[UF_CLAMP_TO_SIDE], Flags[UF_FILL_SCREEN], Flags[UF_CLAMP_RIGHT]);
 
 		bool Hovering = Button_Hover(Coords);
 

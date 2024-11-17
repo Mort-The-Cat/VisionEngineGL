@@ -9,6 +9,8 @@ class Texture
 public:
 	Texture() {}
 
+	unsigned int Get_Texture_ID() { return Texture_ID; }
+
 	bool Texture_Created()
 	{
 		return Texture_ID != Unassigned_Bit_Mask;
