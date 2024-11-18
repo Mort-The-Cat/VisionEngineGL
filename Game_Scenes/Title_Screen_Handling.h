@@ -21,7 +21,7 @@ void Setup_Test_Scene()
 	// UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture));
 
 	
-	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das sieht schön aus!", glm::vec3(1.0f), 0.1f));
+	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das sieht schön aus! Scheiß drauf", glm::vec3(1.0f), 0.1f));
 	
 	
 	//UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;

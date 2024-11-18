@@ -43,10 +43,15 @@ namespace Font_Table
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1u);
 
-		for (char Char = -10; Char < 120; Char++)
+		for (int Char = 32; Char < 256; Char++)
 		{
-			if (FT_Load_Char(Face, Char, FT_LOAD_RENDER))
+			int Glyph_Index = FT_Get_Char_Index(Face, Char);
+
+			if (FT_Load_Glyph(Face, Glyph_Index, FT_LOAD_RENDER))
 				Throw_Error(" >> Unable to load font glyph!\n");
+
+			//if (FT_Load_Char(Face, Char, FT_LOAD_RENDER))
+			//	Throw_Error(" >> Unable to load font glyph!\n");
 
 			if (Face->glyph->bitmap.width)
 			{
