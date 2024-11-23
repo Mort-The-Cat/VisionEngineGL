@@ -32,6 +32,12 @@ void Init_Player_Physics_Object()
 	}
 }
 
+void Initialise_Fonts()
+{
+	Font_Table::Initialise_Font_Texture(&Font_Georgia, 512, "Assets/Font/georgia.ttf");
+	Font_Table::Initialise_Font_Texture(&Font_Gothic, 512, "Assets/Font/COPRGTL.ttf");
+}
+
 void Initialise_Particles()
 {
 	Init_Player_Physics_Object();
@@ -123,6 +129,8 @@ void Initialise_Shaders_And_Particle_Emitters()
 	Initialise_Particles();
 
 	Initialise_UI_Shaders();
+
+	Initialise_Fonts();
 
 	//
 

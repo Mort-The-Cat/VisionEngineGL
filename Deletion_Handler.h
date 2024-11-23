@@ -14,6 +14,8 @@ void Handle_Deletions()
 {
 	Wait_On_Physics();
 
+	while (Physics::Threads_Working_On_Physics) { ; }
+
 	for (size_t W = 0; W < Scene_Lights.size(); W++)
 	{
 		if (Scene_Lights[W]->Flags[LF_TO_BE_DELETED])

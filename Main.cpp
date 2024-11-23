@@ -25,7 +25,7 @@ int main()
 	if(Post_Processing)
 		Post_Processor::Initialise_Post_Processor();
 
-	Font_Table::Initialise_Font_Texture();
+	// Font_Table::Initialise_Font_Texture();
 
 	Initialise_Sound_Engine();
 

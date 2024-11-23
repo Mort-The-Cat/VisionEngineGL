@@ -23,11 +23,19 @@ namespace Font_Table
 		unsigned int Step; // This is how far along (in pixels) the next character should be placed
 	};
 
-	std::map<char, Character> Characters;
+	// std::map<char, Character> Characters;
 
-	const float Character_Pixel_To_Screen_Space = 1.0f / 512;
+	// const float Character_Pixel_To_Screen_Space = 1.0f / 512;
 
-	void Initialise_Font_Texture()
+	class Font
+	{
+	public:
+		std::map<char, Character> Characters;
+
+		float Character_Pixel_To_Screen_Space;
+	};
+
+	void Initialise_Font_Texture(Font* Target_Font, size_t Character_Resolution, std::string File_Name)
 	{
 		FT_Library Interface;
 
@@ -36,10 +44,10 @@ namespace Font_Table
 
 		FT_Face Face;
 
-		if (FT_New_Face(Interface, "Assets/Font/georgia.ttf", 0, &Face))
+		if (FT_New_Face(Interface, File_Name.c_str(), 0, &Face))
 			Throw_Error(" >> Unable to load font!\n");
 
-		FT_Set_Pixel_Sizes(Face, 0, 512);
+		FT_Set_Pixel_Sizes(Face, 0, Character_Resolution);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1u);
 
@@ -70,9 +78,11 @@ namespace Font_Table
 				Letter.Offset = glm::ivec2(Face->glyph->bitmap_left, Face->glyph->bitmap_top);
 				Letter.Step = Face->glyph->advance.x >> 6;
 
-				Characters.insert(std::pair<char, Character>(Char, Letter));
+				Target_Font->Characters.insert(std::pair<char, Character>(Char, Letter));
 			}
 		}
+
+		Target_Font->Character_Pixel_To_Screen_Space = 1.0f / (float)Character_Resolution;
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 4u); // This sets the unpack alignment to default values
 
@@ -82,6 +92,9 @@ namespace Font_Table
 		// This frees the faces and interface we use to generate the glyph textures
 	}
 }
+
+Font_Table::Font Font_Georgia;
+Font_Table::Font Font_Gothic;
 
 #elif
 
@@ -458,11 +471,13 @@ public:
 
 	bool Centered_X = false, Centered_Y = false;
 
+	Font_Table::Font* Font;
+
 	glm::vec3 Text_Colour;
 
 	Text_UI_Element() {}
 
-	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f, 1.0f, 1.0f), float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f, 1.0f, 1.0f), Font_Table::Font* Fontp = &Font_Georgia, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -480,6 +495,8 @@ public:
 		Italic_Slant = Italic_Slantp;
 
 		Text_Colour = Text_Colourp;
+
+		Font = Fontp;
 	}
 
 	virtual void Render_Text(UI_Transformed_Coordinates Coords)
@@ -521,32 +538,44 @@ public:
 		{
 			if (Text[W] != ' ')
 			{
-				Font_Table::Character Character = Font_Table::Characters[Text[W]];
+				Font_Table::Character Character = Font->Characters[Text[W]];
 
 				Bind_UI_Uniforms(Text_Shader, Character.Glyph, Colour);
 
-				float Left_X_Pos = Coords.X1o + (Character.Offset.x + X_Offset) * Window_Aspect_Ratio * Size * Font_Table::Character_Pixel_To_Screen_Space
+				float Left_X_Pos = Coords.X1o + (Character.Offset.x + X_Offset) * Window_Aspect_Ratio * Size * Font->Character_Pixel_To_Screen_Space
 					+ Size * Window_Aspect_Ratio * 0.5f;
-				float Top_Y_Pos = Coords.Y2o + (Character.Offset.y + Y_Offset) * Size * Font_Table::Character_Pixel_To_Screen_Space - Size * 1.5f;
+				float Top_Y_Pos = Coords.Y2o + (Character.Offset.y) * Size * Font->Character_Pixel_To_Screen_Space - Size * (1.5f + Y_Offset);
+
+				float Right_X_Pos = Left_X_Pos + Character.Size.x * Window_Aspect_Ratio * Size * Font->Character_Pixel_To_Screen_Space;
 
 				Billboard_Vertex_Buffer Letter(
 					Left_X_Pos,
 					Top_Y_Pos,
-					Left_X_Pos + Character.Size.x * Window_Aspect_Ratio * Size * Font_Table::Character_Pixel_To_Screen_Space,
-					Top_Y_Pos - Character.Size.y * Size * Font_Table::Character_Pixel_To_Screen_Space,
+					Right_X_Pos,
+					Top_Y_Pos - Character.Size.y * Size * Font->Character_Pixel_To_Screen_Space,
 					glm::vec2(0, 0), glm::vec2(1, 0),
 					glm::vec2(0, 1), glm::vec2(1, 1),
-					Italic_Slant * Window_Aspect_Ratio * Character.Size.y * Font_Table::Character_Pixel_To_Screen_Space
+					Italic_Slant * Window_Aspect_Ratio * Character.Size.y * Font->Character_Pixel_To_Screen_Space
 				);
 
 				X_Offset += Character.Step;
+
+				{
+					Right_X_Pos += Character.Step * Window_Aspect_Ratio * Size * Font->Character_Pixel_To_Screen_Space;
+
+					if (Right_X_Pos > Coords.X2o - Size * Window_Aspect_Ratio * 0.5f)
+					{
+						X_Offset = 0.0f;
+						Y_Offset += 1.0f;
+					}
+				}
 
 				glDrawElements(GL_TRIANGLES, Letter.Indices_Count, GL_UNSIGNED_INT, 0u);
 
 				Letter.Delete_Buffer();
 			}
 			else
-				X_Offset += Font_Table::Characters['a'].Step;
+				X_Offset += Font->Characters['a'].Step;
 		}
 
 #endif
@@ -621,7 +650,7 @@ class Button_Text_UI_Element : public Text_UI_Element
 public:
 	void (*Button_Function)(UI_Element*);
 
-	Button_Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f), float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	Button_Text_UI_Element(float X1p, float Y1p, float X2p, float Y2p, void (*Button_Functionp)(UI_Element*), std::string Textp, glm::vec3 Text_Colourp = glm::vec3(1.0f), Font_Table::Font* Fontp = &Font_Georgia, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -641,6 +670,8 @@ public:
 		Italic_Slant = Italic_Slantp;
 
 		Button_Function = Button_Functionp;
+
+		Font = Fontp;
 	}
 
 	virtual void Update_UI() override

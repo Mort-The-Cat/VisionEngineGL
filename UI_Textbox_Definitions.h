@@ -163,7 +163,7 @@ public:
 
 	// Remember to manually unset this flag once the user has stopped typing in here - check if the user clicks off this UI element
 
-	Textbox_UI_Element(float X1p, float Y1p, float X2p, float Y2p, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f)
+	Textbox_UI_Element(float X1p, float Y1p, float X2p, float Y2p, float Sizep = 1.0f / 15.0f, float Italic_Slantp = 0.0f, Font_Table::Font* Fontp = &Font_Georgia)
 	{
 		X1 = X1p;
 		Y1 = Y1p;
@@ -174,6 +174,8 @@ public:
 		Italic_Slant = Italic_Slantp;
 
 		glfwSetCharCallback(Window, UI_Typing::Character_Typing_Callback);
+
+		Font = Fontp;
 	}
 
 	void Render_Cursor(UI_Transformed_Coordinates Coords)

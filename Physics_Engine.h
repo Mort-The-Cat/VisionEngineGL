@@ -86,11 +86,9 @@ namespace Physics
 
 			float B_Friction = Collision->B != nullptr ? Collision->B->Friction : 0.9f;
 
+			//
+
 			glm::vec3 A_Rotational_Velocity_Tangent = Get_Rotation_Vector_Tangent(Collision->A_Rotation_Vector, Collision->A_Position, Collision);
-
-			// glm::vec3 A_Rotational_Velocity_Tangent = Get_Rotational_Velocity_Tangent(Collision->A_Rotational_Velocity, Collision->A_Position, Collision);
-
-			// glm::vec3 B_Rotational_Velocity_Tangent = Collision->B != nullptr ? Collision->B->Get_Rotational_Velocity_Tangent(Collision->B_Rotational_Velocity, Collision->B_Position, Collision) : glm::vec3(0, 0, 0);
 
 			glm::vec3 B_Rotational_Velocity_Tangent = Collision->B != nullptr ? Collision->B->Get_Rotation_Vector_Tangent(Collision->B_Rotation_Vector, Collision->B_Position, Collision) : glm::vec3(0.0f);
 
@@ -126,6 +124,10 @@ namespace Physics
 
 			//
 
+			glm::vec3 Perpendicular_Rotational_Force = Collision->Collision.Collision_Normal * (0.25f * Collision->A->Friction * B_Friction * glm::dot(Collision->Collision.Collision_Normal, Collision->A_Rotation_Vector - Collision->B_Rotation_Vector));
+
+			//
+
 			glm::vec3 To_Collision = Collision->Collision.Collision_Position - (Centre_Of_Mass + Collision->A_Position);
 
 			glm::vec3 Rotation_Axis = glm::normalize(glm::cross(Impulse, To_Collision));
@@ -136,8 +138,12 @@ namespace Physics
 
 			float Rotational_Acceleration_Angle = Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
+
 			if (!std::isnan(Rotational_Acceleration_Angle) && !Flags[PF_NO_ROTATION])
-				Rotation_Vector -= Rotation_Axis * Rotational_Acceleration_Angle;
+			{
+				Rotation_Vector -= Rotation_Axis * Rotational_Acceleration_Angle
+					+ Perpendicular_Rotational_Force * Inv_Mass;
+			}
 
 			// https://en.wikipedia.org/wiki/Angular_acceleration#Relation_to_torque
 
@@ -165,7 +171,10 @@ namespace Physics
 				Rotational_Acceleration_Angle = Collision->B->Inv_Mass * Perpendicular_Force / glm::length(To_Collision);
 
 				if (!std::isnan(Rotational_Acceleration_Angle) && !Collision->B->Flags[PF_NO_ROTATION])
-					Collision->B->Rotation_Vector += Rotation_Axis * Rotational_Acceleration_Angle;
+				{
+					Collision->B->Rotation_Vector += Rotation_Axis * Rotational_Acceleration_Angle
+						+ Perpendicular_Rotational_Force * Collision->B->Inv_Mass;
+				}
 			}
 		}
 

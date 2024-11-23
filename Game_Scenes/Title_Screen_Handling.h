@@ -21,7 +21,7 @@ void Setup_Test_Scene()
 	// UI_Elements.push_back(new Button_UI_Element(-1, -1, 1, 1, Return_To_Game_Loop, Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture));
 
 	
-	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das sieht schön aus! Scheiß drauf", glm::vec3(1.0f), 0.1f));
+	UI_Elements.push_back(new Button_Text_UI_Element(-0.9f, -0.9, 0.8f, -0.3, Return_To_Game_Loop, "Spiel beginnen? Das sieht schön aus! Scheiß drauf", glm::vec3(1.0f), &Font_Georgia, 0.1f));
 	
 	
 	//UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;
@@ -158,7 +158,7 @@ void Create_Title_Screen_Page()
 	UI_Elements.back()->Flags[UF_RENDER_CONTENTS] = false;
 	UI_Elements.back()->Flags[UF_FILL_SCREEN] = true;
 
-	UI_Elements.push_back(new Button_Text_UI_Element(-1.75f, 0.5, 1.75f, 0.9f, Run_Engine_Loop, "Drücken Sie diesen Knopf, um anzufangen", glm::vec3(1.0f), 0.1f, 0.01f));
+	UI_Elements.push_back(new Button_Text_UI_Element(-1.75f, 0.5, 1.75f, 0.9f, Run_Engine_Loop, "Drücken Sie diesen Knopf, um anzufangen", glm::vec3(1.0f), &Font_Gothic, 0.1f, 0.01f));
 	UI_Elements.back()->Image = Pull_Texture("Assets/Textures/Floor_Tiles.png").Texture;
 
 	UI_Elements.back()->Flags[UF_IMAGE] = true;
